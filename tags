@@ -1,0 +1,133 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.7	//
+BIT_TEST	patricia.h	27;"	d
+Clear_Patricia	patricia.c	/^Clear_Patricia(patricia_tree_t * patricia, void_fn_t func)$/;"	f
+D_FILE_OFFSET_BITS	Makefile	/^	gcc -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -I..\/chad-libs\/apr-1\/include -L..\/chad-libs\/apr-1\/.libs  mod_webfw2.c -o mod_webfw2 filtercloud.o patricia.o -lapr-1 -ggdb $/;"	m
+Deref_Prefix	patricia.c	/^Deref_Prefix(prefix_t * prefix)$/;"	f
+Destroy_Patricia	patricia.c	/^Destroy_Patricia(patricia_tree_t * patricia, void_fn_t func)$/;"	f
+MAXLINE	patricia.h	26;"	d
+New_Patricia	patricia.c	/^New_Patricia(apr_pool_t * pool, int maxbits)$/;"	f
+New_Prefix	patricia.c	/^New_Prefix(apr_pool_t * pool, int family, void *dest, int bitlen)$/;"	f
+New_Prefix2	patricia.c	/^New_Prefix2(apr_pool_t * pool, int family, void *dest, int bitlen,$/;"	f
+PATRICIA_DATA_GET	patricia.h	128;"	d
+PATRICIA_DATA_SET	patricia.h	129;"	d
+PATRICIA_MAXBITS	patricia.h	124;"	d
+PATRICIA_NBIT	patricia.h	125;"	d
+PATRICIA_NBYTE	patricia.h	126;"	d
+PATRICIA_WALK	patricia.h	131;"	d
+PATRICIA_WALK_ALL	patricia.h	139;"	d
+PATRICIA_WALK_BREAK	patricia.h	147;"	d
+PATRICIA_WALK_END	patricia.h	155;"	d
+RULE_ADDR_DST	filtercloud.h	/^enum { RULE_ADDR_SRC, RULE_ADDR_DST, };$/;"	e	enum:__anon3
+RULE_ADDR_SRC	filtercloud.h	/^enum { RULE_ADDR_SRC, RULE_ADDR_DST, };$/;"	e	enum:__anon3
+RULE_MATCH_CHAD_ORD	filtercloud.h	/^    RULE_MATCH_CHAD_ORD,$/;"	e	enum:__anon2
+RULE_MATCH_DSTADDR	filtercloud.h	/^    RULE_MATCH_DSTADDR,$/;"	e	enum:__anon2
+RULE_MATCH_OPERATOR_AND	filtercloud.h	/^    RULE_MATCH_OPERATOR_AND$/;"	e	enum:__anon2
+RULE_MATCH_OPERATOR_OR	filtercloud.h	/^    RULE_MATCH_OPERATOR_OR,$/;"	e	enum:__anon2
+RULE_MATCH_SRCADDR	filtercloud.h	/^    RULE_MATCH_SRCADDR = 1,$/;"	e	enum:__anon2
+Ref_Prefix	patricia.c	/^Ref_Prefix(apr_pool_t * pool, prefix_t * prefix)$/;"	f
+_PATRICIA_H	patricia.h	16;"	d
+_patricia_node_t	patricia.h	/^typedef struct _patricia_node_t {$/;"	s
+_patricia_tree_t	patricia.h	/^typedef struct _patricia_tree_t {$/;"	s
+_prefix4_t	patricia.h	/^typedef struct _prefix4_t {$/;"	s
+_prefix_t	patricia.h	/^typedef struct _prefix_t {$/;"	s
+add	patricia.h	/^    } add;$/;"	m	struct:_prefix_t	typeref:union:_prefix_t::__anon1
+addroute	patricia.h	32;"	d
+ascii2prefix	patricia.c	/^ascii2prefix(apr_pool_t * pool, int family, char *string)$/;"	f
+bit	patricia.h	/^    u_int           bit;        \/* flag if this node used *\/$/;"	m	struct:_patricia_node_t
+bitlen	patricia.h	/^    u_short         bitlen;     \/* same as mask? *\/$/;"	m	struct:_prefix4_t
+bitlen	patricia.h	/^    u_short         bitlen;     \/* same as mask? *\/$/;"	m	struct:_prefix_t
+callback	filtercloud.h	/^    int             (*callback) (apr_pool_t * pool,$/;"	m	struct:rule_flow
+cloud_filter	filtercloud.h	/^typedef struct cloud_filter {$/;"	s
+cloud_filter_add_rule	filtercloud.c	/^cloud_filter_add_rule(cloud_filter_t * filter, cloud_rule_t * rule)$/;"	f
+cloud_filter_init	filtercloud.c	/^cloud_filter_init(apr_pool_t * parent)$/;"	f
+cloud_filter_t	filtercloud.h	/^} cloud_filter_t;$/;"	t	typeref:struct:cloud_filter
+cloud_flow_from_str	filtercloud.c	/^cloud_flow_from_str(apr_pool_t * pool, char *flowstr)$/;"	f
+cloud_match_dstaddr	filtercloud.c	/^cloud_match_dstaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data)$/;"	f	file:
+cloud_match_rule	filtercloud.c	/^cloud_match_rule(apr_pool_t * pool, cloud_rule_t * rule,$/;"	f
+cloud_match_srcaddr	filtercloud.c	/^cloud_match_srcaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data)$/;"	f	file:
+cloud_rule	filtercloud.h	/^struct cloud_rule {$/;"	s
+cloud_rule_add_chad_order	filtercloud.c	/^cloud_rule_add_chad_order(cloud_rule_t * rule, char *order)$/;"	f
+cloud_rule_add_flow	filtercloud.c	/^cloud_rule_add_flow(cloud_rule_t * rule, char *data)$/;"	f
+cloud_rule_add_network	filtercloud.c	/^cloud_rule_add_network(cloud_rule_t * rule,$/;"	f
+cloud_rule_flow_init	filtercloud.c	/^cloud_rule_flow_init(apr_pool_t * pool)$/;"	f
+cloud_rule_init	filtercloud.c	/^cloud_rule_init(apr_pool_t * parent)$/;"	f
+cloud_rule_t	filtercloud.h	/^typedef struct cloud_rule cloud_rule_t;$/;"	t	typeref:struct:cloud_rule
+cloud_traverse_filter	filtercloud.c	/^cloud_traverse_filter(cloud_filter_t * filter,$/;"	f
+cmd_config_file	mod_webfw2.c	/^cmd_config_file(cmd_parms * cmd, void *dummy_config, $/;"	f	file:
+comp_with_mask	patricia.c	/^comp_with_mask(void *addr, void *dest, u_int mask)$/;"	f
+config_file	mod_webfw2.c	/^    char *config_file;$/;"	m	struct:webfw2_config	file:
+copyright	patricia.c	/^static char __attribute__ ((unused)) copyright[] =$/;"	v	file:
+data	patricia.h	/^    void           *data;       \/* pointer to data *\/$/;"	m	struct:_patricia_node_t
+dst_addrs	filtercloud.h	/^    patricia_tree_t *dst_addrs;$/;"	m	struct:cloud_rule
+family	patricia.h	/^    u_short         family;     \/* AF_INET | AF_INET6 *\/$/;"	m	struct:_prefix4_t
+family	patricia.h	/^    u_short         family;     \/* AF_INET | AF_INET6 *\/$/;"	m	struct:_prefix_t
+flow	filtercloud.h	/^    rule_flow_t    *flow;$/;"	m	struct:cloud_rule
+free_tokens	filtercloud.c	/^free_tokens(char **tokens)$/;"	f
+head	filtercloud.h	/^    cloud_rule_t   *head;$/;"	m	struct:cloud_filter
+head	patricia.h	/^    patricia_node_t *head;$/;"	m	struct:_patricia_tree_t
+id	filtercloud.h	/^    uint32_t        id;$/;"	m	struct:cloud_rule
+l	patricia.h	/^    struct _patricia_node_t *l,$/;"	m	struct:_patricia_node_t	typeref:struct:_patricia_node_t::_patricia_node_t
+lookup_then_remove	patricia.c	/^lookup_then_remove(apr_pool_t * pool, patricia_tree_t * tree, char *string)$/;"	f
+main	filtercloud.c	/^main(int argc, char **argv)$/;"	f
+make_and_lookup	patricia.c	/^make_and_lookup(apr_pool_t * pool, patricia_tree_t * tree, char *string)$/;"	f
+maxbits	patricia.h	/^    u_int           maxbits;    \/* for IP, 32 bit addresses *\/$/;"	m	struct:_patricia_tree_t
+my_inet_pton	patricia.c	/^my_inet_pton(int af, const char *src, void *dst)$/;"	f
+n_t_s	filtercloud.c	/^static struct n_t_s {$/;"	s	file:
+name_to_int	filtercloud.c	/^} name_to_int[] = {$/;"	v	typeref:struct:n_t_s	file:
+next	filtercloud.h	/^    struct cloud_rule *next;$/;"	m	struct:cloud_rule	typeref:struct:cloud_rule::cloud_rule
+next	filtercloud.h	/^    struct rule_flow *next;$/;"	m	struct:rule_flow	typeref:struct:rule_flow::rule_flow
+next_operator	filtercloud.h	/^    int             next_operator;$/;"	m	struct:rule_flow
+num_active_node	patricia.h	/^    int             num_active_node;    \/* for debug purpose *\/$/;"	m	struct:_patricia_tree_t
+num_active_patricia	patricia.c	/^static int      num_active_patricia = 0;$/;"	v	file:
+parent	patricia.h	/^    struct _patricia_node_t *parent;    \/* may be used *\/$/;"	m	struct:_patricia_node_t	typeref:struct:_patricia_node_t::_patricia_node_t
+patricia_lookup	patricia.c	/^patricia_lookup(apr_pool_t * pool, patricia_tree_t * patricia,$/;"	f
+patricia_node_t	patricia.h	/^} patricia_node_t;$/;"	t	typeref:struct:_patricia_node_t
+patricia_process	patricia.c	/^patricia_process(patricia_tree_t * patricia, void_fn_t func)$/;"	f
+patricia_remove	patricia.c	/^patricia_remove(patricia_tree_t * patricia, patricia_node_t * node)$/;"	f
+patricia_search_best	patricia.c	/^patricia_search_best(apr_pool_t * pool, patricia_tree_t * patricia,$/;"	f
+patricia_search_best2	patricia.c	/^patricia_search_best2(apr_pool_t * pool,$/;"	f
+patricia_search_exact	patricia.c	/^patricia_search_exact(patricia_tree_t * patricia, prefix_t * prefix)$/;"	f
+patricia_tree_t	patricia.h	/^} patricia_tree_t;$/;"	t	typeref:struct:_patricia_tree_t
+patricia_walk_inorder	patricia.c	/^patricia_walk_inorder(patricia_node_t * node, void_fn_t func)$/;"	f
+pool	filtercloud.h	/^    apr_pool_t     *pool;$/;"	m	struct:cloud_filter
+pool	filtercloud.h	/^    apr_pool_t     *pool;$/;"	m	struct:cloud_rule
+prefix	patricia.h	/^    prefix_t       *prefix;     \/* who we are in patricia tree *\/$/;"	m	struct:_patricia_node_t
+prefix4_t	patricia.h	/^} prefix4_t;$/;"	t	typeref:struct:_prefix4_t
+prefix_t	patricia.h	/^} prefix_t;$/;"	t	typeref:struct:_prefix_t
+prefix_toa	patricia.c	/^prefix_toa(prefix_t * prefix)$/;"	f
+prefix_toa2	patricia.c	/^prefix_toa2(prefix_t * prefix, char *buff)$/;"	f
+prefix_toa2x	patricia.c	/^prefix_toa2x(prefix_t * prefix, char *buff, int with_len)$/;"	f
+prefix_tochar	patricia.c	/^prefix_tochar(prefix_t * prefix)$/;"	f
+prefix_touchar	patricia.h	25;"	d
+r	patricia.h	/^                   *r;          \/* left and right children *\/$/;"	m	struct:_patricia_node_t	typeref:struct:_patricia_node_t::
+ref_count	patricia.h	/^    int             ref_count;  \/* reference count *\/$/;"	m	struct:_prefix4_t
+ref_count	patricia.h	/^    int             ref_count;  \/* reference count *\/$/;"	m	struct:_prefix_t
+rule_count	filtercloud.h	/^    uint32_t        rule_count;$/;"	m	struct:cloud_filter
+rule_flow	filtercloud.h	/^struct rule_flow {$/;"	s
+rule_flow_t	filtercloud.h	/^typedef struct rule_flow rule_flow_t;$/;"	t	typeref:struct:rule_flow
+rule_token_to_int	filtercloud.c	/^rule_token_to_int(char *token)$/;"	f	file:
+sin	patricia.h	/^        struct in_addr  sin;$/;"	m	union:_prefix_t::__anon1	typeref:struct:_prefix_t::__anon1::in_addr
+sin	patricia.h	/^    struct in_addr  sin;$/;"	m	struct:_prefix4_t	typeref:struct:_prefix4_t::in_addr
+sin6	patricia.h	/^        struct in6_addr sin6;$/;"	m	union:_prefix_t::__anon1	typeref:struct:_prefix_t::__anon1::in6_addr
+src_addrs	filtercloud.h	/^    patricia_tree_t *src_addrs;$/;"	m	struct:cloud_rule
+strval	filtercloud.c	/^    const char     *strval;$/;"	m	struct:n_t_s	file:
+tail	filtercloud.h	/^    cloud_rule_t   *tail;$/;"	m	struct:cloud_filter
+this_operator	filtercloud.h	/^    int             this_operator;$/;"	m	struct:rule_flow
+tokenize_str	filtercloud.c	/^tokenize_str(char *string, const char *sep)$/;"	f	file:
+try_search_best	patricia.c	/^try_search_best(apr_pool_t * pool, patricia_tree_t * tree, char *string)$/;"	f
+try_search_exact	patricia.c	/^try_search_exact(apr_pool_t * pool, patricia_tree_t * tree, char *string)$/;"	f
+type	filtercloud.h	/^    int             type;$/;"	m	struct:rule_flow
+update_interval	mod_webfw2.c	/^    uint32_t update_interval;$/;"	m	struct:webfw2_config	file:
+user1	patricia.h	/^    void           *user1;      \/* pointer to usr data (ex. route flap$/;"	m	struct:_patricia_node_t
+val	filtercloud.c	/^    int             val;$/;"	m	struct:n_t_s	file:
+void_fn_t	patricia.h	/^typedef void    (*void_fn_t) ();$/;"	t
+webfw2_config	mod_webfw2.c	/^typedef struct webfw2_config {$/;"	s	file:
+webfw2_config_t	mod_webfw2.c	/^} webfw2_config_t;$/;"	t	typeref:struct:webfw2_config	file:
+webfw2_init_config	mod_webfw2.c	/^webfw2_init_config(apr_pool_t * pool, server_rec * svr)$/;"	f
+webfw2_module	mod_webfw2.c	/^module AP_MODULE_DECLARE_DATA webfw2_module;$/;"	v
+xff_headers	mod_webfw2.c	/^    apr_table_t *xff_headers;$/;"	m	struct:webfw2_config	file:
