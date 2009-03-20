@@ -199,10 +199,10 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
     /*
      * not thread safe 
      */
-    // char save[MAXLINE];
-    char           *save;
+    char save[MAXLINE];
+    //char           *save;
 
-    save = apr_palloc(pool, MAXLINE);
+    //save = apr_palloc(pool, MAXLINE);
 
     if (string == NULL)
         return (NULL);

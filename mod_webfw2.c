@@ -49,6 +49,7 @@ webfw2_child_init(apr_pool_t * pool, server_rec * rec)
     webfw2_filter_t *wf2_filter;
     apr_pool_t     *subpool;
 
+    //ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL, "BOYYYYYY\n");
     config = ap_get_module_config(rec->module_config, &webfw2_module);
 
     ap_assert(config);
@@ -164,7 +165,6 @@ webfw2_handler(request_rec * rec)
             src_ip = ((const char **) addrs->elts)[i];
             dst_ip = (const char *) rec->connection->local_ip;
 
-            printf("HI %s %s\n", src_ip, dst_ip);
 
             if (!(rule = cloud_traverse_filter(wf2_filter->filter,
                                                src_ip, dst_ip,

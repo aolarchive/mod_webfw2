@@ -230,9 +230,7 @@ cloud_filter_t *
 cloud_filter_init(apr_pool_t * parent)
 {
     cloud_filter_t *ret;
-
     ret = apr_pcalloc(parent, sizeof(cloud_filter_t));
-
     apr_pool_create(&ret->pool, parent);
 
     return ret;
@@ -376,8 +374,6 @@ cloud_match_rule(apr_pool_t * pool, cloud_rule_t * rule,
         flows = flows->next;
     }
 
-    printf("Did we match? %s\n", matched_rule ? "Yes" : "No");
-
     if (matched_rule)
         return 1;
 
@@ -392,18 +388,17 @@ cloud_traverse_filter(cloud_filter_t * filter,
     cloud_rule_t   *rule = filter->head;
     apr_pool_t     *subpool;
 
-    apr_pool_create(&subpool, filter->pool);
+    apr_pool_create(&subpool, NULL);
 
     while (rule != NULL) {
         if (cloud_match_rule(subpool, rule, srcip, dstip, data) == 1)
             break;
 
-        printf("Did not match rule %p\n", rule);
+	apr_pool_clear(subpool);
         rule = rule->next;
     }
 
     apr_pool_destroy(subpool);
-    printf("Matched rule %p\n", rule);
     return rule;
 }
 
