@@ -35,6 +35,7 @@ typedef struct webfw2_config {
 } webfw2_config_t;
 
 typedef struct webfw2_filter {
+    uint32_t last_update;
     cloud_filter_t *filter;
     apr_pool_t *pool;
     apr_thread_rwlock_t *rwlock;
@@ -61,6 +62,10 @@ webfw2_child_init(apr_pool_t * pool, server_rec * rec)
     wf2_filter->pool = subpool;
     wf2_filter->test = 500;
 
+    wf2_filter->filter = 
+	cloud_parse_config(wf2_filter->pool, 
+		config->config_file);
+
 #ifdef APR_HAS_THREADS
     ap_assert(apr_thread_rwlock_create(&wf2_filter->rwlock, 
 		subpool) == APR_SUCCESS);
@@ -69,25 +74,119 @@ webfw2_child_init(apr_pool_t * pool, server_rec * rec)
 	    apr_pool_cleanup_null, rec->process->pool);
 }
 
+apr_array_header_t *
+webfw2_find_all_sources(request_rec *rec)
+{
+    webfw2_config_t *config;
+    apr_array_header_t *addr_array;
+    apr_table_entry_t *hdrs;
+    apr_array_header_t *hdrs_arr;
+    int i;
+
+    config = 
+	ap_get_module_config(rec->server->module_config, 
+		&webfw2_module);
+
+    ap_assert(config);
+
+    addr_array = apr_array_make(rec->pool, 1, sizeof(char *)); 
+    ap_assert(addr_array);
+
+    hdrs_arr =
+       (apr_array_header_t *)
+            apr_table_elts(config->xff_headers);       
+
+    hdrs = (apr_table_entry_t *) hdrs_arr->elts;	
+
+    for (i = 0; i < hdrs_arr->nelts; ++i)
+    {
+	char *value;
+	char *addr;
+	char **addrs;
+	char **addrs_ptr;
+
+	if(!hdrs[i].key)
+	    continue;
+
+	value = 
+	    (char *) apr_table_get(rec->headers_in, hdrs[i].key);
+
+	if (!value)
+	    continue;
+
+	addrs = cloud_tokenize_str(value, ",");
+	addrs_ptr = addrs;
+
+	while(addr = *addrs++)
+	    *(const char**)apr_array_push(addr_array) = 
+		apr_pstrdup(rec->pool, addr);
+
+	free_tokens(addrs_ptr);
+    }
+
+    *(const char**)apr_array_push(addr_array) =
+	rec->connection->remote_ip;
+
+    return addr_array;
+}
+
+
 static int
 webfw2_handler(request_rec *rec)
 {
+    int ret;
     webfw2_filter_t *wf2_filter;
+
+    ret = DECLINED;
 
     apr_pool_userdata_get((void **)&wf2_filter, 
 	    FILTER_CONFIG_KEY, rec->server->process->pool);
 
     ap_assert(wf2_filter);
     // apr_thread_rwlock_wrlock
-    
 #ifdef APR_HAS_THREADS
     apr_thread_rwlock_rdlock(wf2_filter->rwlock);
 #endif
-    printf("test %d\n", wf2_filter->test);
+
+    do {
+	int i;
+	char *chad_order;
+	apr_array_header_t *addrs;
+
+	if (!wf2_filter->filter)
+	    break;
+
+	if(!(addrs = webfw2_find_all_sources(rec)))
+	    break;
+
+	chad_order = 
+	    (char *)apr_table_get(rec->notes, "chadorder");
+
+	for (i=0; i < addrs->nelts; i++)
+	{
+	    cloud_rule_t *rule;
+	    const char *src_ip;
+	    const char *dst_ip;
+
+	    src_ip = ((const char**)addrs->elts)[i];
+	    dst_ip = (const char *)rec->connection->local_ip; 
+
+	    printf("HI %s %s\n", src_ip, dst_ip);
+
+	    if(!(rule=cloud_traverse_filter(wf2_filter->filter, 
+		    src_ip, dst_ip, (void *)chad_order)))
+		continue;
+
+	    ret = 404;
+	    break;
+	}
+    } while(0);
+
 #ifdef APR_HAS_THREADS
     apr_thread_rwlock_unlock(wf2_filter->rwlock);
 #endif
-    return DECLINED;
+
+    return ret;
 }
 
 void *
@@ -183,7 +282,6 @@ webfw2_hooker(apr_pool_t *pool)
     ap_hook_access_checker(webfw2_handler, beforeme_list, 
 	    NULL, APR_HOOK_MIDDLE);
 }
-
 
 const command_rec webfw2_directives[] = {
 

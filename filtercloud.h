@@ -14,6 +14,7 @@ struct cloud_rule {
     uint32_t        id;
     patricia_tree_t *src_addrs;
     patricia_tree_t *dst_addrs;
+		apr_hash_t      *chad_orders;
     rule_flow_t    *flow;
     apr_pool_t     *pool;
     struct cloud_rule *next;
@@ -46,7 +47,8 @@ int cloud_rule_add_network(cloud_rule_t *, const char *, const int, void *);
 int cloud_rule_add_chad_order(cloud_rule_t *, char *);
 int cloud_match_rule(apr_pool_t *, cloud_rule_t *, const char *, 
     const char *, const void *);
-int cloud_traverse_filter(cloud_filter_t *, const char *, 
+cloud_rule_t *cloud_traverse_filter(cloud_filter_t *, const char *, 
     const char *, const void *);
-
-
+cloud_filter_t *cloud_parse_config(apr_pool_t *, const char *);
+char **cloud_tokenize_str(char *, const char *);
+void free_tokens(char **tokens);

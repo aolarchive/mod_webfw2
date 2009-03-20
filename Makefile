@@ -8,15 +8,15 @@ libconfuse:
 
 patricia.o: 
 	@echo "  [*] Compiling libpatricia..."
-	@gcc -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -I../chad-libs/apr-1/include -c -o patricia.o patricia.c 
+	@gcc -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -I../chad-libs/apr-1/include -c -o patricia.o patricia.c -ggdb 
 
 filtercloud.o: 
 	@echo "  [*] Compiling libfiltercloud..."
-	@gcc -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -I../chad-libs/apr-1/include -I. -Iconfuse-2.5/src/ -c -o filtercloud.o filtercloud.c 
+	@gcc -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -I../chad-libs/apr-1/include -I. -Iconfuse-2.5/src/ -c -o filtercloud.o filtercloud.c -ggdb 
 
 filtercloud: filtercloud.c patricia.o libconfuse archives
 	@echo "  [*] Compiling test version of filtercloud..."
-	@gcc  -DTEST_FILTERCLOUD -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -I. -L. -I../chad-libs/apr-1/include -L../chad-libs/apr-1/.libs  -Iconfuse-2.5/src/ filtercloud.c -o filtercloud -lpatricia -lapr-1 -lconfuse
+	@gcc  -DTEST_FILTERCLOUD -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -I. -L. -I../chad-libs/apr-1/include -L../chad-libs/apr-1/.libs  -Iconfuse-2.5/src/ filtercloud.c -o filtercloud -lpatricia -lapr-1 -lconfuse -ggdb
  
 	 
 archives:
@@ -26,7 +26,7 @@ archives:
 
 mod_webfw2: filtercloud.o patricia.o libconfuse archives
 	@echo "  [*] Creating Apache modules..."
-	@~/sandbox/bin/apxs -c -I. -Iconfuse-2.5/src/ -L. mod_webfw2.c -ggdb -D_REENTRANT -lfiltercloud -lpatricia -lconfuse 2>&1 >/dev/null 
+	@~/sandbox/bin/apxs -c -I. -Iconfuse-2.5/src/ -L. mod_webfw2.c -ggdb -D_REENTRANT -lfiltercloud -lpatricia -lconfuse -ggdb 2>&1 >/dev/null 
 	@~/sandbox/bin/apxs -i -a -n webfw2 mod_webfw2.la 2>&1 >/dev/null
 
 distclean: clean

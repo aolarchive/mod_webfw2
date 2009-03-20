@@ -11,6 +11,7 @@
 #include <time.h>
 #include <unistd.h>
 #include "apr.h"
+#include "apr_hash.h"
 #include "apr_pools.h"
 #include "patricia.h"
 #include "filtercloud.h"
@@ -57,8 +58,8 @@ rule_token_to_int(char *token)
     return -1;
 }
 
-static char          **
-tokenize_str(char *string, const char *sep)
+char   **
+cloud_tokenize_str(char *string, const char *sep)
 {
     char           *str_copy;
     char           *tok;
@@ -121,6 +122,19 @@ cloud_match_dstaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data)
     return 0;
 }
 
+static int 
+cloud_match_chadorder(apr_pool_t *pool, cloud_rule_t *rule, void *data)
+{
+    if (!rule->chad_orders)
+	return 1;
+
+    if(apr_hash_get(rule->chad_orders, (char *)data, APR_HASH_KEY_STRING))
+	return 1;
+
+    return 0;
+}
+
+
 rule_flow_t    *
 cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
 {
@@ -130,11 +144,12 @@ cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
     rule_flow_t    *tail = NULL;
     rule_flow_t    *flow = NULL;
 
-    tokens = tokenize_str(flowstr, " ");
+    tokens = cloud_tokenize_str(flowstr, " ");
 
     while ((tok = tokens[i++]) != NULL) {
+	rule_flow_t    *new_flow;
+
         switch (rule_token_to_int(tok)) {
-            rule_flow_t    *new_flow;
         case RULE_MATCH_SRCADDR:
             new_flow = cloud_rule_flow_init(pool);
             new_flow->callback = cloud_match_srcaddr;
@@ -166,7 +181,20 @@ cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
             }
 
             break;
+	case RULE_MATCH_CHAD_ORD:
+	    new_flow = cloud_rule_flow_init(pool);
+	    new_flow->callback = cloud_match_chadorder;
+	    new_flow->type = RULE_MATCH_CHAD_ORD;
 
+	    if (!flow)
+		flow = tail = new_flow;
+	    else
+	    {
+		new_flow->this_operator = tail->next_operator;
+		tail->next = new_flow;
+		tail = new_flow;
+	    }
+	    break;
         case RULE_MATCH_OPERATOR_OR:
             if (!flow)
                 /*
@@ -232,6 +260,7 @@ cloud_filter_add_rule(cloud_filter_t * filter, cloud_rule_t * rule)
     }
 
     filter->tail->next = rule;
+    filter->tail = rule;
     return 0;
 }
 
@@ -270,12 +299,19 @@ int
 cloud_rule_add_chad_order(cloud_rule_t * rule, char *order)
 {
 
+    if (!rule->chad_orders)
+	rule->chad_orders = apr_hash_make(rule->pool);
+
+    apr_hash_set(rule->chad_orders, 
+	    (char *)apr_pstrdup(rule->pool, order), APR_HASH_KEY_STRING, (void *)1);
+
     return 0;
 }
 
+
 int
 cloud_match_rule(apr_pool_t * pool, cloud_rule_t * rule,
-                 const char *srcip, const char *dstip, const void *data)
+                 const char *srcip, const char *dstip, const void *usrdata)
 {
     /*
      * go through each rule_flow_t do stuff 
@@ -292,6 +328,9 @@ cloud_match_rule(apr_pool_t * pool, cloud_rule_t * rule,
         case RULE_MATCH_DSTADDR:
             data = (void *) dstip;
             break;
+	case RULE_MATCH_CHAD_ORD:
+	    data = (void *)usrdata;
+	    break;
         }
 
         if (flows->callback(pool, rule, data) == 1) {
@@ -341,8 +380,7 @@ cloud_match_rule(apr_pool_t * pool, cloud_rule_t * rule,
     return 0;
 }
 
-
-int
+cloud_rule_t *
 cloud_traverse_filter(cloud_filter_t * filter,
                       const char *srcip, const char *dstip,
                       const void *data)
@@ -361,81 +399,92 @@ cloud_traverse_filter(cloud_filter_t * filter,
     }
 
     apr_pool_destroy(subpool);
-
     printf("Matched rule %p\n", rule);
-    return 0;
+    return rule;
 }
 
 cloud_filter_t *
-cloud_parse_config(apr_pool_t *pool, const char *filename)
+cloud_parse_config(apr_pool_t * pool, const char *filename)
 {
-    cfg_t *cfg;
+    cfg_t          *cfg;
     cloud_filter_t *filter;
-    int ret;
-    unsigned int n, i;
-	
-    cfg_opt_t addrs_opts[] = {
-       CFG_STR("src", 0, CFGF_NONE),
-       CFG_STR("dst", 0, CFGF_NONE),
-       CFG_END()
+    int             ret;
+    unsigned int    n,
+                    i;
+
+    cfg_opt_t       addrs_opts[] = {
+        CFG_STR("src", 0, CFGF_NONE),
+        CFG_STR("dst", 0, CFGF_NONE),
+        CFG_END()
     };
 
-    cfg_opt_t rule_opts[] = {
-	CFG_STR("flow", 0, CFGF_NONE),
-	CFG_BOOL("enabled", cfg_true, CFGF_NONE),
-	CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
-	CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
-	CFG_STR_LIST("chad_orders", 0, CFGF_MULTI),
-	CFG_END()
+    cfg_opt_t       rule_opts[] = {
+        CFG_STR("flow",
+                "match_src_addr && match_dst_addr || match_http_header",
+                CFGF_NONE),
+        CFG_BOOL("enabled", cfg_true, CFGF_NONE),
+        CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
+        CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
+        CFG_STR_LIST("chad_orders", 0, CFGF_MULTI),
+        CFG_END()
     };
 
-    cfg_opt_t opts[] = {
-	CFG_SEC("rule", rule_opts, CFGF_MULTI | CFGF_TITLE),
-	CFG_END()
+    cfg_opt_t       opts[] = {
+        CFG_SEC("rule", rule_opts, CFGF_MULTI | CFGF_TITLE),
+        CFG_END()
     };
 
     cfg = cfg_init(opts, CFGF_NOCASE);
-    ret = cfg_parse(cfg, filename); 
+    ret = cfg_parse(cfg, filename);
     filter = cloud_filter_init(pool);
 
     n = cfg_size(cfg, "rule");
 
-    for(i = 0; i < n; i++) 
-    {
-	char *flow;
-	int addr_cnt;
-	cloud_rule_t *cloud_rule;
+    for (i = 0; i < n; i++) {
+        char           *flow;
+        int             addr_cnt;
+	int             chad_cnt;
+        cloud_rule_t   *cloud_rule;
+	cfg_t          *rule;
 
-	cloud_rule = cloud_rule_init(filter->pool);
+        rule = cfg_getnsec(cfg, "rule", i);
+	flow = cfg_getstr(rule, "flow");
 
-	cfg_t *rule = cfg_getnsec(cfg, "rule", i);
+        cloud_rule = cloud_rule_init(filter->pool);
+        cloud_rule_add_flow(cloud_rule, (char *)apr_pstrdup(pool, flow));
 
-	if((flow = cfg_getstr(rule, "flow")))
-	    cloud_rule_add_flow(cloud_rule, flow);
+        for (addr_cnt = 0; addr_cnt < cfg_size(rule, "src_addrs");
+             addr_cnt++) {
+            char           *addr =
+                cfg_getnstr(rule, "src_addrs", addr_cnt);
+            cloud_rule_add_network(cloud_rule, addr, 
+		    RULE_ADDR_SRC, NULL);
+        }
 
-	printf("  rule #%u (%s):\n", i+1, cfg_title(rule));
-	printf("   flow: %s\n", flow);
-	printf("   src addr count: %d\n", cfg_size(rule, "src_addrs"));
+        for (addr_cnt = 0; addr_cnt < cfg_size(rule, "dst_addrs");
+             addr_cnt++) {
+            char           *addr =
+                cfg_getnstr(rule, "dst_addrs", addr_cnt);
+            cloud_rule_add_network(cloud_rule, addr, 
+		    RULE_ADDR_DST, NULL);
+        }
 
-	for (addr_cnt = 0; addr_cnt < cfg_size(rule, "src_addrs"); addr_cnt++)
+	for (chad_cnt = 0; chad_cnt < cfg_size(rule, "chad_orders");
+		chad_cnt++)
 	{
-	    char *addr =  cfg_getnstr(rule, "src_addrs", addr_cnt);
-	    printf("        addr: %s\n", addr);
-	    cloud_rule_add_network(cloud_rule, addr, RULE_ADDR_SRC, NULL);
-	}
+	    char *order =
+		cfg_getnstr(rule, "chad_orders", chad_cnt);
 
-	printf("   dst addr count: %d\n", cfg_size(rule, "dst_addrs"));
-
-	for (addr_cnt = 0; addr_cnt < cfg_size(rule, "dst_addrs"); addr_cnt++)
-	{
-	    char *addr = cfg_getnstr(rule, "dst_addrs", addr_cnt);
-	    printf("        addr: %s\n", addr);
-	    cloud_rule_add_network(cloud_rule, addr, RULE_ADDR_DST, NULL);
+	    cloud_rule_add_chad_order(cloud_rule, order);
 	}
-	cloud_filter_add_rule(filter, cloud_rule);
+	    
+	//cloud_rule_add_chad_order(rule, "abcdef");
+
+        cloud_filter_add_rule(filter, cloud_rule);
     }
 
     cfg_free(cfg);
+
     return filter;
 }
 
@@ -450,11 +499,8 @@ main(int argc, char **argv)
     apr_pool_t     *root_pool;
     apr_initialize();
     apr_pool_create(&root_pool, NULL);
-
     filter = cloud_parse_config(root_pool, "./test.conf");
-
     cloud_traverse_filter(filter, argv[1], argv[2], NULL);
-
     apr_pool_destroy(root_pool);
     apr_terminate();
     return 0;
