@@ -14,6 +14,7 @@
 #include "apr_pools.h"
 #include "patricia.h"
 #include "filtercloud.h"
+#include "confuse.h"
 
 static struct n_t_s {
     int             val;
@@ -365,6 +366,79 @@ cloud_traverse_filter(cloud_filter_t * filter,
     return 0;
 }
 
+cloud_filter_t *
+cloud_parse_config(apr_pool_t *pool, const char *filename)
+{
+    cfg_t *cfg;
+    cloud_filter_t *filter;
+    int ret;
+    unsigned int n, i;
+	
+    cfg_opt_t addrs_opts[] = {
+       CFG_STR("src", 0, CFGF_NONE),
+       CFG_STR("dst", 0, CFGF_NONE),
+       CFG_END()
+    };
+
+    cfg_opt_t rule_opts[] = {
+	CFG_STR("flow", 0, CFGF_NONE),
+	CFG_BOOL("enabled", cfg_true, CFGF_NONE),
+	CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
+	CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
+	CFG_STR_LIST("chad_orders", 0, CFGF_MULTI),
+	CFG_END()
+    };
+
+    cfg_opt_t opts[] = {
+	CFG_SEC("rule", rule_opts, CFGF_MULTI | CFGF_TITLE),
+	CFG_END()
+    };
+
+    cfg = cfg_init(opts, CFGF_NOCASE);
+    ret = cfg_parse(cfg, filename); 
+    filter = cloud_filter_init(pool);
+
+    n = cfg_size(cfg, "rule");
+
+    for(i = 0; i < n; i++) 
+    {
+	char *flow;
+	int addr_cnt;
+	cloud_rule_t *cloud_rule;
+
+	cloud_rule = cloud_rule_init(filter->pool);
+
+	cfg_t *rule = cfg_getnsec(cfg, "rule", i);
+
+	if((flow = cfg_getstr(rule, "flow")))
+	    cloud_rule_add_flow(cloud_rule, flow);
+
+	printf("  rule #%u (%s):\n", i+1, cfg_title(rule));
+	printf("   flow: %s\n", flow);
+	printf("   src addr count: %d\n", cfg_size(rule, "src_addrs"));
+
+	for (addr_cnt = 0; addr_cnt < cfg_size(rule, "src_addrs"); addr_cnt++)
+	{
+	    char *addr =  cfg_getnstr(rule, "src_addrs", addr_cnt);
+	    printf("        addr: %s\n", addr);
+	    cloud_rule_add_network(cloud_rule, addr, RULE_ADDR_SRC, NULL);
+	}
+
+	printf("   dst addr count: %d\n", cfg_size(rule, "dst_addrs"));
+
+	for (addr_cnt = 0; addr_cnt < cfg_size(rule, "dst_addrs"); addr_cnt++)
+	{
+	    char *addr = cfg_getnstr(rule, "dst_addrs", addr_cnt);
+	    printf("        addr: %s\n", addr);
+	    cloud_rule_add_network(cloud_rule, addr, RULE_ADDR_DST, NULL);
+	}
+	cloud_filter_add_rule(filter, cloud_rule);
+    }
+
+    cfg_free(cfg);
+    return filter;
+}
+
 
 #ifdef TEST_FILTERCLOUD
 int
@@ -375,31 +449,33 @@ main(int argc, char **argv)
 
     apr_pool_t     *root_pool;
     apr_initialize();
-
     apr_pool_create(&root_pool, NULL);
 
+    filter = cloud_parse_config(root_pool, "./test.conf");
+
+    cloud_traverse_filter(filter, argv[1], argv[2], NULL);
+
+    apr_pool_destroy(root_pool);
+    apr_terminate();
+    return 0;
+#if 0
     filter = cloud_filter_init(root_pool);
     rule = cloud_rule_init(filter->pool);
-
     cloud_rule_add_network(rule, "64.12.23.0/27", RULE_ADDR_SRC, NULL);
     cloud_rule_add_network(rule, "127.0.0.0/30", RULE_ADDR_SRC, NULL);
     cloud_rule_add_network(rule, "5.5.5.5", RULE_ADDR_SRC, NULL);
     cloud_rule_add_network(rule, "10.0.0.1/32", RULE_ADDR_DST, NULL);
     cloud_rule_add_flow(rule, argv[1]);
-
     cloud_filter_add_rule(filter, rule);
-
     rule = cloud_rule_init(filter->pool);
-
     cloud_rule_add_network(rule, "3.3.3.3/32", RULE_ADDR_SRC, NULL);
     cloud_rule_add_network(rule, "4.4.4.4/32", RULE_ADDR_DST, NULL);
     cloud_rule_add_chad_order(rule, "abcdef");
     cloud_rule_add_flow(rule, argv[1]);
     cloud_filter_add_rule(filter, rule);
     cloud_traverse_filter(filter, argv[2], argv[3], NULL);
-    apr_pool_destroy(root_pool);
-    apr_terminate();
-
     return 0;
+#endif
+
 }
 #endif

@@ -57,7 +57,6 @@ webfw2_child_init(apr_pool_t * pool, server_rec * rec)
      * our rules and filters, then set it as a server
      * pool key */
     apr_pool_create(&subpool, pool);
-
     wf2_filter = apr_pcalloc(subpool, sizeof(webfw2_filter_t));
     wf2_filter->pool = subpool;
     wf2_filter->test = 500;
@@ -209,4 +208,3 @@ module AP_MODULE_DECLARE_DATA webfw2_module = {
     webfw2_hooker
 };
 
-    // "match_src_addr && match_dst_addr || match_http_header" 64.12.23.5 10.0.0.2

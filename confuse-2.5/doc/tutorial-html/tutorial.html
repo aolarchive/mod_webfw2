@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>libConfuse tutorial</title><meta name="generator" content="DocBook XSL Stylesheets V1.62.4" /></head><body><div class="article" lang="en" xml:lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="id659348"></a>libConfuse tutorial</h1></div><div><div class="author"><h3 class="author"><span class="firstname">Martin</span> <span class="surname">Hedenfalk</span></h3></div></div></div><div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="sect1"><a href="#id659387">Introducing libConfuse in an existing program</a></span></dt><dd><dl><dt><span class="sect2"><a href="#id659523">Environment variables in values</a></span></dt></dl></dd><dt><span class="sect1"><a href="#id659557">Other types of options</a></span></dt><dt><span class="sect1"><a href="#id659660">Introducing lists</a></span></dt><dt><span class="sect1"><a href="#id659780">Using sections</a></span></dt><dt><span class="sect1"><a href="#id659900">Parsing from internal buffers</a></span></dt><dt><span class="sect1"><a href="#id659971">Validating callback functions</a></span></dt><dd><dl><dt><span class="sect2"><a href="#id660048">Installing the callback</a></span></dt></dl></dd><dt><span class="sect1"><a href="#id660088">Value parsing callback</a></span></dt><dt><span class="sect1"><a href="#id660097">Functions</a></span></dt><dt><span class="sect1"><a href="#id660107">Saving configuration files</a></span></dt></dl></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id659387"></a>Introducing libConfuse in an existing program</h2></div></div><div></div></div><p>Consider this simple program:</p><a id="listing1"></a><pre class="programlisting">
+01   #include &lt;stdio.h&gt;
+02   
+03   int main(void)
+04   {
+05       printf("Hello, World!\n");
+06       return 0;
+07   }
+08   
+</pre><p>
+            Simple enough, but we want to extend the program so we can greet
+            others. Maybe we don't want to greet the whole world, just our
+            neighbour. We use libConfuse to let the user decide whom to greet.
+        </p><a id="listing2"></a><pre class="programlisting">
+01   #include &lt;stdio.h&gt;
+02   #include &lt;confuse.h&gt;
+03   
+04   int main(void)
+05   {
+06       cfg_opt_t opts[] =
+07       {
+08           CFG_STR("target", "World", CFGF_NONE),
+09           CFG_END()
+10       };
+11       cfg_t *cfg;
+12   
+13       cfg = cfg_init(opts, CFGF_NONE);
+14       cfg_parse(cfg, "hello.conf");
+15   
+16       printf("Hello, %s!\n", cfg_getstr(cfg, "target"));
+17   
+18       cfg_free(cfg);
+19       return 0;
+20   }
+21   
+</pre><p>
+            All programs using libConfuse must first include the
+            <tt class="filename">confuse.h</tt> header file.  This is done on line
+            2.
+        </p><p>
+            On line 6 - 10, the options that should be recognized are defined in an
+            array of cfg_opt_t structs. This is passed to the
+            <tt class="function">cfg_init</tt> function on line 13. The resulting
+            <span class="structname">cfg_t</span> context is used by
+            <tt class="function">cfg_parse()</tt>, which reads the configuration file
+            "hello.conf". When reading the configuration file, only options defined in
+            the array of options passed to <tt class="function">cfg_init()</tt> are
+            recognized.
+        </p><p>
+            The friendly greeting is now replaced with a parameter read from the
+            configuration file. The value of the <tt class="varname">target</tt> option is retrieved with
+            <tt class="function">cfg_getstr(cfg, "target")</tt>.
+        </p><p>
+            Lets take a look at the configuration file hello.conf:
+        </p><pre class="programlisting">
+# this is the configuration file for the hello program
+
+target = "Neighbour"
+        </pre><p>
+            Here, the target option is set to the string value "Neighbour".
+            What if the configuration file was empty or didn't exist? Then the
+            default value for the <tt class="varname">target</tt> option would be
+            used. When we initialized our options, the second parameter to the
+            <tt class="function">CFG_STR()</tt> macro specified the default value.
+            Thus, if no <tt class="varname">target</tt> option was specified in the
+            configuration file, the hello program would have printed the
+            standard greeting "Hello, World".
+        </p><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id659523"></a>Environment variables in values</h3></div></div><div></div></div><p>
+                What else can we do in the configuration file? We can set the value to an
+                environment variable:
+            </p><pre class="programlisting">
+target = ${USER}
+            </pre><p>
+                This results in the hello program greeting the user who runs it. On some
+                systems, the USER variable might not be available, so we want to specify a
+                default value in those cases:
+            </p><pre class="programlisting">
+target = ${USER:-User}
+            </pre><p>
+                Now, if the USER environment variable is unset, the string "User" will be
+                used instead.
+            </p></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id659557"></a>Other types of options</h2></div></div><div></div></div><p>
+            Of course, not only strings can be specified in the configuration file.
+            libConfuse can parse strings, integers, booleans and floating point values.
+            These are the fundamental values, and they are all also available as lists.
+            We'll talk more about lists in the next chapter.
+        </p><p>
+            The macros used to initialize a string, integer, boolean and a
+            float is, respectively, <tt class="function">CFG_STR()</tt>,
+            <tt class="function">CFG_INT()</tt>, <tt class="function">CFG_BOOL()</tt> and
+            <tt class="function">CFG_FLOAT()</tt>. All macros take three parameters:
+            the name of the option, a default value and flags. To retrieve the
+            values, use <tt class="function">cfg_getstr()</tt>,
+            <tt class="function">cfg_getint()</tt>,
+            <tt class="function">cfg_getbool()</tt> or
+            <tt class="function">cfg_getfloat()</tt>.
+        </p><p>
+            Let's introduce an integer option that tells us how many times to print the
+            greeting:
+        </p><a id="listing3"></a><pre class="programlisting">
+01   #include &lt;stdio.h&gt;
+02   #include &lt;confuse.h&gt;
+03   
+04   int main(void)
+05   {
+06       cfg_opt_t opts[] =
+07       {
+08           CFG_STR("target", "World", CFGF_NONE),
+09           CFG_INT("repeat", 1, CFGF_NONE),
+10           CFG_END()
+11       };
+12       cfg_t *cfg;
+13       int repeat;
+14   
+15       cfg = cfg_init(opts, CFGF_NONE);
+16       cfg_parse(cfg, "hello.conf");
+17   
+18       repeat = cfg_getint(cfg, "repeat");
+19       while(repeat--)
+20           printf("Hello, %s!\n", cfg_getstr(cfg, "target"));
+21   
+22       cfg_free(cfg);
+23       return 0;
+24   }
+25   
+</pre><p>
+            Here we have used the <tt class="function">CFG_INT()</tt> macro to
+            initialize an integer option named "repeat". The default value is 1
+            as in the standard greeting. The value is retrieved with
+            <tt class="function">cfg_getint()</tt>.
+        </p><p><a id="negative-repeat-problem"></a>
+            But, wait a moment, what if the user specified a negative value for
+            "repeat"?  Or a too large positive value? libConfuse can handle
+            that with a so-called validating callback. We'll come back to this
+            problem later on, but we will first take a look at lists.
+        </p></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id659660"></a>Introducing lists</h2></div></div><div></div></div><p>
+            That was easy. Now let's extend the program a bit so we can greet more than one
+            "target". We'd like to be able to specify a list of targets to greet.
+        </p><p>
+            The list versions of the initialization macros are named
+            <tt class="function">CFG_STR_LIST()</tt>,
+            <tt class="function">CFG_INT_LIST()</tt>,
+            <tt class="function">CFG_BOOL_LIST()</tt> and
+            <tt class="function">CFG_FLOAT_LIST()</tt>. They take the same
+            parameters as the non-list versions, except the default value must
+            be a string surrounded by curly braces.
+        </p><p>
+            The modified program is shown below:
+        </p><pre class="programlisting">
+            <a id="listing4"></a><pre class="programlisting">
+01   #include &lt;stdio.h&gt;
+02   #include &lt;confuse.h&gt;
+03   
+04   int main(void)
+05   {
+06       cfg_opt_t opts[] =
+07       {
+08           CFG_STR_LIST("targets", "{World}", CFGF_NONE),
+09           CFG_INT("repeat", 1, CFGF_NONE),
+10           CFG_END()
+11       };
+12       cfg_t *cfg;
+13       int repeat;
+14       int i;
+15   
+16       cfg = cfg_init(opts, CFGF_NONE);
+17       cfg_parse(cfg, "hello.conf");
+18   
+19       repeat = cfg_getint(cfg, "repeat");
+20       while(repeat--)
+21       {
+22           printf("Hello");
+23           for(i = 0; i &lt; cfg_size(cfg, "targets"); i++)
+24               printf(", %s", cfg_getnstr(cfg, "targets", i));
+25           printf("!\n");
+26       }
+27   
+28       cfg_free(cfg);
+29       return 0;
+30   }
+31   
+</pre>
+
+        </pre><p>
+            Three things are a bit different here. First, the macro to
+            initialize the "targets" option is
+            <tt class="function">CFG_STR_LIST()</tt>. This tells libConfuse that
+            "targets" is a list of strings. Second, the default value in the
+            second parameter is surrounded by curly braces. This is needed to
+            indicate to libConfuse where the list of values ends.
+        </p><p>
+            The third change is in the printing of the greeting. First we print
+            the "Hello" string. Then we loop through all values found for the
+            "targets" option. The number of values is retrieved with the
+            <tt class="function">cfg_size()</tt> function. The string values are
+            then retrieved with <tt class="function">cfg_getnstr()</tt>, which is an
+            indexed version of <tt class="function">cfg_getstr()</tt>. In fact,
+            <tt class="function">cfg_getstr()</tt> is equivalent to
+            <tt class="function">cfg_getnstr()</tt> with an index of zero.
+        </p><p>
+            In the configuration file hello.conf, we can now specify a list of targets to
+            greet:
+        </p><pre class="programlisting">
+# this is the configuration file for the hello program
+
+targets = {"Life", "Universe", "Everything"}
+repeat = 1
+        </pre><p>
+            The output of the hello program, run with the above configuration file, is:
+            "Hello, Life, Universe, Everything!"
+        </p><p>
+            Again, if no targets were configured, the greeting would have been the standard
+            "Hello, World!".
+        </p></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id659780"></a>Using sections</h2></div></div><div></div></div><p>
+            So far, we have only use a flat configuration file. libConfuse can also handle
+            sections to build a hierarchy of options. Sections can be used to group options
+            in logical blocks, and those blocks can (optionally) be specified multiple
+            times.
+        </p><p>
+            Sections are initialized with the <tt class="function">CFG_SEC()</tt> macro. It also takes three
+            parameters: the name of the option, an array of options allowed in the section
+            and flags.
+        </p><p>
+            We'll extend the, now rather complex, hello program so we can do other kinds of
+            greetings, not just "Hello". Each greeting will have its own settings for
+            targets and repeat.
+        </p><a id="listing5"></a><pre class="programlisting">
+01   #include &lt;stdio.h&gt;
+02   #include &lt;confuse.h&gt;
+03   
+04   int validate_unsigned_int(cfg_t *cfg, cfg_opt_t *opt)
+05   {
+06       int value = cfg_opt_getnint(opt, cfg_opt_size(opt) - 1);
+07       if(value &lt; 0)
+08       {
+09           cfg_error(cfg, "integer option '%s' must be positive in section '%s'",
+10                   opt-&gt;name, cfg-&gt;name);
+11           return -1;
+12       }
+13       return 0;
+14   }
+15   
+16   int main(void)
+17   {
+18       cfg_opt_t greet_opts[] =
+19       {
+20           CFG_STR_LIST("targets", "{World}", CFGF_NONE),
+21           CFG_INT("repeat", 1, CFGF_NONE),
+22           CFG_END()
+23       };
+24       cfg_opt_t opts[] =
+25       {
+26           CFG_SEC("greeting", greet_opts, CFGF_TITLE | CFGF_MULTI),
+27           CFG_END()
+28       };
+29       cfg_t *cfg, *cfg_greet;
+30       int repeat;
+31       int i, j;
+32   
+33       cfg = cfg_init(opts, CFGF_NONE);
+34       cfg_set_validate_func(cfg, "greeting|repeat", validate_unsigned_int);
+35       cfg_parse(cfg, "hello.conf");
+36   
+37       for(j = 0; j &lt; cfg_size(cfg, "greeting"); j++)
+38       {
+39           cfg_greet = cfg_getnsec(cfg, "greeting", j);
+40   
+41           repeat = cfg_getint(cfg_greet, "repeat");
+42           while(repeat--)
+43           {
+44               printf("%s", cfg_title(cfg_greet));
+45               for(i = 0; i &lt; cfg_size(cfg_greet, "targets"); i++)
+46                   printf(", %s", cfg_getnstr(cfg_greet, "targets", i));
+47               printf("!\n");
+48           }
+49       }
+50   
+51       cfg_free(cfg);
+52       return 0;
+53   }
+54   
+</pre><p>
+            We have renamed the option array from "opts" to "greet_opts", and introduced a
+            new "opts" array that only has one option: a "greeting" section.
+            The second parameter of the <tt class="function">CFG_SEC()</tt> macro
+            points to the old greeting options "targets" and "repeat".
+        </p><p>
+            We have also used a couple of flags to alter the behaviour of the
+            section: CFGF_TITLE means that a greeting section should have a
+            title and the CFGF_MULTI flag tells libConfuse that this section
+            may be specified multiple times in the configuration file. The
+            title of a section is retrieved with the
+            <tt class="function">cfg_title()</tt> function.
+        </p><p>
+            The outmost loop (with index j) now loops through all given
+            sections in the configuration file. We retrieve a section with a
+            <tt class="function">cfg_getnsec()</tt> call. The value returned is a
+            pointer to a cfg_t struct, the same type as returned by
+            <tt class="function">cfg_init()</tt>. Thus we can use the ordinary value
+            retrieval functions <tt class="function">cfg_getstr()</tt>,
+            <tt class="function">cfg_getint()</tt> and so on to retrieve values of
+            options inside the section.
+        </p><p>
+            Ok, so how does the configuration file look like for this setup?
+        </p><pre class="programlisting">
+# this is the configuration file for the hello program
+
+greeting Hello
+{
+    targets = {"Life", "Universe", "Everything"}
+    repeat = 1
+}
+
+greeting Bye
+{
+    targets = {Adams}
+    repeat = 1
+}
+        </pre><p>
+            The program will loop through the sections in the order specified
+            in the configuration file. First it will find the "Hello" section.
+            It prints the title of the section, "Hello", retrieved with
+            <tt class="function">cfg_title()</tt>. Then the targets are printed just
+            as in the previous exemples, but this time the values are retrieved
+            from the cfg_greet section. Next, the section titled "Bye" is
+            found, and the values are retrieved from that section.
+        </p></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id659900"></a>Parsing from internal buffers</h2></div></div><div></div></div><p>
+            So far, we have only parsed configuration data from files.
+            libConfuse can also parse buffers, or in-memory character
+            strings. We will use this to fix a problem in the previous code.
+        </p><p>
+            The problem is that without a configuration file, the hello program
+            will not print anything. We want it to at least print the standard
+            greeting "Hello, World!" if no configuration file is available.
+        </p><p>
+            We can't have a default value for a section that can be specified
+            multiple times (ie, a section with the CFGF_MULTI flag set).
+            Instead we will parse a default configuration string if no section
+            has been parsed:
+        </p><a id="listing6"></a><pre class="programlisting">
+01   #include &lt;stdio.h&gt;
+02   #include &lt;confuse.h&gt;
+03   
+04   int main(void)
+05   {
+06       /* ... setup options ... */
+07   
+08       cfg = cfg_init(opts, CFGF_NONE);
+09       cfg_parse(cfg, "hello.conf");
+10   
+11       if(cfg_size(cfg, "greeting") == 0)
+12       {
+13           cfg_parse_buf(cfg, "greeting Hello {}");
+14       }
+15   
+16       /* ... print the greetings ... */
+17   }
+</pre><p>
+            Only the changes from the previous code is shown here. We check if
+            the size of the "greeting" section is zero (ie, no section has been
+            defined). In that case we call <tt class="function">cfg_parse_buf()</tt>
+            to parse a default in-memory string "greeting Hello {}". This
+            string defines a greeting section with title Hello, but without any
+            sub-options. This way we rely on the default values of the
+            (sub-)options "targets" and "repeat".
+        </p><p>
+            When this program is run, it issues the well-known standard greeting
+            "Hello, World!" if no configuration file is present.
+        </p></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id659971"></a>Validating callback functions</h2></div></div><div></div></div><p>
+            Remember the problem about a negative or too large "repeat" value
+            in <a href="#negative-repeat-problem">the section called “Other types of options”</a>?  The code that prints
+            the greeting has those lines:
+        </p><pre class="programlisting">
+...
+repeat = cfg_getint(cfg_greet, "repeat");
+while(repeat--)
+...
+        </pre><p>
+            The repeat variable is defined as an int, a signed integer. If the user
+            specified a negative repeat value in the configuration file, this code
+            would continue to decrease the repeat variable until it eventually
+            underflowed.
+        </p><p>
+            We'll fix this by not allowing a negative value in the configuration
+            file. Of course we could first just check if the value is negative
+            and the abort, using <tt class="function">cfg_getint()</tt> and a test.
+            But we will use a validating callback function instead. This way
+            <tt class="function">cfg_parse()</tt> will return an error directly when
+            parsing the file, additionally indicating on which line the error
+            is.
+        </p><p>
+            A validating callback function is defined as:
+        </p><pre class="programlisting">
+typedef int (*cfg_validate_callback_t)(cfg_t *cfg, cfg_opt_t *opt);
+        </pre><p>
+            This function takes two arguments: the section and the option. It
+            should return 0 on success (ie, the value validated ok). All other
+            values indicates an error, and the parsing is aborted. The callback
+            function should notify the error itself, for example by calling
+            <tt class="function">cfg_error()</tt>.
+        </p><p>
+            Here is the code for the callback function:
+        </p><a id="listing7"></a><pre class="programlisting">
+01   int validate_unsigned_int(cfg_t *cfg, cfg_opt_t *opt)
+02   {
+03       int value = cfg_opt_getnint(opt, cfg_opt_size(opt) - 1);
+04       if(value &lt; 0)
+05       {
+06           cfg_error(cfg, "integer option '%s' must be positive in section '%s'",
+07                   opt-&gt;name, cfg-&gt;name);
+08           return -1;
+09       }
+10       return 0;
+11   }
+12   
+</pre><p>
+            Only the last value is validated, because libConfuse will call this
+            function once for every value corresponding to the option. Since
+            the "repeat" option is not a list, we could instead have used
+            <tt class="function">cfg_opt_getint(opt)</tt> to retrieve the only
+            value. However, if we later want to use this callback to validate
+            an integer list, it is already lists-aware.
+        </p><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id660048"></a>Installing the callback</h3></div></div><div></div></div><p>
+
+            </p></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id660088"></a>Value parsing callback</h2></div></div><div></div></div><p>
+        </p></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id660097"></a>Functions</h2></div></div><div></div></div><p>
+        </p></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id660107"></a>Saving configuration files</h2></div></div><div></div></div><p>
+        </p></div></div></body></html>
