@@ -128,6 +128,9 @@ cloud_match_chadorder(apr_pool_t * pool, cloud_rule_t * rule, void *data)
     if (!rule->chad_orders)
         return 1;
 
+    if (!data)
+	return 0;
+
     if (apr_hash_get
         (rule->chad_orders, (char *) data, APR_HASH_KEY_STRING))
         return 1;

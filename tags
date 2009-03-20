@@ -46,6 +46,9 @@ AMTAR	confuse-2.5/tests/Makefile	/^AMTAR = ${SHELL} \/home\/mthomas\/mod_webfw2\
 AM_LDFLAGS	confuse-2.5/doc/Makefile	/^AM_LDFLAGS = -L..\/src\/$/;"	m
 AM_LDFLAGS	confuse-2.5/examples/Makefile	/^AM_LDFLAGS = -L..\/src\/$/;"	m
 AM_LFLAGS	confuse-2.5/src/Makefile	/^AM_LFLAGS = -Pcfg_yy -olex.yy.c$/;"	m
+APR_INCLUDES	Makefile	/^APR_INCLUDES = -I..\/chad-libs\/apr-1\/include$/;"	m
+APR_LIBS	Makefile	/^APR_LIBS     = -L..\/chad-libs\/apr-1\/.libs$/;"	m
+APXS_BIN	Makefile	/^APXS_BIN     = ~\/sandbox\/bin\/apxs$/;"	m
 AR	confuse-2.5/Makefile	/^AR = ar$/;"	m
 AR	confuse-2.5/doc/Makefile	/^AR = ar$/;"	m
 AR	confuse-2.5/examples/Makefile	/^AR = ar$/;"	m
@@ -271,6 +274,7 @@ DEP_FILES	confuse-2.5/examples/Makefile	/^DEP_FILES = .\/$(DEPDIR)\/ftpconf.Po .
 DEP_FILES	confuse-2.5/src/Makefile	/^DEP_FILES = .\/$(DEPDIR)\/confuse.Plo .\/$(DEPDIR)\/lexer.Plo$/;"	m
 DEP_FILES	confuse-2.5/tests/Makefile	/^DEP_FILES = .\/$(DEPDIR)\/check_confuse.Po \\$/;"	m
 DEVCPP_FILES	confuse-2.5/Makefile	/^DEVCPP_FILES = cfgtest.dev config.h libConfuse.dev$/;"	m
+DFLAGS	Makefile	/^DFLAGS       = -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64$/;"	m
 DISTCLEANFILES	confuse-2.5/doc/Makefile	/^DISTCLEANFILES = $/;"	m
 DISTFILES	confuse-2.5/Makefile	/^DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)$/;"	m
 DISTFILES	confuse-2.5/doc/Makefile	/^DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)$/;"	m
@@ -1375,6 +1379,7 @@ cloud_filter_add_rule	filtercloud.c	/^cloud_filter_add_rule(cloud_filter_t * fil
 cloud_filter_init	filtercloud.c	/^cloud_filter_init(apr_pool_t * parent)$/;"	f
 cloud_filter_t	filtercloud.h	/^} cloud_filter_t;$/;"	t	typeref:struct:cloud_filter
 cloud_flow_from_str	filtercloud.c	/^cloud_flow_from_str(apr_pool_t * pool, char *flowstr)$/;"	f
+cloud_match_chadorder	filtercloud.c	/^cloud_match_chadorder(apr_pool_t * pool, cloud_rule_t * rule, void *data)$/;"	f	file:
 cloud_match_dstaddr	filtercloud.c	/^cloud_match_dstaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data)$/;"	f	file:
 cloud_match_rule	filtercloud.c	/^cloud_match_rule(apr_pool_t * pool, cloud_rule_t * rule,$/;"	f
 cloud_match_srcaddr	filtercloud.c	/^cloud_match_srcaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data)$/;"	f	file:
@@ -1388,16 +1393,16 @@ cloud_rule_init	filtercloud.c	/^cloud_rule_init(apr_pool_t * parent)$/;"	f
 cloud_rule_t	filtercloud.h	/^typedef struct cloud_rule cloud_rule_t;$/;"	t	typeref:struct:cloud_rule
 cloud_tokenize_str	filtercloud.c	/^cloud_tokenize_str(char *string, const char *sep)$/;"	f
 cloud_traverse_filter	filtercloud.c	/^cloud_traverse_filter(cloud_filter_t * filter,$/;"	f
-cmd_config_file	mod_webfw2.c	/^cmd_config_file(cmd_parms * cmd, void *dummy_config, $/;"	f	file:
-cmd_rw_xff	mod_webfw2.c	/^cmd_rw_xff(cmd_parms *cmd, void *dummy_config, $/;"	f	file:
-cmd_update_interval	mod_webfw2.c	/^cmd_update_interval(cmd_parms *cmd, void *dummy_config,$/;"	f	file:
+cmd_config_file	mod_webfw2.c	/^cmd_config_file(cmd_parms * cmd, void *dummy_config, const char *arg)$/;"	f	file:
+cmd_rw_xff	mod_webfw2.c	/^cmd_rw_xff(cmd_parms * cmd, void *dummy_config, const char *arg)$/;"	f	file:
+cmd_update_interval	mod_webfw2.c	/^cmd_update_interval(cmd_parms * cmd, void *dummy_config, const char *arg)$/;"	f	file:
 comment	confuse-2.5/src/lexer.c	535;"	d	file:
 comp_with_mask	patricia.c	/^comp_with_mask(void *addr, void *dest, u_int mask)$/;"	f
 conf_alias	confuse-2.5/examples/ftpconf.c	/^int conf_alias(cfg_t *cfg, cfg_opt_t *opt, int argc, const char **argv)$/;"	f
 conf_parse_acb	confuse-2.5/examples/ftpconf.c	/^int conf_parse_acb(cfg_t *cfg, cfg_opt_t *opt, const char *value, void *result)$/;"	f
 conf_validate_bookmark	confuse-2.5/examples/ftpconf.c	/^int conf_validate_bookmark(cfg_t *cfg, cfg_opt_t *opt)$/;"	f
 conf_validate_port	confuse-2.5/examples/ftpconf.c	/^int conf_validate_port(cfg_t *cfg, cfg_opt_t *opt)$/;"	f
-config_file	mod_webfw2.c	/^    char *config_file;$/;"	m	struct:webfw2_config	file:
+config_file	mod_webfw2.c	/^    char           *config_file;$/;"	m	struct:webfw2_config	file:
 config_filename	confuse-2.5/examples/reread.c	/^const char *config_filename = ".\/reread.conf";$/;"	v
 confuse_author	confuse-2.5/src/confuse.c	/^const char confuse_author[] = "Martin Hedenfalk <mhe@home.se>";$/;"	v
 confuse_cflags	confuse-2.5/Makefile	/^confuse_cflags = $/;"	m
@@ -1641,7 +1646,7 @@ l00486	confuse-2.5/doc/html/confuse_8h-source.html	/^<a name="l00486"><\/a><a cl
 l00507	confuse-2.5/doc/html/confuse_8h-source.html	/^<a name="l00507"><\/a><a class="code" href="confuse_8h.html#a45">00507<\/a> <span class="preprocessor">#define CFG_PTR_CB(name, def, flags, parsecb, freecb) \\<\/span>$/;"	a
 l00512	confuse-2.5/doc/html/confuse_8h-source.html	/^<a name="l00512"><\/a><a class="code" href="confuse_8h.html#a46">00512<\/a> <span class="preprocessor">#define CFG_PTR_LIST_CB(name, def, flags, parsecb, freecb) \\<\/span>$/;"	a
 l00522	confuse-2.5/doc/html/confuse_8h-source.html	/^<a name="l00522"><\/a><a class="code" href="confuse_8h.html#a47">00522<\/a> <span class="preprocessor">#define CFG_END() \\<\/span>$/;"	a
-last_update	mod_webfw2.c	/^    uint32_t last_update;$/;"	m	struct:webfw2_filter	file:
+last_update	mod_webfw2.c	/^    uint32_t        last_update;$/;"	m	struct:webfw2_filter	file:
 libLTLIBRARIES_INSTALL	confuse-2.5/src/Makefile	/^libLTLIBRARIES_INSTALL = $(INSTALL)$/;"	m
 lib_LTLIBRARIES	confuse-2.5/src/Makefile	/^lib_LTLIBRARIES = libconfuse.la$/;"	m
 libconfuse_la_LIBADD	confuse-2.5/src/Makefile	/^libconfuse_la_LIBADD =$/;"	m
@@ -1800,7 +1805,7 @@ pkglibdir	confuse-2.5/src/Makefile	/^pkglibdir = $(libdir)\/confuse$/;"	m
 pkglibdir	confuse-2.5/tests/Makefile	/^pkglibdir = $(libdir)\/confuse$/;"	m
 pool	filtercloud.h	/^    apr_pool_t     *pool;$/;"	m	struct:cloud_filter
 pool	filtercloud.h	/^    apr_pool_t     *pool;$/;"	m	struct:cloud_rule
-pool	mod_webfw2.c	/^    apr_pool_t *pool;$/;"	m	struct:webfw2_filter	file:
+pool	mod_webfw2.c	/^    apr_pool_t     *pool;$/;"	m	struct:webfw2_filter	file:
 pre_fp_scan_state	confuse-2.5/src/lexer.c	/^static YY_BUFFER_STATE pre_fp_scan_state;$/;"	v	file:
 pre_string_scan_state	confuse-2.5/src/lexer.c	/^static YY_BUFFER_STATE pre_string_scan_state = 0;$/;"	v	file:
 prefix	confuse-2.5/Makefile	/^prefix = \/usr\/local$/;"	m
@@ -1914,7 +1919,7 @@ target_alias	confuse-2.5/examples/Makefile	/^target_alias = $/;"	m
 target_alias	confuse-2.5/m4/Makefile	/^target_alias = $/;"	m
 target_alias	confuse-2.5/src/Makefile	/^target_alias = $/;"	m
 target_alias	confuse-2.5/tests/Makefile	/^target_alias = $/;"	m
-test	mod_webfw2.c	/^    int test;$/;"	m	struct:webfw2_filter	file:
+test	mod_webfw2.c	/^    int             test;$/;"	m	struct:webfw2_filter	file:
 this_operator	filtercloud.h	/^    int             this_operator;$/;"	m	struct:rule_flow
 title	confuse-2.5/src/confuse.h	/^    char *title;            \/**< Optional title for this section, only$/;"	m	struct:cfg_t
 top_builddir	confuse-2.5/Makefile	/^top_builddir = .$/;"	m
@@ -1943,7 +1948,7 @@ try_search_exact	patricia.c	/^try_search_exact(apr_pool_t * pool, patricia_tree_
 type	confuse-2.5/src/confuse.h	/^    cfg_type_t type;        \/**< Type of option *\/$/;"	m	struct:cfg_opt_t
 type	filtercloud.h	/^    int             type;$/;"	m	struct:rule_flow
 unput	confuse-2.5/src/lexer.c	153;"	d	file:
-update_interval	mod_webfw2.c	/^    uint32_t update_interval;$/;"	m	struct:webfw2_config	file:
+update_interval	mod_webfw2.c	/^    uint32_t        update_interval;$/;"	m	struct:webfw2_config	file:
 user1	patricia.h	/^    void           *user1;      \/* pointer to usr data (ex. route flap$/;"	m	struct:_patricia_node_t
 usr1handler	confuse-2.5/examples/reread.c	/^void usr1handler(int sig)$/;"	f
 val	filtercloud.c	/^    int             val;$/;"	m	struct:n_t_s	file:
@@ -1964,13 +1969,13 @@ webfw2_config_t	mod_webfw2.c	/^} webfw2_config_t;$/;"	t	typeref:struct:webfw2_co
 webfw2_directives	mod_webfw2.c	/^const command_rec webfw2_directives[] = {$/;"	v
 webfw2_filter	mod_webfw2.c	/^typedef struct webfw2_filter {$/;"	s	file:
 webfw2_filter_t	mod_webfw2.c	/^} webfw2_filter_t;$/;"	t	typeref:struct:webfw2_filter	file:
-webfw2_find_all_sources	mod_webfw2.c	/^webfw2_find_all_sources(request_rec *rec)$/;"	f
-webfw2_handler	mod_webfw2.c	/^webfw2_handler(request_rec *rec)$/;"	f	file:
-webfw2_hooker	mod_webfw2.c	/^webfw2_hooker(apr_pool_t *pool)$/;"	f	file:
+webfw2_find_all_sources	mod_webfw2.c	/^webfw2_find_all_sources(request_rec * rec)$/;"	f
+webfw2_handler	mod_webfw2.c	/^webfw2_handler(request_rec * rec)$/;"	f	file:
+webfw2_hooker	mod_webfw2.c	/^webfw2_hooker(apr_pool_t * pool)$/;"	f	file:
 webfw2_init_config	mod_webfw2.c	/^webfw2_init_config(apr_pool_t * pool, server_rec * svr)$/;"	f
 webfw2_module	mod_webfw2.c	/^module AP_MODULE_DECLARE_DATA webfw2_module = {$/;"	v
 webfw2_module	mod_webfw2.c	/^module AP_MODULE_DECLARE_DATA webfw2_module;$/;"	v
-xff_headers	mod_webfw2.c	/^    apr_table_t *xff_headers;$/;"	m	struct:webfw2_config	file:
+xff_headers	mod_webfw2.c	/^    apr_table_t    *xff_headers;$/;"	m	struct:webfw2_config	file:
 yy_accept	confuse-2.5/src/lexer.c	/^static yyconst short int yy_accept[81] =$/;"	v	file:
 yy_at_bol	confuse-2.5/src/lexer.c	/^	int yy_at_bol;$/;"	m	struct:yy_buffer_state	file:
 yy_base	confuse-2.5/src/lexer.c	/^static yyconst short int yy_base[97] =$/;"	v	file:
