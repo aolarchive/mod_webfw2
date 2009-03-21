@@ -233,6 +233,7 @@ cloud_filter_init(apr_pool_t * parent)
     ret = apr_pcalloc(parent, sizeof(cloud_filter_t));
     apr_pool_create(&ret->pool, parent);
 
+
     return ret;
 }
 
@@ -275,10 +276,10 @@ cloud_rule_add_network(cloud_rule_t * rule,
     patricia_node_t *pnode;
 
     switch (direction) {
-    case RULE_ADDR_SRC:
+    case RULE_MATCH_SRCADDR:
         tree = &rule->src_addrs;
         break;
-    case RULE_ADDR_DST:
+    case RULE_MATCH_DSTADDR:
         tree = &rule->dst_addrs;
         break;
     }
@@ -307,6 +308,74 @@ cloud_rule_add_chad_order(cloud_rule_t * rule, char *order)
                  (char *) apr_pstrdup(rule->pool, order),
                  APR_HASH_KEY_STRING, (void *) 1);
 
+    return 0;
+}
+
+int 
+cloud_match_rulen(apr_pool_t *pool, cloud_filter_t *filter, 
+	cloud_rule_t *rule, const void *usrdata)
+{
+    int matched_rule = 0;
+    rule_flow_t *flows = rule->flow;
+
+    while(flows != NULL)
+    {
+	void *data;
+	switch(flows->type)
+	{
+	    case RULE_MATCH_SRCADDR:
+		data = filter->callbacks.src_addr_cb(pool, usrdata);
+		break;
+	    case RULE_MATCH_DSTADDR:
+		data = filter->callbacks.dst_addr_cb(pool, usrdata);
+		break;
+	    case RULE_MATCH_CHAD_ORD:
+		data = filter->callbacks.chad_ord_cb(pool, usrdata);
+		break;
+	}
+	
+	if (flows->callback(pool, rule, data) == 1)
+	{
+            /*
+             * We matched something in this callback. 
+             */
+            if (flows->next_operator == RULE_MATCH_OPERATOR_OR) {
+                matched_rule = 1;
+                break;
+            }
+
+            if (flows->next_operator == RULE_MATCH_OPERATOR_AND) {
+                flows = flows->next;
+                continue;
+            }
+
+            if (flows->next_operator == 0) {
+                matched_rule = 1;
+                break;
+            }
+	}
+
+	if (flows->this_operator == RULE_MATCH_OPERATOR_AND &&
+		flows->next_operator != RULE_MATCH_OPERATOR_OR)
+	{
+	    matched_rule = 0;
+	    break;
+	}
+
+	if (flows->this_operator == RULE_MATCH_OPERATOR_OR &&
+		flows->next_operator == RULE_MATCH_OPERATOR_AND) 
+	{
+	    matched_rule = 0;
+	    break;
+	}
+
+	flows = flows->next;
+    }
+
+        
+    if (matched_rule)
+	return 1;
+	
     return 0;
 }
 
@@ -382,8 +451,7 @@ cloud_match_rule(apr_pool_t * pool, cloud_rule_t * rule,
 
 cloud_rule_t   *
 cloud_traverse_filter(cloud_filter_t * filter,
-                      const char *srcip, const char *dstip,
-                      const void *data)
+                      const void *usrdata)
 {
     cloud_rule_t   *rule = filter->head;
     apr_pool_t     *subpool;
@@ -391,8 +459,12 @@ cloud_traverse_filter(cloud_filter_t * filter,
     apr_pool_create(&subpool, NULL);
 
     while (rule != NULL) {
+	/*
         if (cloud_match_rule(subpool, rule, srcip, dstip, data) == 1)
             break;
+	    */
+	if (cloud_match_rulen(subpool, filter, rule, usrdata) == 1)
+	    break;
 
 	apr_pool_clear(subpool);
         rule = rule->next;
@@ -400,6 +472,32 @@ cloud_traverse_filter(cloud_filter_t * filter,
 
     apr_pool_destroy(subpool);
     return rule;
+}
+
+int
+cloud_register_cb(cloud_filter_t *filter, 
+	void *(*cb)(apr_pool_t *p, const void *d), 
+	int type)
+{
+    /* 
+     * these callbacks will be used to fetch the
+     * data in question. E.g., match_src_addr 
+     * callback returns a source ip, dst_addr
+     * returns a destination ip, etc, etc
+     */
+    switch(type)
+    {
+	case RULE_MATCH_SRCADDR:
+	    filter->callbacks.src_addr_cb = cb;
+	    break;
+	case RULE_MATCH_DSTADDR:
+	    filter->callbacks.dst_addr_cb = cb;
+	    break;
+	case RULE_MATCH_CHAD_ORD:
+	    filter->callbacks.chad_ord_cb = cb;
+	    break;
+    }
+    return 0;
 }
 
 cloud_filter_t *
@@ -456,14 +554,14 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
              addr_cnt++) {
             char           *addr =
                 cfg_getnstr(rule, "src_addrs", addr_cnt);
-            cloud_rule_add_network(cloud_rule, addr, RULE_ADDR_SRC, NULL);
+            cloud_rule_add_network(cloud_rule, addr, RULE_MATCH_SRCADDR, NULL);
         }
 
         for (addr_cnt = 0; addr_cnt < cfg_size(rule, "dst_addrs");
              addr_cnt++) {
             char           *addr =
                 cfg_getnstr(rule, "dst_addrs", addr_cnt);
-            cloud_rule_add_network(cloud_rule, addr, RULE_ADDR_DST, NULL);
+            cloud_rule_add_network(cloud_rule, addr, RULE_MATCH_DSTADDR, NULL);
         }
 
         for (chad_cnt = 0; chad_cnt < cfg_size(rule, "chad_orders");
@@ -473,8 +571,6 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
 
             cloud_rule_add_chad_order(cloud_rule, order);
         }
-
-        // cloud_rule_add_chad_order(rule, "abcdef");
 
         cloud_filter_add_rule(filter, cloud_rule);
     }
@@ -486,6 +582,30 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
 
 
 #ifdef TEST_FILTERCLOUD
+void *src_addr_cb(apr_pool_t *pool, const void *d)
+{
+    char *addr = "1.1.1.1";
+    char **argv = (char **)d;
+    printf("%s\n", __FUNCTION__);
+    return argv[1];
+}
+
+void *dst_addr_cb(apr_pool_t *pool, const void *d)
+{
+    char *addr = "2.2.2.2";
+    char **argv = (char **)d;
+
+    printf("%s\n", __FUNCTION__);
+    return argv[2];
+}
+
+void *chad_ord_cb(apr_pool_t *pool, const void *d)
+{
+    char *ord = "abcdef";
+    printf("%s\n", __FUNCTION__);
+    return ord;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -496,7 +616,15 @@ main(int argc, char **argv)
     apr_initialize();
     apr_pool_create(&root_pool, NULL);
     filter = cloud_parse_config(root_pool, "./test.conf");
-    cloud_traverse_filter(filter, argv[1], argv[2], NULL);
+
+    cloud_register_cb(filter, src_addr_cb, RULE_MATCH_SRCADDR); 
+    cloud_register_cb(filter, dst_addr_cb, RULE_MATCH_DSTADDR);
+    cloud_register_cb(filter, chad_ord_cb, RULE_MATCH_CHAD_ORD);
+
+    rule = cloud_traverse_filter(filter, (void *)argv);
+
+    printf("Matched filter? %s\n", rule?"yes":"no");
+
     apr_pool_destroy(root_pool);
     apr_terminate();
     return 0;

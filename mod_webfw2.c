@@ -42,6 +42,37 @@ typedef struct webfw2_filter {
     int             test;
 } webfw2_filter_t;
 
+static void *
+webfw2_srcaddr_cb(apr_pool_t *pool, const void **usrdata)
+{
+    if (!usrdata)
+        return NULL;
+
+    return (void *)usrdata[1];
+}
+
+static void *
+webfw2_dstaddr_cb(apr_pool_t *pool, const void **userdata)
+{
+    if (!userdata)
+        return NULL;
+
+    return (void *)userdata[2];
+}
+
+static void *
+webfw2_chad_ord_cb(apr_pool_t *pool, const void **userdata)
+{
+    request_rec *rec;
+    if(!userdata)
+        return NULL;
+
+    rec = (request_rec *)userdata[0];
+
+    return (char *)
+        apr_table_get(rec->notes, "chadorder");
+}
+
 static void
 webfw2_child_init(apr_pool_t * pool, server_rec * rec)
 {
@@ -49,9 +80,7 @@ webfw2_child_init(apr_pool_t * pool, server_rec * rec)
     webfw2_filter_t *wf2_filter;
     apr_pool_t     *subpool;
 
-    //ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL, "BOYYYYYY\n");
     config = ap_get_module_config(rec->module_config, &webfw2_module);
-
     ap_assert(config);
 
     /*
@@ -65,6 +94,13 @@ webfw2_child_init(apr_pool_t * pool, server_rec * rec)
 
     wf2_filter->filter =
         cloud_parse_config(wf2_filter->pool, config->config_file);
+
+    cloud_register_cb(wf2_filter->filter,
+	    webfw2_srcaddr_cb, RULE_MATCH_SRCADDR);
+    cloud_register_cb(wf2_filter->filter,
+	    webfw2_dstaddr_cb, RULE_MATCH_DSTADDR);
+    cloud_register_cb(wf2_filter->filter,
+	    webfw2_chad_ord_cb, RULE_MATCH_CHAD_ORD);
 
 #ifdef APR_HAS_THREADS
     ap_assert(apr_thread_rwlock_create(&wf2_filter->rwlock,
@@ -126,7 +162,6 @@ webfw2_find_all_sources(request_rec * rec)
     return addr_array;
 }
 
-
 static int
 webfw2_handler(request_rec * rec)
 {
@@ -161,13 +196,19 @@ webfw2_handler(request_rec * rec)
             cloud_rule_t   *rule;
             const char     *src_ip;
             const char     *dst_ip;
+	    void **callback_data;
+
+	    callback_data = apr_pcalloc(rec->pool, sizeof(void *) * 3); 
 
             src_ip = ((const char **) addrs->elts)[i];
             dst_ip = (const char *) rec->connection->local_ip;
 
-            if (!(rule = cloud_traverse_filter(wf2_filter->filter,
-                                               src_ip, dst_ip,
-                                               (void *) chad_order)))
+	    callback_data[0] = (void *)rec;
+	    callback_data[1] = (void *)src_ip;
+	    callback_data[2] = (void *)dst_ip;
+
+            if (!(rule = cloud_traverse_filter(wf2_filter->filter, 
+			    (void *)callback_data)))
                 continue;
 
             ret = 404;
@@ -178,7 +219,6 @@ webfw2_handler(request_rec * rec)
 #ifdef APR_HAS_THREADS
     apr_thread_rwlock_unlock(wf2_filter->rwlock);
 #endif
-
     return ret;
 }
 

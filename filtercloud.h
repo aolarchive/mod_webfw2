@@ -1,5 +1,6 @@
 typedef struct cloud_rule cloud_rule_t;
 typedef struct rule_flow rule_flow_t;
+typedef struct cloud_callbacks cloud_callbacks_t;
 
 struct rule_flow {
     int             type;
@@ -8,6 +9,12 @@ struct rule_flow {
     int             this_operator;
     int             next_operator;
     struct rule_flow *next;
+};
+
+struct cloud_callbacks {
+  void *(*src_addr_cb) (apr_pool_t *pool, const void *usrdata);
+  void *(*dst_addr_cb) (apr_pool_t *pool, const void *usrdata);
+  void *(*chad_ord_cb) (apr_pool_t *pool, const void *usrdata);
 };
 
 struct cloud_rule {
@@ -21,9 +28,10 @@ struct cloud_rule {
 };
 
 typedef struct cloud_filter {
-    cloud_rule_t   *head;
-    cloud_rule_t   *tail;
-    apr_pool_t     *pool;
+    cloud_rule_t      *head;
+    cloud_rule_t      *tail;
+    apr_pool_t        *pool;
+    struct cloud_callbacks  callbacks; 
     uint32_t        rule_count;
 } cloud_filter_t;
 
@@ -35,8 +43,6 @@ enum {
     RULE_MATCH_OPERATOR_AND
 };
 
-enum { RULE_ADDR_SRC, RULE_ADDR_DST, };
-
 rule_flow_t *cloud_rule_flow_init(apr_pool_t *);
 rule_flow_t *cloud_flow_from_str(apr_pool_t *, char *);
 int cloud_rule_add_flow(cloud_rule_t *, char *);
@@ -47,8 +53,7 @@ int cloud_rule_add_network(cloud_rule_t *, const char *, const int, void *);
 int cloud_rule_add_chad_order(cloud_rule_t *, char *);
 int cloud_match_rule(apr_pool_t *, cloud_rule_t *, const char *, 
     const char *, const void *);
-cloud_rule_t *cloud_traverse_filter(cloud_filter_t *, const char *, 
-    const char *, const void *);
+cloud_rule_t *cloud_traverse_filter(cloud_filter_t *, const void *);
 cloud_filter_t *cloud_parse_config(apr_pool_t *, const char *);
 char **cloud_tokenize_str(char *, const char *);
 void free_tokens(char **tokens);
