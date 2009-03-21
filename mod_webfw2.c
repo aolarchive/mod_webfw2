@@ -165,7 +165,6 @@ webfw2_handler(request_rec * rec)
             src_ip = ((const char **) addrs->elts)[i];
             dst_ip = (const char *) rec->connection->local_ip;
 
-
             if (!(rule = cloud_traverse_filter(wf2_filter->filter,
                                                src_ip, dst_ip,
                                                (void *) chad_order)))
