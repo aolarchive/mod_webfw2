@@ -23,6 +23,7 @@
 #include "apr_thread_rwlock.h"
 #include "patricia.h"
 #include "filtercloud.h"
+#include "version.h"
 
 #define FILTER_CONFIG_KEY "webfw2_filter_config"
 
@@ -43,7 +44,7 @@ typedef struct webfw2_filter {
 } webfw2_filter_t;
 
 static void *
-webfw2_srcaddr_cb(apr_pool_t *pool, const void **usrdata)
+webfw2_srcaddr_cb(apr_pool_t *pool, void *fc_data, const void **usrdata)
 {
     if (!usrdata)
         return NULL;
@@ -52,7 +53,7 @@ webfw2_srcaddr_cb(apr_pool_t *pool, const void **usrdata)
 }
 
 static void *
-webfw2_dstaddr_cb(apr_pool_t *pool, const void **userdata)
+webfw2_dstaddr_cb(apr_pool_t *pool, void *fc_data, const void **userdata)
 {
     if (!userdata)
         return NULL;
@@ -61,16 +62,16 @@ webfw2_dstaddr_cb(apr_pool_t *pool, const void **userdata)
 }
 
 static void *
-webfw2_chad_ord_cb(apr_pool_t *pool, const void **userdata)
+webfw2_note_cb(apr_pool_t *pool, void *fc_data, const void **userdata)
 {
     request_rec *rec;
-    if(!userdata)
-        return NULL;
+    if(!userdata || !fc_data)
+	return NULL;
 
     rec = (request_rec *)userdata[0];
 
     return (char *)
-        apr_table_get(rec->notes, "chadorder");
+	apr_table_get(rec->notes, (char *)fc_data);
 }
 
 static void
@@ -95,12 +96,12 @@ webfw2_child_init(apr_pool_t * pool, server_rec * rec)
     wf2_filter->filter =
         cloud_parse_config(wf2_filter->pool, config->config_file);
 
-    cloud_register_cb(wf2_filter->filter,
+    cloud_register_user_cb(wf2_filter->filter,
 	    webfw2_srcaddr_cb, RULE_MATCH_SRCADDR);
-    cloud_register_cb(wf2_filter->filter,
+    cloud_register_user_cb(wf2_filter->filter,
 	    webfw2_dstaddr_cb, RULE_MATCH_DSTADDR);
-    cloud_register_cb(wf2_filter->filter,
-	    webfw2_chad_ord_cb, RULE_MATCH_CHAD_ORD);
+    cloud_register_user_cb(wf2_filter->filter, 
+	    webfw2_note_cb, RULE_MATCH_STRING, "chadorder");
 
 #ifdef APR_HAS_THREADS
     ap_assert(apr_thread_rwlock_create(&wf2_filter->rwlock,
@@ -181,7 +182,6 @@ webfw2_handler(request_rec * rec)
 
     do {
         int             i;
-        char           *chad_order;
         apr_array_header_t *addrs;
 
         if (!wf2_filter->filter)
@@ -189,8 +189,6 @@ webfw2_handler(request_rec * rec)
 
         if (!(addrs = webfw2_find_all_sources(rec)))
             break;
-
-        chad_order = (char *) apr_table_get(rec->notes, "chadorder");
 
         for (i = 0; i < addrs->nelts; i++) {
             cloud_rule_t   *rule;
@@ -306,6 +304,8 @@ webfw2_hooker(apr_pool_t * pool)
         NULL
     };
 
+    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+	    "initializing mod_webfw2 v%s\n", VERSION);
     ap_hook_child_init(webfw2_child_init, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_access_checker(webfw2_handler, beforeme_list,
                            NULL, APR_HOOK_MIDDLE);

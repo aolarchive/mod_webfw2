@@ -13,6 +13,7 @@
 #include "apr.h"
 #include "apr_hash.h"
 #include "apr_pools.h"
+#include "apr_strings.h"
 #include "patricia.h"
 #include "filtercloud.h"
 #include "confuse.h"
@@ -24,7 +25,7 @@ static struct n_t_s {
     {
     RULE_MATCH_SRCADDR, "match_src_addr"}, {
     RULE_MATCH_DSTADDR, "match_dst_addr"}, {
-    RULE_MATCH_CHAD_ORD, "match_chad_ord"}, {
+    RULE_MATCH_STRING, "match_string"}, {	
     RULE_MATCH_OPERATOR_OR, "||"}, {
     RULE_MATCH_OPERATOR_AND, "&&"}, {
     0, NULL}
@@ -48,10 +49,9 @@ static int
 rule_token_to_int(char *token)
 {
     int             i;
-    int             ret;
 
     for (i = 0; name_to_int[i].strval != NULL; i++) {
-        if (!strcasecmp(name_to_int[i].strval, token))
+        if (!strncasecmp(name_to_int[i].strval, token, strlen(name_to_int[i].strval)))
             return name_to_int[i].val;
     }
 
@@ -99,7 +99,8 @@ cloud_rule_flow_init(apr_pool_t * pool)
 }
 
 static int
-cloud_match_srcaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data)
+cloud_match_srcaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data, 
+	void *usrdata)
 {
     if (!rule->src_addrs)
         return 1;
@@ -111,7 +112,8 @@ cloud_match_srcaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data)
 }
 
 static int
-cloud_match_dstaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data)
+cloud_match_dstaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data,
+	void *usrdata)
 {
     if (!rule->dst_addrs)
         return 1;
@@ -123,23 +125,33 @@ cloud_match_dstaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data)
 }
 
 static int
-cloud_match_chadorder(apr_pool_t * pool, cloud_rule_t * rule, void *data)
+cloud_match_string(apr_pool_t *pool, 
+	cloud_rule_t *rule, void *val, void *key)
 {
-    if (!rule->chad_orders)
-        return 1;
+    apr_hash_t *string_hash;
 
-    if (!data)
+    if(!rule->strings)
+	return 1;
+
+    if (!key || !val)
+    {
+	return 0;
+    }
+
+    if(!(string_hash=apr_hash_get
+		(rule->strings, (char *)key, 
+		 APR_HASH_KEY_STRING)))
 	return 0;
 
-    if (apr_hash_get
-        (rule->chad_orders, (char *) data, APR_HASH_KEY_STRING))
-        return 1;
+
+    if(apr_hash_get(string_hash, (char *)val, APR_HASH_KEY_STRING))
+       return 1;	
 
     return 0;
 }
 
 
-rule_flow_t    *
+static rule_flow_t    *
 cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
 {
     char          **tokens;
@@ -185,19 +197,29 @@ cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
             }
 
             break;
-        case RULE_MATCH_CHAD_ORD:
-            new_flow = cloud_rule_flow_init(pool);
-            new_flow->callback = cloud_match_chadorder;
-            new_flow->type = RULE_MATCH_CHAD_ORD;
+	case RULE_MATCH_STRING:
+	    /* in order to have a proper string matching
+	     * along with the proper precedence and ordering
+	     * we must set a flow where the value is the 
+	     * section of strings to match. */
 
-            if (!flow)
-                flow = tail = new_flow;
-            else {
-                new_flow->this_operator = tail->next_operator;
-                tail->next = new_flow;
-                tail = new_flow;
-            }
-            break;
+	    /* remove the match_string( and the ending ) */
+	    tok[strlen(tok)-1] = 0;
+	    tok = &tok[13];
+
+	    new_flow = cloud_rule_flow_init(pool);
+	    new_flow->callback = cloud_match_string;
+	    new_flow->type = RULE_MATCH_STRING;
+	    new_flow->user_data = (void *)apr_pstrdup(pool, tok);
+
+	    if(!flow)
+		flow = tail = new_flow;
+	    else {
+		new_flow->this_operator = tail->next_operator;
+		tail->next = new_flow;
+		tail = new_flow;
+	    }
+	    break;
         case RULE_MATCH_OPERATOR_OR:
             if (!flow)
                 /*
@@ -219,7 +241,7 @@ cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
     return flow;
 }
 
-int
+static int
 cloud_rule_add_flow(cloud_rule_t * rule, char *data)
 {
     rule->flow = cloud_flow_from_str(rule->pool, data);
@@ -237,7 +259,7 @@ cloud_filter_init(apr_pool_t * parent)
     return ret;
 }
 
-cloud_rule_t   *
+static cloud_rule_t   *
 cloud_rule_init(apr_pool_t * parent)
 {
     cloud_rule_t   *rule;
@@ -250,7 +272,7 @@ cloud_rule_init(apr_pool_t * parent)
     return rule;
 }
 
-int
+static int
 cloud_filter_add_rule(cloud_filter_t * filter, cloud_rule_t * rule)
 {
     if (!filter || !rule)
@@ -266,7 +288,7 @@ cloud_filter_add_rule(cloud_filter_t * filter, cloud_rule_t * rule)
     return 0;
 }
 
-int
+static int
 cloud_rule_add_network(cloud_rule_t * rule,
                        const char *network, const int direction,
                        void *data)
@@ -297,44 +319,115 @@ cloud_rule_add_network(cloud_rule_t * rule,
     return 0;
 }
 
-int
-cloud_rule_add_chad_order(cloud_rule_t * rule, char *order)
+static int
+cloud_rule_add_string(cloud_rule_t *rule, char *key, char *val)
 {
+    /* a string match set is a hash of hashes.
+     *
+     * The "key" in this case is a hash key of our
+     * rule->strings hash. The values of that hash
+     * will be our value passed to this function.
+     */
 
-    if (!rule->chad_orders)
-        rule->chad_orders = apr_hash_make(rule->pool);
+    /* ok, string matching rules are a bit odd here. I haven't
+     * really thought of a more dynamic way to do this that fits
+     * in with the current architecture. 
+     *
+     * With string matching we can have multiple "keys" or 
+     * string groups. In order to facilitate these groups 
+     * within our rule we have a hash of hashes that can be 
+     * found under rule->strings. 
+     *
+     * For every "group" found within the config, the group
+     * name is used as a key to another hash which holds all
+     * of the values. Since our string matching is static strings
+     * we hash the string values with a value of 1 
+     *
+     * Now to how strings work with our rule flow.
+     *
+     * In normal situations we have a set of flow callbacks,
+     * these callbacks are run after running a user set callback
+     * that fetches the correct data for the flow in question.
+     *
+     * In a string flow situation 
+     *
+     * */ 
+    apr_hash_t *subnode;
+    char *ckey;
+    char *cval;
 
-    apr_hash_set(rule->chad_orders,
-                 (char *) apr_pstrdup(rule->pool, order),
-                 APR_HASH_KEY_STRING, (void *) 1);
+    ckey = (char *)apr_pstrdup(rule->pool, key);
+    cval = (char *)apr_pstrdup(rule->pool, val);
+
+    if (!rule->strings)
+	rule->strings = apr_hash_make(rule->pool);
+
+    if(!(subnode = apr_hash_get(rule->strings,
+		    (char *)ckey, APR_HASH_KEY_STRING)))
+    {
+	subnode = apr_hash_make(rule->pool);
+	apr_hash_set(rule->strings, ckey, 
+		APR_HASH_KEY_STRING, subnode); 
+		    
+    }
+
+    apr_hash_set(subnode, cval, 
+	    APR_HASH_KEY_STRING, (void *)1); 
 
     return 0;
+
 }
 
-int 
+static int 
 cloud_match_rulen(apr_pool_t *pool, cloud_filter_t *filter, 
 	cloud_rule_t *rule, const void *usrdata)
 {
     int matched_rule = 0;
     rule_flow_t *flows = rule->flow;
 
+
     while(flows != NULL)
     {
-	void *data;
+	void *data, *extra;
+	extra = NULL;
+
 	switch(flows->type)
 	{
 	    case RULE_MATCH_SRCADDR:
-		data = filter->callbacks.src_addr_cb(pool, usrdata);
+		if (!filter->callbacks.src_addr_cb)
+		{
+		    flows = flows->next;
+		    continue;
+		}
+		data = filter->callbacks.src_addr_cb(pool, NULL, usrdata);
 		break;
 	    case RULE_MATCH_DSTADDR:
-		data = filter->callbacks.dst_addr_cb(pool, usrdata);
+		if(!filter->callbacks.dst_addr_cb)
+		{
+		    flows = flows->next;
+		    continue;
+		}
+		data = filter->callbacks.dst_addr_cb(pool, NULL, usrdata);
 		break;
-	    case RULE_MATCH_CHAD_ORD:
-		data = filter->callbacks.chad_ord_cb(pool, usrdata);
+	    case RULE_MATCH_STRING:
+		/* first we must find the callback associated 
+		 * with this string key */
+		{
+		    void *(*cb)  (apr_pool_t *pool, void *fc_data, const void *usrdata);
+
+		    if(!(cb=apr_hash_get(filter->callbacks.string_callbacks,
+				    flows->user_data, APR_HASH_KEY_STRING)))
+		    {
+			flows = flows->next;
+			continue;
+		    }
+		    data = cb(pool, flows->user_data, usrdata);
+		    extra = flows->user_data;
+		}
 		break;
 	}
 	
-	if (flows->callback(pool, rule, data) == 1)
+	if (flows->callback(pool, rule, data, extra) == 1)
 	{
             /*
              * We matched something in this callback. 
@@ -376,75 +469,6 @@ cloud_match_rulen(apr_pool_t *pool, cloud_filter_t *filter,
     if (matched_rule)
 	return 1;
 	
-    return 0;
-}
-
-
-int
-cloud_match_rule(apr_pool_t * pool, cloud_rule_t * rule,
-                 const char *srcip, const char *dstip, const void *usrdata)
-{
-    /*
-     * go through each rule_flow_t do stuff 
-     */
-    int             matched_rule = 0;
-    rule_flow_t    *flows = rule->flow;
-
-    while (flows != NULL) {
-        void           *data;
-        switch (flows->type) {
-        case RULE_MATCH_SRCADDR:
-            data = (void *) srcip;
-            break;
-        case RULE_MATCH_DSTADDR:
-            data = (void *) dstip;
-            break;
-        case RULE_MATCH_CHAD_ORD:
-            data = (void *) usrdata;
-            break;
-        }
-
-        if (flows->callback(pool, rule, data) == 1) {
-            /*
-             * We matched something in this callback. 
-             */
-            if (flows->next_operator == RULE_MATCH_OPERATOR_OR) {
-                matched_rule = 1;
-                break;
-            }
-
-            if (flows->next_operator == RULE_MATCH_OPERATOR_AND) {
-                flows = flows->next;
-                continue;
-            }
-
-            if (flows->next_operator == 0) {
-                matched_rule = 1;
-                break;
-            }
-        }
-
-        /*
-         * we didn't match anything in the callback :( 
-         */
-        if (flows->this_operator == RULE_MATCH_OPERATOR_AND &&
-            flows->next_operator != RULE_MATCH_OPERATOR_OR) {
-            matched_rule = 0;
-            break;
-        }
-
-
-        if (flows->this_operator == RULE_MATCH_OPERATOR_OR &&
-            flows->next_operator == RULE_MATCH_OPERATOR_AND) {
-            matched_rule = 0;
-            break;
-        }
-
-        flows = flows->next;
-    }
-
-    if (matched_rule)
-        return 1;
 
     return 0;
 }
@@ -459,10 +483,6 @@ cloud_traverse_filter(cloud_filter_t * filter,
     apr_pool_create(&subpool, NULL);
 
     while (rule != NULL) {
-	/*
-        if (cloud_match_rule(subpool, rule, srcip, dstip, data) == 1)
-            break;
-	    */
 	if (cloud_match_rulen(subpool, filter, rule, usrdata) == 1)
 	    break;
 
@@ -475,15 +495,14 @@ cloud_traverse_filter(cloud_filter_t * filter,
 }
 
 int
-cloud_register_cb(cloud_filter_t *filter, 
-	void *(*cb)(apr_pool_t *p, const void *d), 
-	int type)
+cloud_register_user_cb(cloud_filter_t *filter, 
+	void *(*cb)(apr_pool_t *p, void *fc_data, const void *d), 
+	int type, void *data)
 {
     /* 
-     * these callbacks will be used to fetch the
-     * data in question. E.g., match_src_addr 
-     * callback returns a source ip, dst_addr
-     * returns a destination ip, etc, etc
+     * If a callback isn't registered for a specific
+     * datatype, the rule will not even attempt to match
+     * that flow.
      */
     switch(type)
     {
@@ -493,9 +512,16 @@ cloud_register_cb(cloud_filter_t *filter,
 	case RULE_MATCH_DSTADDR:
 	    filter->callbacks.dst_addr_cb = cb;
 	    break;
-	case RULE_MATCH_CHAD_ORD:
-	    filter->callbacks.chad_ord_cb = cb;
+	case RULE_MATCH_STRING:
+	    if(!filter->callbacks.string_callbacks)
+		filter->callbacks.string_callbacks 
+		    = apr_hash_make(filter->pool);
+
+	    apr_hash_set(filter->callbacks.string_callbacks,
+		    (char *)apr_pstrdup(filter->pool, data),
+		    APR_HASH_KEY_STRING, (void *)cb);
 	    break;
+
     }
     return 0;
 }
@@ -509,10 +535,10 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
     unsigned int    n,
                     i;
 
-    cfg_opt_t       addrs_opts[] = {
-        CFG_STR("src", 0, CFGF_NONE),
-        CFG_STR("dst", 0, CFGF_NONE),
-        CFG_END()
+    cfg_opt_t       str_match_opts[] = {
+	CFG_BOOL("case_sensitive", cfg_true, CFGF_NONE),
+	CFG_STR_LIST("values", 0, CFGF_MULTI),
+	CFG_END()
     };
 
     cfg_opt_t       rule_opts[] = {
@@ -522,7 +548,7 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
-        CFG_STR_LIST("chad_orders", 0, CFGF_MULTI),
+	CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
         CFG_END()
     };
 
@@ -540,7 +566,6 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
     for (i = 0; i < n; i++) {
         char           *flow;
         int             addr_cnt;
-        int             chad_cnt;
         cloud_rule_t   *cloud_rule;
         cfg_t          *rule;
 
@@ -548,6 +573,7 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
         flow = cfg_getstr(rule, "flow");
 
         cloud_rule = cloud_rule_init(filter->pool);
+	cloud_rule->name = apr_pstrdup(pool, cfg_title(rule));
         cloud_rule_add_flow(cloud_rule, (char *) apr_pstrdup(pool, flow));
 
         for (addr_cnt = 0; addr_cnt < cfg_size(rule, "src_addrs");
@@ -564,13 +590,31 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
             cloud_rule_add_network(cloud_rule, addr, RULE_MATCH_DSTADDR, NULL);
         }
 
-        for (chad_cnt = 0; chad_cnt < cfg_size(rule, "chad_orders");
-             chad_cnt++) {
-            char           *order =
-                cfg_getnstr(rule, "chad_orders", chad_cnt);
+	int str_match_size = cfg_size(rule, "match_string");
+	int sm_n;
 
-            cloud_rule_add_chad_order(cloud_rule, order);
-        }
+	for (sm_n = 0; sm_n < str_match_size; sm_n++)
+	{
+	    cfg_t *matcher;
+	    int value_cnt;
+
+	    matcher = cfg_getnsec(rule, "match_string", sm_n);
+
+	    for (value_cnt = 0; value_cnt < cfg_size(matcher, "values");
+		    value_cnt++) {
+		char *str =
+		    cfg_getnstr(matcher, "values", value_cnt); 
+
+		printf("String Match Title: %s\n", cfg_title(matcher));
+		printf("Case sensitive? %s\n",
+			cfg_getbool(matcher, "case_sensitive") ?
+			"true":"false");
+		printf("String value: %s\n", str);
+		cloud_rule_add_string(cloud_rule, 
+			(char *)cfg_title(matcher), str);
+	    }
+
+	}
 
         cloud_filter_add_rule(filter, cloud_rule);
     }
@@ -582,28 +626,31 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
 
 
 #ifdef TEST_FILTERCLOUD
-void *src_addr_cb(apr_pool_t *pool, const void *d)
+void *src_addr_cb(apr_pool_t *pool, void *fc_data, const void *d)
 {
-    char *addr = "1.1.1.1";
     char **argv = (char **)d;
     printf("%s\n", __FUNCTION__);
     return argv[1];
 }
 
-void *dst_addr_cb(apr_pool_t *pool, const void *d)
+void *dst_addr_cb(apr_pool_t *pool, void *fc_data, const void *d)
 {
-    char *addr = "2.2.2.2";
     char **argv = (char **)d;
 
     printf("%s\n", __FUNCTION__);
     return argv[2];
 }
 
-void *chad_ord_cb(apr_pool_t *pool, const void *d)
+void *cloud_str_cb(apr_pool_t *pool, void *fc_data, const void *d)
 {
-    char *ord = "abcdef";
     printf("%s\n", __FUNCTION__);
-    return ord;
+    return "abcdef";
+}
+
+void *cloud_str2_cb(apr_pool_t *pool, void *fc_data, const void *d)
+{
+    printf("%s\n", __FUNCTION__);
+    return "derr";
 }
 
 int
@@ -617,9 +664,10 @@ main(int argc, char **argv)
     apr_pool_create(&root_pool, NULL);
     filter = cloud_parse_config(root_pool, "./test.conf");
 
-    cloud_register_cb(filter, src_addr_cb, RULE_MATCH_SRCADDR); 
-    cloud_register_cb(filter, dst_addr_cb, RULE_MATCH_DSTADDR);
-    cloud_register_cb(filter, chad_ord_cb, RULE_MATCH_CHAD_ORD);
+    cloud_register_user_cb(filter, src_addr_cb, RULE_MATCH_SRCADDR, NULL); 
+    cloud_register_user_cb(filter, dst_addr_cb, RULE_MATCH_DSTADDR, NULL);
+    cloud_register_user_cb(filter, cloud_str_cb, RULE_MATCH_STRING, "stuff");
+    cloud_register_user_cb(filter, cloud_str2_cb, RULE_MATCH_STRING, "lame");
 
     rule = cloud_traverse_filter(filter, (void *)argv);
 
@@ -628,24 +676,5 @@ main(int argc, char **argv)
     apr_pool_destroy(root_pool);
     apr_terminate();
     return 0;
-#if 0
-    filter = cloud_filter_init(root_pool);
-    rule = cloud_rule_init(filter->pool);
-    cloud_rule_add_network(rule, "64.12.23.0/27", RULE_ADDR_SRC, NULL);
-    cloud_rule_add_network(rule, "127.0.0.0/30", RULE_ADDR_SRC, NULL);
-    cloud_rule_add_network(rule, "5.5.5.5", RULE_ADDR_SRC, NULL);
-    cloud_rule_add_network(rule, "10.0.0.1/32", RULE_ADDR_DST, NULL);
-    cloud_rule_add_flow(rule, argv[1]);
-    cloud_filter_add_rule(filter, rule);
-    rule = cloud_rule_init(filter->pool);
-    cloud_rule_add_network(rule, "3.3.3.3/32", RULE_ADDR_SRC, NULL);
-    cloud_rule_add_network(rule, "4.4.4.4/32", RULE_ADDR_DST, NULL);
-    cloud_rule_add_chad_order(rule, "abcdef");
-    cloud_rule_add_flow(rule, argv[1]);
-    cloud_filter_add_rule(filter, rule);
-    cloud_traverse_filter(filter, argv[2], argv[3], NULL);
-    return 0;
-#endif
-
 }
 #endif
