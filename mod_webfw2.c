@@ -361,7 +361,7 @@ webfw2_handler(request_rec * rec)
     ap_assert(wf2_filter);
 #ifdef APR_HAS_THREADS
 
-#ifndef RADIX_IS_REENTRANT
+#ifdef RADIX_IS_REENTRANT
     apr_thread_rwlock_rdlock(wf2_filter->rwlock);
 #else
     apr_thread_rwlock_wrlock(wf2_filter->rwlock);
@@ -419,8 +419,12 @@ webfw2_handler(request_rec * rec)
                                            config->dynamic_srcaddr_rule)) == rule)
                     break;
 
+		if (dynamic_rule == NULL) 
+		    break;
+
+
 #ifdef APR_HAS_THREADS
-#ifndef RADIX_IS_REENTRANT
+#ifdef RADIX_IS_REENTRANT
                 /*
                  * we have to unlock our reader, and set a write lock 
                  */
