@@ -7,99 +7,16 @@
 ACB_ASK	confuse-2.5/examples/ftpconf.c	13;"	d	file:
 ACB_NO	confuse-2.5/examples/ftpconf.c	12;"	d	file:
 ACB_YES	confuse-2.5/examples/ftpconf.c	11;"	d	file:
-ACLOCAL	confuse-2.5/Makefile	/^ACLOCAL = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run aclocal-1.8$/;"	m
-ACLOCAL	confuse-2.5/doc/Makefile	/^ACLOCAL = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run aclocal-1.8$/;"	m
-ACLOCAL	confuse-2.5/examples/Makefile	/^ACLOCAL = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run aclocal-1.8$/;"	m
-ACLOCAL	confuse-2.5/m4/Makefile	/^ACLOCAL = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run aclocal-1.8$/;"	m
-ACLOCAL	confuse-2.5/src/Makefile	/^ACLOCAL = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run aclocal-1.8$/;"	m
-ACLOCAL	confuse-2.5/tests/Makefile	/^ACLOCAL = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run aclocal-1.8$/;"	m
-ACLOCAL_AMFLAGS	confuse-2.5/Makefile	/^ACLOCAL_AMFLAGS = -I m4$/;"	m
-ACLOCAL_M4	confuse-2.5/Makefile	/^ACLOCAL_M4 = $(top_srcdir)\/aclocal.m4$/;"	m
-ACLOCAL_M4	confuse-2.5/doc/Makefile	/^ACLOCAL_M4 = $(top_srcdir)\/aclocal.m4$/;"	m
-ACLOCAL_M4	confuse-2.5/examples/Makefile	/^ACLOCAL_M4 = $(top_srcdir)\/aclocal.m4$/;"	m
-ACLOCAL_M4	confuse-2.5/m4/Makefile	/^ACLOCAL_M4 = $(top_srcdir)\/aclocal.m4$/;"	m
-ACLOCAL_M4	confuse-2.5/src/Makefile	/^ACLOCAL_M4 = $(top_srcdir)\/aclocal.m4$/;"	m
-ACLOCAL_M4	confuse-2.5/tests/Makefile	/^ACLOCAL_M4 = $(top_srcdir)\/aclocal.m4$/;"	m
 ACTION_CRAWL	confuse-2.5/tests/suite_validate.c	14;"	d	file:
 ACTION_JUMP	confuse-2.5/tests/suite_validate.c	15;"	d	file:
 ACTION_NONE	confuse-2.5/tests/suite_validate.c	11;"	d	file:
 ACTION_RUN	confuse-2.5/tests/suite_validate.c	12;"	d	file:
 ACTION_WALK	confuse-2.5/tests/suite_validate.c	13;"	d	file:
-AMDEP_FALSE	confuse-2.5/Makefile	/^AMDEP_FALSE = #$/;"	m
-AMDEP_FALSE	confuse-2.5/doc/Makefile	/^AMDEP_FALSE = #$/;"	m
-AMDEP_FALSE	confuse-2.5/examples/Makefile	/^AMDEP_FALSE = #$/;"	m
-AMDEP_FALSE	confuse-2.5/m4/Makefile	/^AMDEP_FALSE = #$/;"	m
-AMDEP_FALSE	confuse-2.5/src/Makefile	/^AMDEP_FALSE = #$/;"	m
-AMDEP_FALSE	confuse-2.5/tests/Makefile	/^AMDEP_FALSE = #$/;"	m
-AMDEP_TRUE	confuse-2.5/Makefile	/^AMDEP_TRUE = $/;"	m
-AMDEP_TRUE	confuse-2.5/doc/Makefile	/^AMDEP_TRUE = $/;"	m
-AMDEP_TRUE	confuse-2.5/examples/Makefile	/^AMDEP_TRUE = $/;"	m
-AMDEP_TRUE	confuse-2.5/m4/Makefile	/^AMDEP_TRUE = $/;"	m
-AMDEP_TRUE	confuse-2.5/src/Makefile	/^AMDEP_TRUE = $/;"	m
-AMDEP_TRUE	confuse-2.5/tests/Makefile	/^AMDEP_TRUE = $/;"	m
-AMTAR	confuse-2.5/Makefile	/^AMTAR = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run tar$/;"	m
-AMTAR	confuse-2.5/doc/Makefile	/^AMTAR = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run tar$/;"	m
-AMTAR	confuse-2.5/examples/Makefile	/^AMTAR = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run tar$/;"	m
-AMTAR	confuse-2.5/m4/Makefile	/^AMTAR = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run tar$/;"	m
-AMTAR	confuse-2.5/src/Makefile	/^AMTAR = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run tar$/;"	m
-AMTAR	confuse-2.5/tests/Makefile	/^AMTAR = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run tar$/;"	m
-AM_LDFLAGS	confuse-2.5/doc/Makefile	/^AM_LDFLAGS = -L..\/src\/$/;"	m
-AM_LDFLAGS	confuse-2.5/examples/Makefile	/^AM_LDFLAGS = -L..\/src\/$/;"	m
-AM_LFLAGS	confuse-2.5/src/Makefile	/^AM_LFLAGS = -Pcfg_yy -olex.yy.c$/;"	m
 APR_INCLUDES	Makefile	/^APR_INCLUDES = -I..\/chad-libs\/apr-1\/include$/;"	m
 APR_LIBS	Makefile	/^APR_LIBS     = -L..\/chad-libs\/apr-1\/.libs$/;"	m
 APXS_BIN	Makefile	/^APXS_BIN     = ~\/sandbox\/bin\/apxs$/;"	m
-AR	confuse-2.5/Makefile	/^AR = ar$/;"	m
-AR	confuse-2.5/doc/Makefile	/^AR = ar$/;"	m
-AR	confuse-2.5/examples/Makefile	/^AR = ar$/;"	m
-AR	confuse-2.5/m4/Makefile	/^AR = ar$/;"	m
-AR	confuse-2.5/src/Makefile	/^AR = ar$/;"	m
-AR	confuse-2.5/tests/Makefile	/^AR = ar$/;"	m
-AUTOCONF	confuse-2.5/Makefile	/^AUTOCONF = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoconf$/;"	m
-AUTOCONF	confuse-2.5/doc/Makefile	/^AUTOCONF = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoconf$/;"	m
-AUTOCONF	confuse-2.5/examples/Makefile	/^AUTOCONF = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoconf$/;"	m
-AUTOCONF	confuse-2.5/m4/Makefile	/^AUTOCONF = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoconf$/;"	m
-AUTOCONF	confuse-2.5/src/Makefile	/^AUTOCONF = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoconf$/;"	m
-AUTOCONF	confuse-2.5/tests/Makefile	/^AUTOCONF = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoconf$/;"	m
-AUTOHEADER	confuse-2.5/Makefile	/^AUTOHEADER = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoheader$/;"	m
-AUTOHEADER	confuse-2.5/doc/Makefile	/^AUTOHEADER = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoheader$/;"	m
-AUTOHEADER	confuse-2.5/examples/Makefile	/^AUTOHEADER = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoheader$/;"	m
-AUTOHEADER	confuse-2.5/m4/Makefile	/^AUTOHEADER = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoheader$/;"	m
-AUTOHEADER	confuse-2.5/src/Makefile	/^AUTOHEADER = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoheader$/;"	m
-AUTOHEADER	confuse-2.5/tests/Makefile	/^AUTOHEADER = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run autoheader$/;"	m
-AUTOMAKE	confuse-2.5/Makefile	/^AUTOMAKE = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run automake-1.8$/;"	m
-AUTOMAKE	confuse-2.5/doc/Makefile	/^AUTOMAKE = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run automake-1.8$/;"	m
-AUTOMAKE	confuse-2.5/examples/Makefile	/^AUTOMAKE = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run automake-1.8$/;"	m
-AUTOMAKE	confuse-2.5/m4/Makefile	/^AUTOMAKE = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run automake-1.8$/;"	m
-AUTOMAKE	confuse-2.5/src/Makefile	/^AUTOMAKE = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run automake-1.8$/;"	m
-AUTOMAKE	confuse-2.5/tests/Makefile	/^AUTOMAKE = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run automake-1.8$/;"	m
-AUTOMAKE_OPTIONS	confuse-2.5/Makefile	/^AUTOMAKE_OPTIONS = foreign$/;"	m
-AWK	confuse-2.5/Makefile	/^AWK = mawk$/;"	m
-AWK	confuse-2.5/doc/Makefile	/^AWK = mawk$/;"	m
-AWK	confuse-2.5/examples/Makefile	/^AWK = mawk$/;"	m
-AWK	confuse-2.5/m4/Makefile	/^AWK = mawk$/;"	m
-AWK	confuse-2.5/src/Makefile	/^AWK = mawk$/;"	m
-AWK	confuse-2.5/tests/Makefile	/^AWK = mawk$/;"	m
 BEGIN	confuse-2.5/src/lexer.c	97;"	d	file:
 BIT_TEST	patricia.h	27;"	d
-BORLAND_FILES	confuse-2.5/Makefile	/^BORLAND_FILES = cfgtest.bpf cfgtest.bpr config.h confuse.bpg libConfuse.bpf libConfuse.bpr$/;"	m
-CATALOGS	confuse-2.5/po/Makefile	/^CATALOGS =  sv.gmo$/;"	m
-CC	confuse-2.5/Makefile	/^CC = gcc$/;"	m
-CC	confuse-2.5/doc/Makefile	/^CC = gcc$/;"	m
-CC	confuse-2.5/examples/Makefile	/^CC = gcc$/;"	m
-CC	confuse-2.5/m4/Makefile	/^CC = gcc$/;"	m
-CC	confuse-2.5/src/Makefile	/^CC = gcc$/;"	m
-CC	confuse-2.5/tests/Makefile	/^CC = gcc$/;"	m
-CCDEPMODE	confuse-2.5/Makefile	/^CCDEPMODE = depmode=gcc3$/;"	m
-CCDEPMODE	confuse-2.5/doc/Makefile	/^CCDEPMODE = depmode=gcc3$/;"	m
-CCDEPMODE	confuse-2.5/examples/Makefile	/^CCDEPMODE = depmode=gcc3$/;"	m
-CCDEPMODE	confuse-2.5/m4/Makefile	/^CCDEPMODE = depmode=gcc3$/;"	m
-CCDEPMODE	confuse-2.5/src/Makefile	/^CCDEPMODE = depmode=gcc3$/;"	m
-CCDEPMODE	confuse-2.5/tests/Makefile	/^CCDEPMODE = depmode=gcc3$/;"	m
-CCLD	confuse-2.5/doc/Makefile	/^CCLD = $(CC)$/;"	m
-CCLD	confuse-2.5/examples/Makefile	/^CCLD = $(CC)$/;"	m
-CCLD	confuse-2.5/src/Makefile	/^CCLD = $(CC)$/;"	m
-CCLD	confuse-2.5/tests/Makefile	/^CCLD = $(CC)$/;"	m
 CFGF_DEFINIT	confuse-2.5/src/confuse.h	97;"	d
 CFGF_LIST	confuse-2.5/src/confuse.h	92;"	d
 CFGF_MULTI	confuse-2.5/src/confuse.h	91;"	d
@@ -152,292 +69,50 @@ CFG_STR_CB	confuse-2.5/src/confuse.h	301;"	d
 CFG_STR_LIST	confuse-2.5/src/confuse.h	296;"	d
 CFG_STR_LIST_CB	confuse-2.5/src/confuse.h	306;"	d
 CFG_SUCCESS	confuse-2.5/src/confuse.h	100;"	d
-CFLAGS	confuse-2.5/Makefile	/^CFLAGS = -g -O2$/;"	m
-CFLAGS	confuse-2.5/doc/Makefile	/^CFLAGS = -g -O2$/;"	m
-CFLAGS	confuse-2.5/examples/Makefile	/^CFLAGS = -g -O2$/;"	m
-CFLAGS	confuse-2.5/m4/Makefile	/^CFLAGS = -g -O2$/;"	m
-CFLAGS	confuse-2.5/src/Makefile	/^CFLAGS = -g -O2$/;"	m
-CFLAGS	confuse-2.5/tests/Makefile	/^CFLAGS = -g -O2$/;"	m
-CHECK_CFLAGS	confuse-2.5/Makefile	/^CHECK_CFLAGS = $/;"	m
-CHECK_CFLAGS	confuse-2.5/doc/Makefile	/^CHECK_CFLAGS = $/;"	m
-CHECK_CFLAGS	confuse-2.5/examples/Makefile	/^CHECK_CFLAGS = $/;"	m
-CHECK_CFLAGS	confuse-2.5/m4/Makefile	/^CHECK_CFLAGS = $/;"	m
-CHECK_CFLAGS	confuse-2.5/src/Makefile	/^CHECK_CFLAGS = $/;"	m
-CHECK_CFLAGS	confuse-2.5/tests/Makefile	/^CHECK_CFLAGS = $/;"	m
-CHECK_LIBS	confuse-2.5/Makefile	/^CHECK_LIBS = $/;"	m
-CHECK_LIBS	confuse-2.5/doc/Makefile	/^CHECK_LIBS = $/;"	m
-CHECK_LIBS	confuse-2.5/examples/Makefile	/^CHECK_LIBS = $/;"	m
-CHECK_LIBS	confuse-2.5/m4/Makefile	/^CHECK_LIBS = $/;"	m
-CHECK_LIBS	confuse-2.5/src/Makefile	/^CHECK_LIBS = $/;"	m
-CHECK_LIBS	confuse-2.5/tests/Makefile	/^CHECK_LIBS = $/;"	m
-CLEANFILES	confuse-2.5/Makefile	/^CLEANFILES = *~ '\\#*\\#'$/;"	m
-CLEANFILES	confuse-2.5/doc/Makefile	/^CLEANFILES = *~ '\\#*\\#' $(TUTORIAL_LISTINGS)$/;"	m
-CLEANFILES	confuse-2.5/examples/Makefile	/^CLEANFILES = *~ \\#*\\#$/;"	m
-CLEANFILES	confuse-2.5/src/Makefile	/^CLEANFILES = *~ \\#*\\#$/;"	m
-CLEANFILES	confuse-2.5/tests/Makefile	/^CLEANFILES = *~ \\#*\\#$/;"	m
-COMPILE	confuse-2.5/doc/Makefile	/^COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \\$/;"	m
-COMPILE	confuse-2.5/examples/Makefile	/^COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \\$/;"	m
-COMPILE	confuse-2.5/src/Makefile	/^COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \\$/;"	m
-COMPILE	confuse-2.5/tests/Makefile	/^COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \\$/;"	m
-CONFIG_CLEAN_FILES	confuse-2.5/Makefile	/^CONFIG_CLEAN_FILES = libconfuse.pc libconfuse.spec confuse-config$/;"	m
-CONFIG_CLEAN_FILES	confuse-2.5/doc/Makefile	/^CONFIG_CLEAN_FILES = Doxyfile$/;"	m
-CONFIG_CLEAN_FILES	confuse-2.5/examples/Makefile	/^CONFIG_CLEAN_FILES =$/;"	m
-CONFIG_CLEAN_FILES	confuse-2.5/m4/Makefile	/^CONFIG_CLEAN_FILES =$/;"	m
-CONFIG_CLEAN_FILES	confuse-2.5/src/Makefile	/^CONFIG_CLEAN_FILES =$/;"	m
-CONFIG_CLEAN_FILES	confuse-2.5/tests/Makefile	/^CONFIG_CLEAN_FILES =$/;"	m
-CONFIG_HEADER	confuse-2.5/Makefile	/^CONFIG_HEADER = config.h$/;"	m
-CONFIG_HEADER	confuse-2.5/doc/Makefile	/^CONFIG_HEADER = $(top_builddir)\/config.h$/;"	m
-CONFIG_HEADER	confuse-2.5/examples/Makefile	/^CONFIG_HEADER = $(top_builddir)\/config.h$/;"	m
-CONFIG_HEADER	confuse-2.5/m4/Makefile	/^CONFIG_HEADER = $(top_builddir)\/config.h$/;"	m
-CONFIG_HEADER	confuse-2.5/src/Makefile	/^CONFIG_HEADER = $(top_builddir)\/config.h$/;"	m
-CONFIG_HEADER	confuse-2.5/tests/Makefile	/^CONFIG_HEADER = $(top_builddir)\/config.h$/;"	m
-CONFUSE_CONFIG	confuse-2.5/Makefile	/^CONFUSE_CONFIG = confuse-config$/;"	m
-CONFUSE_CONFIG	confuse-2.5/doc/Makefile	/^CONFUSE_CONFIG = confuse-config$/;"	m
-CONFUSE_CONFIG	confuse-2.5/examples/Makefile	/^CONFUSE_CONFIG = confuse-config$/;"	m
-CONFUSE_CONFIG	confuse-2.5/m4/Makefile	/^CONFUSE_CONFIG = confuse-config$/;"	m
-CONFUSE_CONFIG	confuse-2.5/src/Makefile	/^CONFUSE_CONFIG = confuse-config$/;"	m
-CONFUSE_CONFIG	confuse-2.5/tests/Makefile	/^CONFUSE_CONFIG = confuse-config$/;"	m
-CONFUSE_VERSION	confuse-2.5/Makefile	/^CONFUSE_VERSION = 2.5$/;"	m
-CONFUSE_VERSION	confuse-2.5/doc/Makefile	/^CONFUSE_VERSION = 2.5$/;"	m
-CONFUSE_VERSION	confuse-2.5/examples/Makefile	/^CONFUSE_VERSION = 2.5$/;"	m
-CONFUSE_VERSION	confuse-2.5/m4/Makefile	/^CONFUSE_VERSION = 2.5$/;"	m
-CONFUSE_VERSION	confuse-2.5/src/Makefile	/^CONFUSE_VERSION = 2.5$/;"	m
-CONFUSE_VERSION	confuse-2.5/tests/Makefile	/^CONFUSE_VERSION = 2.5$/;"	m
-COPYRIGHT_HOLDER	confuse-2.5/po/Makefile	/^COPYRIGHT_HOLDER = Martin Hedenfalk$/;"	m
-CPP	confuse-2.5/Makefile	/^CPP = gcc -E$/;"	m
-CPP	confuse-2.5/doc/Makefile	/^CPP = gcc -E$/;"	m
-CPP	confuse-2.5/examples/Makefile	/^CPP = gcc -E$/;"	m
-CPP	confuse-2.5/m4/Makefile	/^CPP = gcc -E$/;"	m
-CPP	confuse-2.5/src/Makefile	/^CPP = gcc -E$/;"	m
-CPP	confuse-2.5/tests/Makefile	/^CPP = gcc -E$/;"	m
-CPPFLAGS	confuse-2.5/Makefile	/^CPPFLAGS = $/;"	m
-CPPFLAGS	confuse-2.5/doc/Makefile	/^CPPFLAGS = $/;"	m
-CPPFLAGS	confuse-2.5/examples/Makefile	/^CPPFLAGS = $/;"	m
-CPPFLAGS	confuse-2.5/m4/Makefile	/^CPPFLAGS = $/;"	m
-CPPFLAGS	confuse-2.5/src/Makefile	/^CPPFLAGS = $/;"	m
-CPPFLAGS	confuse-2.5/tests/Makefile	/^CPPFLAGS = $/;"	m
-CTAGS	confuse-2.5/Makefile	/^CTAGS = ctags$/;"	m
-CTAGS	confuse-2.5/doc/Makefile	/^CTAGS = ctags$/;"	m
-CTAGS	confuse-2.5/examples/Makefile	/^CTAGS = ctags$/;"	m
-CTAGS	confuse-2.5/src/Makefile	/^CTAGS = ctags$/;"	m
-CTAGS	confuse-2.5/tests/Makefile	/^CTAGS = ctags$/;"	m
-CXX	confuse-2.5/Makefile	/^CXX = g++$/;"	m
-CXX	confuse-2.5/doc/Makefile	/^CXX = g++$/;"	m
-CXX	confuse-2.5/examples/Makefile	/^CXX = g++$/;"	m
-CXX	confuse-2.5/m4/Makefile	/^CXX = g++$/;"	m
-CXX	confuse-2.5/src/Makefile	/^CXX = g++$/;"	m
-CXX	confuse-2.5/tests/Makefile	/^CXX = g++$/;"	m
-CXXCPP	confuse-2.5/Makefile	/^CXXCPP = g++ -E$/;"	m
-CXXCPP	confuse-2.5/doc/Makefile	/^CXXCPP = g++ -E$/;"	m
-CXXCPP	confuse-2.5/examples/Makefile	/^CXXCPP = g++ -E$/;"	m
-CXXCPP	confuse-2.5/m4/Makefile	/^CXXCPP = g++ -E$/;"	m
-CXXCPP	confuse-2.5/src/Makefile	/^CXXCPP = g++ -E$/;"	m
-CXXCPP	confuse-2.5/tests/Makefile	/^CXXCPP = g++ -E$/;"	m
-CXXDEPMODE	confuse-2.5/Makefile	/^CXXDEPMODE = depmode=gcc3$/;"	m
-CXXDEPMODE	confuse-2.5/doc/Makefile	/^CXXDEPMODE = depmode=gcc3$/;"	m
-CXXDEPMODE	confuse-2.5/examples/Makefile	/^CXXDEPMODE = depmode=gcc3$/;"	m
-CXXDEPMODE	confuse-2.5/m4/Makefile	/^CXXDEPMODE = depmode=gcc3$/;"	m
-CXXDEPMODE	confuse-2.5/src/Makefile	/^CXXDEPMODE = depmode=gcc3$/;"	m
-CXXDEPMODE	confuse-2.5/tests/Makefile	/^CXXDEPMODE = depmode=gcc3$/;"	m
-CXXFLAGS	confuse-2.5/Makefile	/^CXXFLAGS = -g -O2$/;"	m
-CXXFLAGS	confuse-2.5/doc/Makefile	/^CXXFLAGS = -g -O2$/;"	m
-CXXFLAGS	confuse-2.5/examples/Makefile	/^CXXFLAGS = -g -O2$/;"	m
-CXXFLAGS	confuse-2.5/m4/Makefile	/^CXXFLAGS = -g -O2$/;"	m
-CXXFLAGS	confuse-2.5/src/Makefile	/^CXXFLAGS = -g -O2$/;"	m
-CXXFLAGS	confuse-2.5/tests/Makefile	/^CXXFLAGS = -g -O2$/;"	m
-CYGPATH_W	confuse-2.5/Makefile	/^CYGPATH_W = echo$/;"	m
-CYGPATH_W	confuse-2.5/doc/Makefile	/^CYGPATH_W = echo$/;"	m
-CYGPATH_W	confuse-2.5/examples/Makefile	/^CYGPATH_W = echo$/;"	m
-CYGPATH_W	confuse-2.5/m4/Makefile	/^CYGPATH_W = echo$/;"	m
-CYGPATH_W	confuse-2.5/src/Makefile	/^CYGPATH_W = echo$/;"	m
-CYGPATH_W	confuse-2.5/tests/Makefile	/^CYGPATH_W = echo$/;"	m
+CMD_MATCH_ENV	mod_webfw2.c	/^    CMD_MATCH_ENV$/;"	e	enum:__anon3	file:
+CMD_MATCH_NOTE	mod_webfw2.c	/^    CMD_MATCH_NOTE,$/;"	e	enum:__anon3	file:
 Clear_Patricia	patricia.c	/^Clear_Patricia(patricia_tree_t * patricia, void_fn_t func)$/;"	f
-DATA	confuse-2.5/Makefile	/^DATA = $(pkgconfig_DATA)$/;"	m
-DEFAULT_INCLUDES	confuse-2.5/doc/Makefile	/^DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)$/;"	m
-DEFAULT_INCLUDES	confuse-2.5/examples/Makefile	/^DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)$/;"	m
-DEFAULT_INCLUDES	confuse-2.5/src/Makefile	/^DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)$/;"	m
-DEFAULT_INCLUDES	confuse-2.5/tests/Makefile	/^DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)$/;"	m
-DEFS	confuse-2.5/Makefile	/^DEFS = -DHAVE_CONFIG_H$/;"	m
-DEFS	confuse-2.5/doc/Makefile	/^DEFS = -DHAVE_CONFIG_H$/;"	m
-DEFS	confuse-2.5/examples/Makefile	/^DEFS = -DHAVE_CONFIG_H$/;"	m
-DEFS	confuse-2.5/m4/Makefile	/^DEFS = -DHAVE_CONFIG_H$/;"	m
-DEFS	confuse-2.5/src/Makefile	/^DEFS = -DLOCALEDIR=\\"$(localedir)\\" -DHAVE_CONFIG_H$/;"	m
-DEFS	confuse-2.5/tests/Makefile	/^DEFS = -DHAVE_CONFIG_H$/;"	m
-DEPDIR	confuse-2.5/Makefile	/^DEPDIR = .deps$/;"	m
-DEPDIR	confuse-2.5/doc/Makefile	/^DEPDIR = .deps$/;"	m
-DEPDIR	confuse-2.5/examples/Makefile	/^DEPDIR = .deps$/;"	m
-DEPDIR	confuse-2.5/m4/Makefile	/^DEPDIR = .deps$/;"	m
-DEPDIR	confuse-2.5/src/Makefile	/^DEPDIR = .deps$/;"	m
-DEPDIR	confuse-2.5/tests/Makefile	/^DEPDIR = .deps$/;"	m
-DEP_FILES	confuse-2.5/doc/Makefile	/^DEP_FILES = .\/$(DEPDIR)\/listing1.Po \\$/;"	m
-DEP_FILES	confuse-2.5/examples/Makefile	/^DEP_FILES = .\/$(DEPDIR)\/ftpconf.Po .\/$(DEPDIR)\/reread.Po \\$/;"	m
-DEP_FILES	confuse-2.5/src/Makefile	/^DEP_FILES = .\/$(DEPDIR)\/confuse.Plo .\/$(DEPDIR)\/lexer.Plo$/;"	m
-DEP_FILES	confuse-2.5/tests/Makefile	/^DEP_FILES = .\/$(DEPDIR)\/check_confuse.Po \\$/;"	m
-DEVCPP_FILES	confuse-2.5/Makefile	/^DEVCPP_FILES = cfgtest.dev config.h libConfuse.dev$/;"	m
 DFLAGS	Makefile	/^DFLAGS       = -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64$/;"	m
-DISTCLEANFILES	confuse-2.5/doc/Makefile	/^DISTCLEANFILES = $/;"	m
-DISTFILES	confuse-2.5/Makefile	/^DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)$/;"	m
-DISTFILES	confuse-2.5/doc/Makefile	/^DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)$/;"	m
-DISTFILES	confuse-2.5/examples/Makefile	/^DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)$/;"	m
-DISTFILES	confuse-2.5/m4/Makefile	/^DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)$/;"	m
-DISTFILES	confuse-2.5/po/Makefile	/^DISTFILES = $(DISTFILES.common) Makevars POTFILES.in $(DOMAIN).pot stamp-po \\$/;"	m
-DISTFILES	confuse-2.5/src/Makefile	/^DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)$/;"	m
-DISTFILES	confuse-2.5/tests/Makefile	/^DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)$/;"	m
-DISTFILES.common	confuse-2.5/po/Makefile	/^DISTFILES.common = Makefile.in.in remove-potcdate.sin \\$/;"	m
-DISTFILES.common.extra1	confuse-2.5/po/Makefile	/^DISTFILES.common.extra1 = quot.sed boldquot.sed en@quot.header en@boldquot.header insert-header.sin Rules-quot$/;"	m
-DIST_ARCHIVES	confuse-2.5/Makefile	/^DIST_ARCHIVES = $(distdir).tar.gz$/;"	m
-DIST_COMMON	confuse-2.5/Makefile	/^DIST_COMMON = README $(am__configure_deps) $(srcdir)\/Makefile.am \\$/;"	m
-DIST_COMMON	confuse-2.5/doc/Makefile	/^DIST_COMMON = $(srcdir)\/Doxyfile.in $(srcdir)\/Makefile.am \\$/;"	m
-DIST_COMMON	confuse-2.5/examples/Makefile	/^DIST_COMMON = $(srcdir)\/Makefile.am $(srcdir)\/Makefile.in$/;"	m
-DIST_COMMON	confuse-2.5/m4/Makefile	/^DIST_COMMON = $(srcdir)\/Makefile.am $(srcdir)\/Makefile.in ChangeLog$/;"	m
-DIST_COMMON	confuse-2.5/src/Makefile	/^DIST_COMMON = $(include_HEADERS) $(srcdir)\/Makefile.am \\$/;"	m
-DIST_COMMON	confuse-2.5/tests/Makefile	/^DIST_COMMON = $(srcdir)\/Makefile.am $(srcdir)\/Makefile.in$/;"	m
-DIST_SOURCES	confuse-2.5/Makefile	/^DIST_SOURCES =$/;"	m
-DIST_SOURCES	confuse-2.5/doc/Makefile	/^DIST_SOURCES = listing1.c listing2.c listing3.c listing4.c listing5.c \\$/;"	m
-DIST_SOURCES	confuse-2.5/examples/Makefile	/^DIST_SOURCES = ftpconf.c reread.c simple.c$/;"	m
-DIST_SOURCES	confuse-2.5/m4/Makefile	/^DIST_SOURCES =$/;"	m
-DIST_SOURCES	confuse-2.5/src/Makefile	/^DIST_SOURCES = $(libconfuse_la_SOURCES)$/;"	m
-DIST_SOURCES	confuse-2.5/tests/Makefile	/^DIST_SOURCES = $(check_confuse_SOURCES)$/;"	m
-DIST_SUBDIRS	confuse-2.5/Makefile	/^DIST_SUBDIRS = $(SUBDIRS)$/;"	m
 DLLIMPORT	confuse-2.5/src/confuse.h	62;"	d
 DLLIMPORT	confuse-2.5/src/confuse.h	64;"	d
 DLLIMPORT	confuse-2.5/src/confuse.h	68;"	d
 DLLSYM	confuse-2.5/examples/wincfgtest.c	12;"	d	file:
 DLLSYM	confuse-2.5/examples/wincfgtest.c	14;"	d	file:
-DOMAIN	confuse-2.5/po/Makefile	/^DOMAIN = $(PACKAGE)$/;"	m
-DUMMYPOFILES	confuse-2.5/po/Makefile	/^DUMMYPOFILES =  sv.nop$/;"	m
 Deref_Prefix	patricia.c	/^Deref_Prefix(prefix_t * prefix)$/;"	f
 Destroy_Patricia	patricia.c	/^Destroy_Patricia(patricia_tree_t * patricia, void_fn_t func)$/;"	f
-ECHO	confuse-2.5/Makefile	/^ECHO = echo$/;"	m
-ECHO	confuse-2.5/doc/Makefile	/^ECHO = echo$/;"	m
-ECHO	confuse-2.5/examples/Makefile	/^ECHO = echo$/;"	m
-ECHO	confuse-2.5/m4/Makefile	/^ECHO = echo$/;"	m
-ECHO	confuse-2.5/src/Makefile	/^ECHO = echo$/;"	m
 ECHO	confuse-2.5/src/lexer.c	621;"	d	file:
-ECHO	confuse-2.5/tests/Makefile	/^ECHO = echo$/;"	m
-ECHO_C	confuse-2.5/Makefile	/^ECHO_C = $/;"	m
-ECHO_C	confuse-2.5/doc/Makefile	/^ECHO_C = $/;"	m
-ECHO_C	confuse-2.5/examples/Makefile	/^ECHO_C = $/;"	m
-ECHO_C	confuse-2.5/m4/Makefile	/^ECHO_C = $/;"	m
-ECHO_C	confuse-2.5/src/Makefile	/^ECHO_C = $/;"	m
-ECHO_C	confuse-2.5/tests/Makefile	/^ECHO_C = $/;"	m
-ECHO_N	confuse-2.5/Makefile	/^ECHO_N = -n$/;"	m
-ECHO_N	confuse-2.5/doc/Makefile	/^ECHO_N = -n$/;"	m
-ECHO_N	confuse-2.5/examples/Makefile	/^ECHO_N = -n$/;"	m
-ECHO_N	confuse-2.5/m4/Makefile	/^ECHO_N = -n$/;"	m
-ECHO_N	confuse-2.5/src/Makefile	/^ECHO_N = -n$/;"	m
-ECHO_N	confuse-2.5/tests/Makefile	/^ECHO_N = -n$/;"	m
-ECHO_T	confuse-2.5/Makefile	/^ECHO_T = $/;"	m
-ECHO_T	confuse-2.5/doc/Makefile	/^ECHO_T = $/;"	m
-ECHO_T	confuse-2.5/examples/Makefile	/^ECHO_T = $/;"	m
-ECHO_T	confuse-2.5/m4/Makefile	/^ECHO_T = $/;"	m
-ECHO_T	confuse-2.5/src/Makefile	/^ECHO_T = $/;"	m
-ECHO_T	confuse-2.5/tests/Makefile	/^ECHO_T = $/;"	m
-EGREP	confuse-2.5/Makefile	/^EGREP = grep -E$/;"	m
-EGREP	confuse-2.5/doc/Makefile	/^EGREP = grep -E$/;"	m
-EGREP	confuse-2.5/examples/Makefile	/^EGREP = grep -E$/;"	m
-EGREP	confuse-2.5/m4/Makefile	/^EGREP = grep -E$/;"	m
-EGREP	confuse-2.5/src/Makefile	/^EGREP = grep -E$/;"	m
-EGREP	confuse-2.5/tests/Makefile	/^EGREP = grep -E$/;"	m
-ENABLE_NLS	confuse-2.5/config.h	6;"	d
 EOB_ACT_CONTINUE_SCAN	confuse-2.5/src/lexer.c	122;"	d	file:
 EOB_ACT_END_OF_FILE	confuse-2.5/src/lexer.c	123;"	d	file:
 EOB_ACT_LAST_MATCH	confuse-2.5/src/lexer.c	124;"	d	file:
-ETAGS	confuse-2.5/Makefile	/^ETAGS = etags$/;"	m
-ETAGS	confuse-2.5/doc/Makefile	/^ETAGS = etags$/;"	m
-ETAGS	confuse-2.5/examples/Makefile	/^ETAGS = etags$/;"	m
-ETAGS	confuse-2.5/src/Makefile	/^ETAGS = etags$/;"	m
-ETAGS	confuse-2.5/tests/Makefile	/^ETAGS = etags$/;"	m
-EXEEXT	confuse-2.5/Makefile	/^EXEEXT = $/;"	m
-EXEEXT	confuse-2.5/doc/Makefile	/^EXEEXT = $/;"	m
-EXEEXT	confuse-2.5/examples/Makefile	/^EXEEXT = $/;"	m
-EXEEXT	confuse-2.5/m4/Makefile	/^EXEEXT = $/;"	m
-EXEEXT	confuse-2.5/src/Makefile	/^EXEEXT = $/;"	m
-EXEEXT	confuse-2.5/tests/Makefile	/^EXEEXT = $/;"	m
-EXTRA_DIST	confuse-2.5/Makefile	/^EXTRA_DIST = libconfuse.spec.in libconfuse.spec$/;"	m
-EXTRA_DIST	confuse-2.5/doc/Makefile	/^EXTRA_DIST = doxygen-footer.html doxygen-header.html doxygen.css tutorial.xml \\$/;"	m
-EXTRA_DIST	confuse-2.5/examples/Makefile	/^EXTRA_DIST = simple.conf reread.conf wincfgtest.conf \\$/;"	m
-EXTRA_DIST	confuse-2.5/m4/Makefile	/^EXTRA_DIST = intdiv0.m4 inttypes.m4 inttypes_h.m4 inttypes-pri.m4 nls.m4 \\$/;"	m
-EXTRA_DIST	confuse-2.5/tests/Makefile	/^EXTRA_DIST = a.conf b.conf$/;"	m
-EXTRA_LOCALE_CATEGORIES	confuse-2.5/po/Makefile	/^EXTRA_LOCALE_CATEGORIES =$/;"	m
-EXTRA_PROGRAMS	confuse-2.5/tests/Makefile	/^EXTRA_PROGRAMS = check_confuse$(EXEEXT)$/;"	m
-F77	confuse-2.5/Makefile	/^F77 = $/;"	m
-F77	confuse-2.5/doc/Makefile	/^F77 = $/;"	m
-F77	confuse-2.5/examples/Makefile	/^F77 = $/;"	m
-F77	confuse-2.5/m4/Makefile	/^F77 = $/;"	m
-F77	confuse-2.5/src/Makefile	/^F77 = $/;"	m
-F77	confuse-2.5/tests/Makefile	/^F77 = $/;"	m
-FFLAGS	confuse-2.5/Makefile	/^FFLAGS = $/;"	m
-FFLAGS	confuse-2.5/doc/Makefile	/^FFLAGS = $/;"	m
-FFLAGS	confuse-2.5/examples/Makefile	/^FFLAGS = $/;"	m
-FFLAGS	confuse-2.5/m4/Makefile	/^FFLAGS = $/;"	m
-FFLAGS	confuse-2.5/src/Makefile	/^FFLAGS = $/;"	m
-FFLAGS	confuse-2.5/tests/Makefile	/^FFLAGS = $/;"	m
-FILTER_CONFIG_KEY	mod_webfw2.c	28;"	d	file:
+FILTER_CONFIG_KEY	mod_webfw2.c	29;"	d	file:
 FLEX_SCANNER	confuse-2.5/src/lexer.c	25;"	d	file:
-GMOFILES	confuse-2.5/po/Makefile	/^GMOFILES =  sv.gmo$/;"	m
-GMSGFMT	confuse-2.5/Makefile	/^GMSGFMT = \/usr\/bin\/msgfmt$/;"	m
-GMSGFMT	confuse-2.5/doc/Makefile	/^GMSGFMT = \/usr\/bin\/msgfmt$/;"	m
-GMSGFMT	confuse-2.5/examples/Makefile	/^GMSGFMT = \/usr\/bin\/msgfmt$/;"	m
-GMSGFMT	confuse-2.5/m4/Makefile	/^GMSGFMT = \/usr\/bin\/msgfmt$/;"	m
-GMSGFMT	confuse-2.5/po/Makefile	/^GMSGFMT = \/usr\/bin\/msgfmt$/;"	m
-GMSGFMT	confuse-2.5/src/Makefile	/^GMSGFMT = \/usr\/bin\/msgfmt$/;"	m
-GMSGFMT	confuse-2.5/tests/Makefile	/^GMSGFMT = \/usr\/bin\/msgfmt$/;"	m
-GZIP_ENV	confuse-2.5/Makefile	/^GZIP_ENV = --best$/;"	m
-HAVE_DCGETTEXT	confuse-2.5/config.h	10;"	d
-HAVE_DLFCN_H	confuse-2.5/config.h	13;"	d
-HAVE_GETTEXT	confuse-2.5/config.h	16;"	d
-HAVE_INTTYPES_H	confuse-2.5/config.h	22;"	d
-HAVE_MEMORY_H	confuse-2.5/config.h	25;"	d
 HAVE_MEMORY_H	confuse-2.5/windows/borland/config.h	24;"	d
 HAVE_MEMORY_H	confuse-2.5/windows/devcpp/config.h	24;"	d
 HAVE_MEMORY_H	confuse-2.5/windows/msvc6/libConfuse/config.h	24;"	d
 HAVE_MEMORY_H	confuse-2.5/windows/msvs.net/config.h	24;"	d
-HAVE_PKGCONFIG_FALSE	confuse-2.5/Makefile	/^HAVE_PKGCONFIG_FALSE = #$/;"	m
-HAVE_PKGCONFIG_FALSE	confuse-2.5/doc/Makefile	/^HAVE_PKGCONFIG_FALSE = #$/;"	m
-HAVE_PKGCONFIG_FALSE	confuse-2.5/examples/Makefile	/^HAVE_PKGCONFIG_FALSE = #$/;"	m
-HAVE_PKGCONFIG_FALSE	confuse-2.5/m4/Makefile	/^HAVE_PKGCONFIG_FALSE = #$/;"	m
-HAVE_PKGCONFIG_FALSE	confuse-2.5/src/Makefile	/^HAVE_PKGCONFIG_FALSE = #$/;"	m
-HAVE_PKGCONFIG_FALSE	confuse-2.5/tests/Makefile	/^HAVE_PKGCONFIG_FALSE = #$/;"	m
-HAVE_PKGCONFIG_TRUE	confuse-2.5/Makefile	/^HAVE_PKGCONFIG_TRUE = $/;"	m
-HAVE_PKGCONFIG_TRUE	confuse-2.5/doc/Makefile	/^HAVE_PKGCONFIG_TRUE = $/;"	m
-HAVE_PKGCONFIG_TRUE	confuse-2.5/examples/Makefile	/^HAVE_PKGCONFIG_TRUE = $/;"	m
-HAVE_PKGCONFIG_TRUE	confuse-2.5/m4/Makefile	/^HAVE_PKGCONFIG_TRUE = $/;"	m
-HAVE_PKGCONFIG_TRUE	confuse-2.5/src/Makefile	/^HAVE_PKGCONFIG_TRUE = $/;"	m
-HAVE_PKGCONFIG_TRUE	confuse-2.5/tests/Makefile	/^HAVE_PKGCONFIG_TRUE = $/;"	m
-HAVE_STDINT_H	confuse-2.5/config.h	28;"	d
 HAVE_STDINT_H	confuse-2.5/windows/borland/config.h	27;"	d
 HAVE_STDINT_H	confuse-2.5/windows/devcpp/config.h	27;"	d
 HAVE_STDINT_H	confuse-2.5/windows/msvc6/libConfuse/config.h	27;"	d
 HAVE_STDINT_H	confuse-2.5/windows/msvs.net/config.h	27;"	d
-HAVE_STDLIB_H	confuse-2.5/config.h	31;"	d
 HAVE_STDLIB_H	confuse-2.5/windows/borland/config.h	30;"	d
 HAVE_STDLIB_H	confuse-2.5/windows/devcpp/config.h	30;"	d
 HAVE_STDLIB_H	confuse-2.5/windows/msvc6/libConfuse/config.h	30;"	d
 HAVE_STDLIB_H	confuse-2.5/windows/msvs.net/config.h	30;"	d
-HAVE_STRCASECMP	confuse-2.5/config.h	34;"	d
 HAVE_STRCASECMP	confuse-2.5/windows/devcpp/config.h	33;"	d
-HAVE_STRDUP	confuse-2.5/config.h	37;"	d
 HAVE_STRDUP	confuse-2.5/windows/borland/config.h	36;"	d
 HAVE_STRDUP	confuse-2.5/windows/devcpp/config.h	36;"	d
-HAVE_STRINGS_H	confuse-2.5/config.h	40;"	d
-HAVE_STRING_H	confuse-2.5/config.h	43;"	d
 HAVE_STRING_H	confuse-2.5/windows/borland/config.h	42;"	d
 HAVE_STRING_H	confuse-2.5/windows/devcpp/config.h	42;"	d
 HAVE_STRING_H	confuse-2.5/windows/msvc6/libConfuse/config.h	45;"	d
 HAVE_STRING_H	confuse-2.5/windows/msvs.net/config.h	45;"	d
-HAVE_STRNDUP	confuse-2.5/config.h	46;"	d
-HAVE_SYS_STAT_H	confuse-2.5/config.h	49;"	d
 HAVE_SYS_STAT_H	confuse-2.5/windows/borland/config.h	45;"	d
 HAVE_SYS_STAT_H	confuse-2.5/windows/devcpp/config.h	45;"	d
 HAVE_SYS_STAT_H	confuse-2.5/windows/msvc6/libConfuse/config.h	48;"	d
 HAVE_SYS_STAT_H	confuse-2.5/windows/msvs.net/config.h	48;"	d
-HAVE_SYS_TYPES_H	confuse-2.5/config.h	52;"	d
 HAVE_SYS_TYPES_H	confuse-2.5/windows/borland/config.h	48;"	d
 HAVE_SYS_TYPES_H	confuse-2.5/windows/devcpp/config.h	48;"	d
 HAVE_SYS_TYPES_H	confuse-2.5/windows/msvc6/libConfuse/config.h	51;"	d
 HAVE_SYS_TYPES_H	confuse-2.5/windows/msvs.net/config.h	51;"	d
-HAVE_UNISTD_H	confuse-2.5/config.h	55;"	d
 HAVE_UNISTD_H	confuse-2.5/windows/devcpp/config.h	51;"	d
 HAVE__FILENO	confuse-2.5/windows/msvc6/libConfuse/config.h	91;"	d
 HAVE__FILENO	confuse-2.5/windows/msvs.net/config.h	91;"	d
@@ -445,278 +120,38 @@ HAVE__ISATTY	confuse-2.5/windows/msvc6/libConfuse/config.h	94;"	d
 HAVE__ISATTY	confuse-2.5/windows/msvs.net/config.h	94;"	d
 HAVE__STRDUP	confuse-2.5/windows/msvc6/libConfuse/config.h	39;"	d
 HAVE__STRDUP	confuse-2.5/windows/msvs.net/config.h	39;"	d
-HEADERS	confuse-2.5/src/Makefile	/^HEADERS = $(include_HEADERS)$/;"	m
-INCLUDES	confuse-2.5/doc/Makefile	/^INCLUDES = -I$(top_srcdir)\/src$/;"	m
-INCLUDES	confuse-2.5/examples/Makefile	/^INCLUDES = -I$(top_srcdir)\/src$/;"	m
 INITIAL	confuse-2.5/src/lexer.c	465;"	d	file:
-INSTALL	confuse-2.5/Makefile	/^INSTALL = \/usr\/bin\/install -c$/;"	m
-INSTALL	confuse-2.5/doc/Makefile	/^INSTALL = \/usr\/bin\/install -c$/;"	m
-INSTALL	confuse-2.5/examples/Makefile	/^INSTALL = \/usr\/bin\/install -c$/;"	m
-INSTALL	confuse-2.5/m4/Makefile	/^INSTALL = \/usr\/bin\/install -c$/;"	m
-INSTALL	confuse-2.5/po/Makefile	/^INSTALL = \/usr\/bin\/install -c$/;"	m
-INSTALL	confuse-2.5/src/Makefile	/^INSTALL = \/usr\/bin\/install -c$/;"	m
-INSTALL	confuse-2.5/tests/Makefile	/^INSTALL = \/usr\/bin\/install -c$/;"	m
-INSTALL_DATA	confuse-2.5/Makefile	/^INSTALL_DATA = ${INSTALL} -m 644$/;"	m
-INSTALL_DATA	confuse-2.5/doc/Makefile	/^INSTALL_DATA = ${INSTALL} -m 644$/;"	m
-INSTALL_DATA	confuse-2.5/examples/Makefile	/^INSTALL_DATA = ${INSTALL} -m 644$/;"	m
-INSTALL_DATA	confuse-2.5/m4/Makefile	/^INSTALL_DATA = ${INSTALL} -m 644$/;"	m
-INSTALL_DATA	confuse-2.5/po/Makefile	/^INSTALL_DATA = ${INSTALL} -m 644$/;"	m
-INSTALL_DATA	confuse-2.5/src/Makefile	/^INSTALL_DATA = ${INSTALL} -m 644$/;"	m
-INSTALL_DATA	confuse-2.5/tests/Makefile	/^INSTALL_DATA = ${INSTALL} -m 644$/;"	m
-INSTALL_HEADER	confuse-2.5/Makefile	/^INSTALL_HEADER = $(INSTALL_DATA)$/;"	m
-INSTALL_HEADER	confuse-2.5/doc/Makefile	/^INSTALL_HEADER = $(INSTALL_DATA)$/;"	m
-INSTALL_HEADER	confuse-2.5/examples/Makefile	/^INSTALL_HEADER = $(INSTALL_DATA)$/;"	m
-INSTALL_HEADER	confuse-2.5/m4/Makefile	/^INSTALL_HEADER = $(INSTALL_DATA)$/;"	m
-INSTALL_HEADER	confuse-2.5/src/Makefile	/^INSTALL_HEADER = $(INSTALL_DATA)$/;"	m
-INSTALL_HEADER	confuse-2.5/tests/Makefile	/^INSTALL_HEADER = $(INSTALL_DATA)$/;"	m
-INSTALL_PROGRAM	confuse-2.5/Makefile	/^INSTALL_PROGRAM = ${INSTALL}$/;"	m
-INSTALL_PROGRAM	confuse-2.5/doc/Makefile	/^INSTALL_PROGRAM = ${INSTALL}$/;"	m
-INSTALL_PROGRAM	confuse-2.5/examples/Makefile	/^INSTALL_PROGRAM = ${INSTALL}$/;"	m
-INSTALL_PROGRAM	confuse-2.5/m4/Makefile	/^INSTALL_PROGRAM = ${INSTALL}$/;"	m
-INSTALL_PROGRAM	confuse-2.5/src/Makefile	/^INSTALL_PROGRAM = ${INSTALL}$/;"	m
-INSTALL_PROGRAM	confuse-2.5/tests/Makefile	/^INSTALL_PROGRAM = ${INSTALL}$/;"	m
-INSTALL_SCRIPT	confuse-2.5/Makefile	/^INSTALL_SCRIPT = ${INSTALL}$/;"	m
-INSTALL_SCRIPT	confuse-2.5/doc/Makefile	/^INSTALL_SCRIPT = ${INSTALL}$/;"	m
-INSTALL_SCRIPT	confuse-2.5/examples/Makefile	/^INSTALL_SCRIPT = ${INSTALL}$/;"	m
-INSTALL_SCRIPT	confuse-2.5/m4/Makefile	/^INSTALL_SCRIPT = ${INSTALL}$/;"	m
-INSTALL_SCRIPT	confuse-2.5/src/Makefile	/^INSTALL_SCRIPT = ${INSTALL}$/;"	m
-INSTALL_SCRIPT	confuse-2.5/tests/Makefile	/^INSTALL_SCRIPT = ${INSTALL}$/;"	m
-INSTALL_STRIP_PROGRAM	confuse-2.5/Makefile	/^INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s$/;"	m
-INSTALL_STRIP_PROGRAM	confuse-2.5/doc/Makefile	/^INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s$/;"	m
-INSTALL_STRIP_PROGRAM	confuse-2.5/examples/Makefile	/^INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s$/;"	m
-INSTALL_STRIP_PROGRAM	confuse-2.5/m4/Makefile	/^INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s$/;"	m
-INSTALL_STRIP_PROGRAM	confuse-2.5/src/Makefile	/^INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s$/;"	m
-INSTALL_STRIP_PROGRAM	confuse-2.5/tests/Makefile	/^INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s$/;"	m
-INTLLIBS	confuse-2.5/Makefile	/^INTLLIBS = $/;"	m
-INTLLIBS	confuse-2.5/doc/Makefile	/^INTLLIBS = $/;"	m
-INTLLIBS	confuse-2.5/examples/Makefile	/^INTLLIBS = $/;"	m
-INTLLIBS	confuse-2.5/m4/Makefile	/^INTLLIBS = $/;"	m
-INTLLIBS	confuse-2.5/src/Makefile	/^INTLLIBS = $/;"	m
-INTLLIBS	confuse-2.5/tests/Makefile	/^INTLLIBS = $/;"	m
-LDFLAGS	confuse-2.5/Makefile	/^LDFLAGS = $/;"	m
-LDFLAGS	confuse-2.5/doc/Makefile	/^LDFLAGS = $/;"	m
-LDFLAGS	confuse-2.5/examples/Makefile	/^LDFLAGS = $/;"	m
-LDFLAGS	confuse-2.5/m4/Makefile	/^LDFLAGS = $/;"	m
-LDFLAGS	confuse-2.5/src/Makefile	/^LDFLAGS = $/;"	m
-LDFLAGS	confuse-2.5/tests/Makefile	/^LDFLAGS = $/;"	m
-LEX	confuse-2.5/Makefile	/^LEX = flex$/;"	m
-LEX	confuse-2.5/doc/Makefile	/^LEX = flex$/;"	m
-LEX	confuse-2.5/examples/Makefile	/^LEX = flex$/;"	m
-LEX	confuse-2.5/m4/Makefile	/^LEX = flex$/;"	m
-LEX	confuse-2.5/src/Makefile	/^LEX = flex$/;"	m
-LEX	confuse-2.5/tests/Makefile	/^LEX = flex$/;"	m
-LEXCOMPILE	confuse-2.5/src/Makefile	/^LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)$/;"	m
-LEXLIB	confuse-2.5/Makefile	/^LEXLIB = -lfl$/;"	m
-LEXLIB	confuse-2.5/doc/Makefile	/^LEXLIB = -lfl$/;"	m
-LEXLIB	confuse-2.5/examples/Makefile	/^LEXLIB = -lfl$/;"	m
-LEXLIB	confuse-2.5/m4/Makefile	/^LEXLIB = -lfl$/;"	m
-LEXLIB	confuse-2.5/src/Makefile	/^LEXLIB = -lfl$/;"	m
-LEXLIB	confuse-2.5/tests/Makefile	/^LEXLIB = -lfl$/;"	m
-LEX_OUTPUT_ROOT	confuse-2.5/Makefile	/^LEX_OUTPUT_ROOT = lex.yy$/;"	m
-LEX_OUTPUT_ROOT	confuse-2.5/doc/Makefile	/^LEX_OUTPUT_ROOT = lex.yy$/;"	m
-LEX_OUTPUT_ROOT	confuse-2.5/examples/Makefile	/^LEX_OUTPUT_ROOT = lex.yy$/;"	m
-LEX_OUTPUT_ROOT	confuse-2.5/m4/Makefile	/^LEX_OUTPUT_ROOT = lex.yy$/;"	m
-LEX_OUTPUT_ROOT	confuse-2.5/src/Makefile	/^LEX_OUTPUT_ROOT = lex.yy$/;"	m
-LEX_OUTPUT_ROOT	confuse-2.5/tests/Makefile	/^LEX_OUTPUT_ROOT = lex.yy$/;"	m
-LIBICONV	confuse-2.5/Makefile	/^LIBICONV = -liconv$/;"	m
-LIBICONV	confuse-2.5/doc/Makefile	/^LIBICONV = -liconv$/;"	m
-LIBICONV	confuse-2.5/examples/Makefile	/^LIBICONV = -liconv$/;"	m
-LIBICONV	confuse-2.5/m4/Makefile	/^LIBICONV = -liconv$/;"	m
-LIBICONV	confuse-2.5/src/Makefile	/^LIBICONV = -liconv$/;"	m
-LIBICONV	confuse-2.5/tests/Makefile	/^LIBICONV = -liconv$/;"	m
-LIBINTL	confuse-2.5/Makefile	/^LIBINTL = $/;"	m
-LIBINTL	confuse-2.5/doc/Makefile	/^LIBINTL = $/;"	m
-LIBINTL	confuse-2.5/examples/Makefile	/^LIBINTL = $/;"	m
-LIBINTL	confuse-2.5/m4/Makefile	/^LIBINTL = $/;"	m
-LIBINTL	confuse-2.5/src/Makefile	/^LIBINTL = $/;"	m
-LIBINTL	confuse-2.5/tests/Makefile	/^LIBINTL = $/;"	m
-LIBOBJS	confuse-2.5/Makefile	/^LIBOBJS = $/;"	m
-LIBOBJS	confuse-2.5/doc/Makefile	/^LIBOBJS = $/;"	m
-LIBOBJS	confuse-2.5/examples/Makefile	/^LIBOBJS = $/;"	m
-LIBOBJS	confuse-2.5/m4/Makefile	/^LIBOBJS = $/;"	m
-LIBOBJS	confuse-2.5/src/Makefile	/^LIBOBJS = $/;"	m
-LIBOBJS	confuse-2.5/tests/Makefile	/^LIBOBJS = $/;"	m
-LIBS	confuse-2.5/Makefile	/^LIBS = $/;"	m
-LIBS	confuse-2.5/doc/Makefile	/^LIBS = $(LTLIBINTL)$/;"	m
-LIBS	confuse-2.5/examples/Makefile	/^LIBS = $(LTLIBINTL)$/;"	m
-LIBS	confuse-2.5/m4/Makefile	/^LIBS = $/;"	m
-LIBS	confuse-2.5/src/Makefile	/^LIBS = $/;"	m
-LIBS	confuse-2.5/tests/Makefile	/^LIBS = $/;"	m
-LIBTOOL	confuse-2.5/Makefile	/^LIBTOOL = $(SHELL) $(top_builddir)\/libtool$/;"	m
-LIBTOOL	confuse-2.5/doc/Makefile	/^LIBTOOL = $(SHELL) $(top_builddir)\/libtool$/;"	m
-LIBTOOL	confuse-2.5/examples/Makefile	/^LIBTOOL = $(SHELL) $(top_builddir)\/libtool$/;"	m
-LIBTOOL	confuse-2.5/m4/Makefile	/^LIBTOOL = $(SHELL) $(top_builddir)\/libtool$/;"	m
-LIBTOOL	confuse-2.5/src/Makefile	/^LIBTOOL = $(SHELL) $(top_builddir)\/libtool$/;"	m
-LIBTOOL	confuse-2.5/tests/Makefile	/^LIBTOOL = $(SHELL) $(top_builddir)\/libtool$/;"	m
-LINK	confuse-2.5/doc/Makefile	/^LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \\$/;"	m
-LINK	confuse-2.5/examples/Makefile	/^LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \\$/;"	m
-LINK	confuse-2.5/src/Makefile	/^LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \\$/;"	m
-LINK	confuse-2.5/tests/Makefile	/^LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \\$/;"	m
-LN_S	confuse-2.5/Makefile	/^LN_S = ln -s$/;"	m
-LN_S	confuse-2.5/doc/Makefile	/^LN_S = ln -s$/;"	m
-LN_S	confuse-2.5/examples/Makefile	/^LN_S = ln -s$/;"	m
-LN_S	confuse-2.5/m4/Makefile	/^LN_S = ln -s$/;"	m
-LN_S	confuse-2.5/src/Makefile	/^LN_S = ln -s$/;"	m
-LN_S	confuse-2.5/tests/Makefile	/^LN_S = ln -s$/;"	m
-LTCOMPILE	confuse-2.5/doc/Makefile	/^LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \\$/;"	m
-LTCOMPILE	confuse-2.5/examples/Makefile	/^LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \\$/;"	m
-LTCOMPILE	confuse-2.5/src/Makefile	/^LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \\$/;"	m
-LTCOMPILE	confuse-2.5/tests/Makefile	/^LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \\$/;"	m
-LTLEXCOMPILE	confuse-2.5/src/Makefile	/^LTLEXCOMPILE = $(LIBTOOL) --mode=compile $(LEX) $(LFLAGS) $(AM_LFLAGS)$/;"	m
-LTLIBICONV	confuse-2.5/Makefile	/^LTLIBICONV = -liconv$/;"	m
-LTLIBICONV	confuse-2.5/doc/Makefile	/^LTLIBICONV = -liconv$/;"	m
-LTLIBICONV	confuse-2.5/examples/Makefile	/^LTLIBICONV = -liconv$/;"	m
-LTLIBICONV	confuse-2.5/m4/Makefile	/^LTLIBICONV = -liconv$/;"	m
-LTLIBICONV	confuse-2.5/src/Makefile	/^LTLIBICONV = -liconv$/;"	m
-LTLIBICONV	confuse-2.5/tests/Makefile	/^LTLIBICONV = -liconv$/;"	m
-LTLIBINTL	confuse-2.5/Makefile	/^LTLIBINTL = $/;"	m
-LTLIBINTL	confuse-2.5/doc/Makefile	/^LTLIBINTL = $/;"	m
-LTLIBINTL	confuse-2.5/examples/Makefile	/^LTLIBINTL = $/;"	m
-LTLIBINTL	confuse-2.5/m4/Makefile	/^LTLIBINTL = $/;"	m
-LTLIBINTL	confuse-2.5/src/Makefile	/^LTLIBINTL = $/;"	m
-LTLIBINTL	confuse-2.5/tests/Makefile	/^LTLIBINTL = $/;"	m
-LTLIBOBJS	confuse-2.5/Makefile	/^LTLIBOBJS = $/;"	m
-LTLIBOBJS	confuse-2.5/doc/Makefile	/^LTLIBOBJS = $/;"	m
-LTLIBOBJS	confuse-2.5/examples/Makefile	/^LTLIBOBJS = $/;"	m
-LTLIBOBJS	confuse-2.5/m4/Makefile	/^LTLIBOBJS = $/;"	m
-LTLIBOBJS	confuse-2.5/src/Makefile	/^LTLIBOBJS = $/;"	m
-LTLIBOBJS	confuse-2.5/tests/Makefile	/^LTLIBOBJS = $/;"	m
-LTLIBRARIES	confuse-2.5/src/Makefile	/^LTLIBRARIES = $(lib_LTLIBRARIES)$/;"	m
-MAKEINFO	confuse-2.5/Makefile	/^MAKEINFO = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run makeinfo$/;"	m
-MAKEINFO	confuse-2.5/doc/Makefile	/^MAKEINFO = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run makeinfo$/;"	m
-MAKEINFO	confuse-2.5/examples/Makefile	/^MAKEINFO = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run makeinfo$/;"	m
-MAKEINFO	confuse-2.5/m4/Makefile	/^MAKEINFO = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run makeinfo$/;"	m
-MAKEINFO	confuse-2.5/src/Makefile	/^MAKEINFO = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run makeinfo$/;"	m
-MAKEINFO	confuse-2.5/tests/Makefile	/^MAKEINFO = ${SHELL} \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/missing --run makeinfo$/;"	m
 MAXLINE	patricia.h	26;"	d
 MAX_INCLUDE_DEPTH	confuse-2.5/src/lexer.c	522;"	d	file:
-MKINSTALLDIRS	confuse-2.5/Makefile	/^MKINSTALLDIRS = $(top_builddir)\/support\/mkinstalldirs$/;"	m
-MKINSTALLDIRS	confuse-2.5/doc/Makefile	/^MKINSTALLDIRS = $(top_builddir)\/support\/mkinstalldirs$/;"	m
-MKINSTALLDIRS	confuse-2.5/examples/Makefile	/^MKINSTALLDIRS = $(top_builddir)\/support\/mkinstalldirs$/;"	m
-MKINSTALLDIRS	confuse-2.5/m4/Makefile	/^MKINSTALLDIRS = $(top_builddir)\/support\/mkinstalldirs$/;"	m
-MKINSTALLDIRS	confuse-2.5/po/Makefile	/^MKINSTALLDIRS = $(top_builddir)\/support\/mkinstalldirs$/;"	m
-MKINSTALLDIRS	confuse-2.5/src/Makefile	/^MKINSTALLDIRS = $(top_builddir)\/support\/mkinstalldirs$/;"	m
-MKINSTALLDIRS	confuse-2.5/tests/Makefile	/^MKINSTALLDIRS = $(top_builddir)\/support\/mkinstalldirs$/;"	m
-MOSTLYCLEANFILES	confuse-2.5/doc/Makefile	/^MOSTLYCLEANFILES = tutorial.pdf$/;"	m
-MSGCONV	confuse-2.5/po/Makefile	/^MSGCONV = msgconv$/;"	m
-MSGFILTER	confuse-2.5/po/Makefile	/^MSGFILTER = msgfilter$/;"	m
-MSGFMT	confuse-2.5/Makefile	/^MSGFMT = \/usr\/bin\/msgfmt$/;"	m
-MSGFMT	confuse-2.5/doc/Makefile	/^MSGFMT = \/usr\/bin\/msgfmt$/;"	m
-MSGFMT	confuse-2.5/examples/Makefile	/^MSGFMT = \/usr\/bin\/msgfmt$/;"	m
-MSGFMT	confuse-2.5/m4/Makefile	/^MSGFMT = \/usr\/bin\/msgfmt$/;"	m
-MSGFMT	confuse-2.5/po/Makefile	/^MSGFMT = \/usr\/bin\/msgfmt$/;"	m
-MSGFMT	confuse-2.5/src/Makefile	/^MSGFMT = \/usr\/bin\/msgfmt$/;"	m
-MSGFMT	confuse-2.5/tests/Makefile	/^MSGFMT = \/usr\/bin\/msgfmt$/;"	m
-MSGID_BUGS_ADDRESS	confuse-2.5/po/Makefile	/^MSGID_BUGS_ADDRESS = mhe@home.se$/;"	m
-MSGINIT	confuse-2.5/po/Makefile	/^MSGINIT = msginit$/;"	m
-MSGMERGE	confuse-2.5/Makefile	/^MSGMERGE = \/usr\/bin\/msgmerge$/;"	m
-MSGMERGE	confuse-2.5/doc/Makefile	/^MSGMERGE = \/usr\/bin\/msgmerge$/;"	m
-MSGMERGE	confuse-2.5/examples/Makefile	/^MSGMERGE = \/usr\/bin\/msgmerge$/;"	m
-MSGMERGE	confuse-2.5/m4/Makefile	/^MSGMERGE = \/usr\/bin\/msgmerge$/;"	m
-MSGMERGE	confuse-2.5/po/Makefile	/^MSGMERGE = msgmerge$/;"	m
-MSGMERGE	confuse-2.5/src/Makefile	/^MSGMERGE = \/usr\/bin\/msgmerge$/;"	m
-MSGMERGE	confuse-2.5/tests/Makefile	/^MSGMERGE = \/usr\/bin\/msgmerge$/;"	m
-MSGMERGE_UPDATE	confuse-2.5/po/Makefile	/^MSGMERGE_UPDATE = \/usr\/bin\/msgmerge --update$/;"	m
-MSVC6_FILES	confuse-2.5/Makefile	/^MSVC6_FILES = config.h libConfuse.dsp libConfuse.dsw unistd.h$/;"	m
-MSVS_CFGTEST_FILES	confuse-2.5/Makefile	/^MSVS_CFGTEST_FILES = cfgtest.vcproj$/;"	m
-MSVS_FILES	confuse-2.5/Makefile	/^MSVS_FILES = config.h msvs.net.sln unistd.h$/;"	m
-MSVS_LIBCONFUSE_FILES	confuse-2.5/Makefile	/^MSVS_LIBCONFUSE_FILES = libConfuse.vcproj$/;"	m
-NORMAL_INSTALL	confuse-2.5/Makefile	/^NORMAL_INSTALL = :$/;"	m
-NORMAL_INSTALL	confuse-2.5/doc/Makefile	/^NORMAL_INSTALL = :$/;"	m
-NORMAL_INSTALL	confuse-2.5/examples/Makefile	/^NORMAL_INSTALL = :$/;"	m
-NORMAL_INSTALL	confuse-2.5/m4/Makefile	/^NORMAL_INSTALL = :$/;"	m
-NORMAL_INSTALL	confuse-2.5/src/Makefile	/^NORMAL_INSTALL = :$/;"	m
-NORMAL_INSTALL	confuse-2.5/tests/Makefile	/^NORMAL_INSTALL = :$/;"	m
-NORMAL_UNINSTALL	confuse-2.5/Makefile	/^NORMAL_UNINSTALL = :$/;"	m
-NORMAL_UNINSTALL	confuse-2.5/doc/Makefile	/^NORMAL_UNINSTALL = :$/;"	m
-NORMAL_UNINSTALL	confuse-2.5/examples/Makefile	/^NORMAL_UNINSTALL = :$/;"	m
-NORMAL_UNINSTALL	confuse-2.5/m4/Makefile	/^NORMAL_UNINSTALL = :$/;"	m
-NORMAL_UNINSTALL	confuse-2.5/src/Makefile	/^NORMAL_UNINSTALL = :$/;"	m
-NORMAL_UNINSTALL	confuse-2.5/tests/Makefile	/^NORMAL_UNINSTALL = :$/;"	m
 N_	confuse-2.5/src/confuse.c	54;"	d	file:
 N_	confuse-2.5/src/lexer.c	507;"	d	file:
 New_Patricia	patricia.c	/^New_Patricia(apr_pool_t * pool, int maxbits)$/;"	f
 New_Prefix	patricia.c	/^New_Prefix(apr_pool_t * pool, int family, void *dest, int bitlen)$/;"	f
 New_Prefix2	patricia.c	/^New_Prefix2(apr_pool_t * pool, int family, void *dest, int bitlen,$/;"	f
-OBJEXT	confuse-2.5/Makefile	/^OBJEXT = o$/;"	m
-OBJEXT	confuse-2.5/doc/Makefile	/^OBJEXT = o$/;"	m
-OBJEXT	confuse-2.5/examples/Makefile	/^OBJEXT = o$/;"	m
-OBJEXT	confuse-2.5/m4/Makefile	/^OBJEXT = o$/;"	m
-OBJEXT	confuse-2.5/src/Makefile	/^OBJEXT = o$/;"	m
-OBJEXT	confuse-2.5/tests/Makefile	/^OBJEXT = o$/;"	m
-PACKAGE	confuse-2.5/Makefile	/^PACKAGE = confuse$/;"	m
-PACKAGE	confuse-2.5/config.h	58;"	d
-PACKAGE	confuse-2.5/doc/Makefile	/^PACKAGE = confuse$/;"	m
-PACKAGE	confuse-2.5/examples/Makefile	/^PACKAGE = confuse$/;"	m
-PACKAGE	confuse-2.5/m4/Makefile	/^PACKAGE = confuse$/;"	m
-PACKAGE	confuse-2.5/po/Makefile	/^PACKAGE = confuse$/;"	m
-PACKAGE	confuse-2.5/src/Makefile	/^PACKAGE = confuse$/;"	m
-PACKAGE	confuse-2.5/tests/Makefile	/^PACKAGE = confuse$/;"	m
 PACKAGE	confuse-2.5/windows/borland/config.h	54;"	d
 PACKAGE	confuse-2.5/windows/devcpp/config.h	54;"	d
 PACKAGE	confuse-2.5/windows/msvc6/libConfuse/config.h	57;"	d
 PACKAGE	confuse-2.5/windows/msvs.net/config.h	57;"	d
-PACKAGE_BUGREPORT	confuse-2.5/Makefile	/^PACKAGE_BUGREPORT = confuse-devel@nongnu.org$/;"	m
-PACKAGE_BUGREPORT	confuse-2.5/config.h	61;"	d
-PACKAGE_BUGREPORT	confuse-2.5/doc/Makefile	/^PACKAGE_BUGREPORT = confuse-devel@nongnu.org$/;"	m
-PACKAGE_BUGREPORT	confuse-2.5/examples/Makefile	/^PACKAGE_BUGREPORT = confuse-devel@nongnu.org$/;"	m
-PACKAGE_BUGREPORT	confuse-2.5/m4/Makefile	/^PACKAGE_BUGREPORT = confuse-devel@nongnu.org$/;"	m
-PACKAGE_BUGREPORT	confuse-2.5/src/Makefile	/^PACKAGE_BUGREPORT = confuse-devel@nongnu.org$/;"	m
-PACKAGE_BUGREPORT	confuse-2.5/tests/Makefile	/^PACKAGE_BUGREPORT = confuse-devel@nongnu.org$/;"	m
 PACKAGE_BUGREPORT	confuse-2.5/windows/borland/config.h	57;"	d
 PACKAGE_BUGREPORT	confuse-2.5/windows/devcpp/config.h	57;"	d
 PACKAGE_BUGREPORT	confuse-2.5/windows/msvc6/libConfuse/config.h	60;"	d
 PACKAGE_BUGREPORT	confuse-2.5/windows/msvs.net/config.h	60;"	d
-PACKAGE_NAME	confuse-2.5/Makefile	/^PACKAGE_NAME = libConfuse$/;"	m
-PACKAGE_NAME	confuse-2.5/config.h	64;"	d
-PACKAGE_NAME	confuse-2.5/doc/Makefile	/^PACKAGE_NAME = libConfuse$/;"	m
-PACKAGE_NAME	confuse-2.5/examples/Makefile	/^PACKAGE_NAME = libConfuse$/;"	m
-PACKAGE_NAME	confuse-2.5/m4/Makefile	/^PACKAGE_NAME = libConfuse$/;"	m
-PACKAGE_NAME	confuse-2.5/src/Makefile	/^PACKAGE_NAME = libConfuse$/;"	m
-PACKAGE_NAME	confuse-2.5/tests/Makefile	/^PACKAGE_NAME = libConfuse$/;"	m
 PACKAGE_NAME	confuse-2.5/windows/borland/config.h	60;"	d
 PACKAGE_NAME	confuse-2.5/windows/devcpp/config.h	60;"	d
 PACKAGE_NAME	confuse-2.5/windows/msvc6/libConfuse/config.h	63;"	d
 PACKAGE_NAME	confuse-2.5/windows/msvs.net/config.h	63;"	d
-PACKAGE_STRING	confuse-2.5/Makefile	/^PACKAGE_STRING = libConfuse 2.5$/;"	m
-PACKAGE_STRING	confuse-2.5/config.h	67;"	d
-PACKAGE_STRING	confuse-2.5/doc/Makefile	/^PACKAGE_STRING = libConfuse 2.5$/;"	m
-PACKAGE_STRING	confuse-2.5/examples/Makefile	/^PACKAGE_STRING = libConfuse 2.5$/;"	m
-PACKAGE_STRING	confuse-2.5/m4/Makefile	/^PACKAGE_STRING = libConfuse 2.5$/;"	m
-PACKAGE_STRING	confuse-2.5/src/Makefile	/^PACKAGE_STRING = libConfuse 2.5$/;"	m
-PACKAGE_STRING	confuse-2.5/tests/Makefile	/^PACKAGE_STRING = libConfuse 2.5$/;"	m
 PACKAGE_STRING	confuse-2.5/windows/borland/config.h	63;"	d
 PACKAGE_STRING	confuse-2.5/windows/devcpp/config.h	63;"	d
 PACKAGE_STRING	confuse-2.5/windows/msvc6/libConfuse/config.h	66;"	d
 PACKAGE_STRING	confuse-2.5/windows/msvs.net/config.h	66;"	d
-PACKAGE_TARNAME	confuse-2.5/Makefile	/^PACKAGE_TARNAME = confuse$/;"	m
-PACKAGE_TARNAME	confuse-2.5/config.h	70;"	d
-PACKAGE_TARNAME	confuse-2.5/doc/Makefile	/^PACKAGE_TARNAME = confuse$/;"	m
-PACKAGE_TARNAME	confuse-2.5/examples/Makefile	/^PACKAGE_TARNAME = confuse$/;"	m
-PACKAGE_TARNAME	confuse-2.5/m4/Makefile	/^PACKAGE_TARNAME = confuse$/;"	m
-PACKAGE_TARNAME	confuse-2.5/src/Makefile	/^PACKAGE_TARNAME = confuse$/;"	m
-PACKAGE_TARNAME	confuse-2.5/tests/Makefile	/^PACKAGE_TARNAME = confuse$/;"	m
 PACKAGE_TARNAME	confuse-2.5/windows/borland/config.h	66;"	d
 PACKAGE_TARNAME	confuse-2.5/windows/devcpp/config.h	66;"	d
 PACKAGE_TARNAME	confuse-2.5/windows/msvc6/libConfuse/config.h	69;"	d
 PACKAGE_TARNAME	confuse-2.5/windows/msvs.net/config.h	69;"	d
-PACKAGE_VERSION	confuse-2.5/Makefile	/^PACKAGE_VERSION = 2.5$/;"	m
-PACKAGE_VERSION	confuse-2.5/config.h	73;"	d
-PACKAGE_VERSION	confuse-2.5/doc/Makefile	/^PACKAGE_VERSION = 2.5$/;"	m
-PACKAGE_VERSION	confuse-2.5/examples/Makefile	/^PACKAGE_VERSION = 2.5$/;"	m
-PACKAGE_VERSION	confuse-2.5/m4/Makefile	/^PACKAGE_VERSION = 2.5$/;"	m
-PACKAGE_VERSION	confuse-2.5/src/Makefile	/^PACKAGE_VERSION = 2.5$/;"	m
-PACKAGE_VERSION	confuse-2.5/tests/Makefile	/^PACKAGE_VERSION = 2.5$/;"	m
 PACKAGE_VERSION	confuse-2.5/windows/borland/config.h	69;"	d
 PACKAGE_VERSION	confuse-2.5/windows/devcpp/config.h	69;"	d
 PACKAGE_VERSION	confuse-2.5/windows/msvc6/libConfuse/config.h	72;"	d
 PACKAGE_VERSION	confuse-2.5/windows/msvs.net/config.h	72;"	d
-PATH_SEPARATOR	confuse-2.5/Makefile	/^PATH_SEPARATOR = :$/;"	m
-PATH_SEPARATOR	confuse-2.5/doc/Makefile	/^PATH_SEPARATOR = :$/;"	m
-PATH_SEPARATOR	confuse-2.5/examples/Makefile	/^PATH_SEPARATOR = :$/;"	m
-PATH_SEPARATOR	confuse-2.5/m4/Makefile	/^PATH_SEPARATOR = :$/;"	m
-PATH_SEPARATOR	confuse-2.5/src/Makefile	/^PATH_SEPARATOR = :$/;"	m
-PATH_SEPARATOR	confuse-2.5/tests/Makefile	/^PATH_SEPARATOR = :$/;"	m
 PATRICIA_DATA_GET	patricia.h	128;"	d
 PATRICIA_DATA_SET	patricia.h	129;"	d
 PATRICIA_MAXBITS	patricia.h	124;"	d
@@ -726,54 +161,8 @@ PATRICIA_WALK	patricia.h	131;"	d
 PATRICIA_WALK_ALL	patricia.h	139;"	d
 PATRICIA_WALK_BREAK	patricia.h	147;"	d
 PATRICIA_WALK_END	patricia.h	155;"	d
-PKGCONFIG	confuse-2.5/Makefile	/^PKGCONFIG = yes$/;"	m
-PKGCONFIG	confuse-2.5/doc/Makefile	/^PKGCONFIG = yes$/;"	m
-PKGCONFIG	confuse-2.5/examples/Makefile	/^PKGCONFIG = yes$/;"	m
-PKGCONFIG	confuse-2.5/m4/Makefile	/^PKGCONFIG = yes$/;"	m
-PKGCONFIG	confuse-2.5/src/Makefile	/^PKGCONFIG = yes$/;"	m
-PKGCONFIG	confuse-2.5/tests/Makefile	/^PKGCONFIG = yes$/;"	m
-POFILES	confuse-2.5/po/Makefile	/^POFILES =  sv.po$/;"	m
-POST_INSTALL	confuse-2.5/Makefile	/^POST_INSTALL = :$/;"	m
-POST_INSTALL	confuse-2.5/doc/Makefile	/^POST_INSTALL = :$/;"	m
-POST_INSTALL	confuse-2.5/examples/Makefile	/^POST_INSTALL = :$/;"	m
-POST_INSTALL	confuse-2.5/m4/Makefile	/^POST_INSTALL = :$/;"	m
-POST_INSTALL	confuse-2.5/src/Makefile	/^POST_INSTALL = :$/;"	m
-POST_INSTALL	confuse-2.5/tests/Makefile	/^POST_INSTALL = :$/;"	m
-POST_UNINSTALL	confuse-2.5/Makefile	/^POST_UNINSTALL = :$/;"	m
-POST_UNINSTALL	confuse-2.5/doc/Makefile	/^POST_UNINSTALL = :$/;"	m
-POST_UNINSTALL	confuse-2.5/examples/Makefile	/^POST_UNINSTALL = :$/;"	m
-POST_UNINSTALL	confuse-2.5/m4/Makefile	/^POST_UNINSTALL = :$/;"	m
-POST_UNINSTALL	confuse-2.5/src/Makefile	/^POST_UNINSTALL = :$/;"	m
-POST_UNINSTALL	confuse-2.5/tests/Makefile	/^POST_UNINSTALL = :$/;"	m
-POSUB	confuse-2.5/Makefile	/^POSUB = po$/;"	m
-POSUB	confuse-2.5/doc/Makefile	/^POSUB = po$/;"	m
-POSUB	confuse-2.5/examples/Makefile	/^POSUB = po$/;"	m
-POSUB	confuse-2.5/m4/Makefile	/^POSUB = po$/;"	m
-POSUB	confuse-2.5/src/Makefile	/^POSUB = po$/;"	m
-POSUB	confuse-2.5/tests/Makefile	/^POSUB = po$/;"	m
-POTFILES	confuse-2.5/po/Makefile	/^POTFILES = \\$/;"	m
-PRE_INSTALL	confuse-2.5/Makefile	/^PRE_INSTALL = :$/;"	m
-PRE_INSTALL	confuse-2.5/doc/Makefile	/^PRE_INSTALL = :$/;"	m
-PRE_INSTALL	confuse-2.5/examples/Makefile	/^PRE_INSTALL = :$/;"	m
-PRE_INSTALL	confuse-2.5/m4/Makefile	/^PRE_INSTALL = :$/;"	m
-PRE_INSTALL	confuse-2.5/src/Makefile	/^PRE_INSTALL = :$/;"	m
-PRE_INSTALL	confuse-2.5/tests/Makefile	/^PRE_INSTALL = :$/;"	m
-PRE_UNINSTALL	confuse-2.5/Makefile	/^PRE_UNINSTALL = :$/;"	m
-PRE_UNINSTALL	confuse-2.5/doc/Makefile	/^PRE_UNINSTALL = :$/;"	m
-PRE_UNINSTALL	confuse-2.5/examples/Makefile	/^PRE_UNINSTALL = :$/;"	m
-PRE_UNINSTALL	confuse-2.5/m4/Makefile	/^PRE_UNINSTALL = :$/;"	m
-PRE_UNINSTALL	confuse-2.5/src/Makefile	/^PRE_UNINSTALL = :$/;"	m
-PRE_UNINSTALL	confuse-2.5/tests/Makefile	/^PRE_UNINSTALL = :$/;"	m
-PROGRAMS	confuse-2.5/doc/Makefile	/^PROGRAMS = $(noinst_PROGRAMS)$/;"	m
-PROGRAMS	confuse-2.5/examples/Makefile	/^PROGRAMS = $(noinst_PROGRAMS)$/;"	m
-PROGRAMS	confuse-2.5/tests/Makefile	/^PROGRAMS = $(noinst_PROGRAMS)$/;"	m
-RANLIB	confuse-2.5/Makefile	/^RANLIB = ranlib$/;"	m
-RANLIB	confuse-2.5/doc/Makefile	/^RANLIB = ranlib$/;"	m
-RANLIB	confuse-2.5/examples/Makefile	/^RANLIB = ranlib$/;"	m
-RANLIB	confuse-2.5/m4/Makefile	/^RANLIB = ranlib$/;"	m
-RANLIB	confuse-2.5/src/Makefile	/^RANLIB = ranlib$/;"	m
-RANLIB	confuse-2.5/tests/Makefile	/^RANLIB = ranlib$/;"	m
-RECURSIVE_TARGETS	confuse-2.5/Makefile	/^RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \\$/;"	m
+PRINT_DEBUG	filtercloud.c	26;"	d	file:
+PRINT_DEBUG	filtercloud.c	28;"	d	file:
 REJECT	confuse-2.5/src/lexer.c	459;"	d	file:
 RULE_MATCH_CHAD_ORD	filtercloud.h	/^    RULE_MATCH_CHAD_ORD,$/;"	e	enum:__anon2
 RULE_MATCH_DSTADDR	filtercloud.h	/^    RULE_MATCH_DSTADDR,$/;"	e	enum:__anon2
@@ -782,27 +171,6 @@ RULE_MATCH_OPERATOR_OR	filtercloud.h	/^    RULE_MATCH_OPERATOR_OR,$/;"	e	enum:__
 RULE_MATCH_SRCADDR	filtercloud.h	/^    RULE_MATCH_SRCADDR = 1,$/;"	e	enum:__anon2
 RULE_MATCH_STRING	filtercloud.h	/^		RULE_MATCH_STRING,$/;"	e	enum:__anon2
 Ref_Prefix	patricia.c	/^Ref_Prefix(apr_pool_t * pool, prefix_t * prefix)$/;"	f
-SCRIPTS	confuse-2.5/Makefile	/^SCRIPTS = $(bin_SCRIPTS)$/;"	m
-SET_MAKE	confuse-2.5/Makefile	/^SET_MAKE = $/;"	m
-SET_MAKE	confuse-2.5/doc/Makefile	/^SET_MAKE = $/;"	m
-SET_MAKE	confuse-2.5/examples/Makefile	/^SET_MAKE = $/;"	m
-SET_MAKE	confuse-2.5/m4/Makefile	/^SET_MAKE = $/;"	m
-SET_MAKE	confuse-2.5/src/Makefile	/^SET_MAKE = $/;"	m
-SET_MAKE	confuse-2.5/tests/Makefile	/^SET_MAKE = $/;"	m
-SHELL	confuse-2.5/Makefile	/^SHELL = \/bin\/bash$/;"	m
-SHELL	confuse-2.5/doc/Makefile	/^SHELL = \/bin\/bash$/;"	m
-SHELL	confuse-2.5/examples/Makefile	/^SHELL = \/bin\/bash$/;"	m
-SHELL	confuse-2.5/m4/Makefile	/^SHELL = \/bin\/bash$/;"	m
-SHELL	confuse-2.5/po/Makefile	/^SHELL = \/bin\/sh$/;"	m
-SHELL	confuse-2.5/src/Makefile	/^SHELL = \/bin\/bash$/;"	m
-SHELL	confuse-2.5/tests/Makefile	/^SHELL = \/bin\/bash$/;"	m
-SOURCES	confuse-2.5/Makefile	/^SOURCES =$/;"	m
-SOURCES	confuse-2.5/doc/Makefile	/^SOURCES = listing1.c listing2.c listing3.c listing4.c listing5.c \\$/;"	m
-SOURCES	confuse-2.5/doc/Makefile	/^SOURCES = listing1.c listing2.c listing3.c listing4.c listing5.c listing8.c$/;"	m
-SOURCES	confuse-2.5/examples/Makefile	/^SOURCES = ftpconf.c reread.c simple.c$/;"	m
-SOURCES	confuse-2.5/m4/Makefile	/^SOURCES =$/;"	m
-SOURCES	confuse-2.5/src/Makefile	/^SOURCES = $(libconfuse_la_SOURCES)$/;"	m
-SOURCES	confuse-2.5/tests/Makefile	/^SOURCES = $(check_confuse_SOURCES)$/;"	m
 START_TEST	confuse-2.5/tests/suite_dup.c	/^START_TEST(dup_test)$/;"	f
 START_TEST	confuse-2.5/tests/suite_func.c	/^START_TEST(func_test)$/;"	f
 START_TEST	confuse-2.5/tests/suite_list.c	/^START_TEST(list_bool_test)$/;"	f
@@ -825,51 +193,17 @@ START_TEST	confuse-2.5/tests/suite_validate.c	/^START_TEST(validate_test)$/;"	f
 STATE_CONTINUE	confuse-2.5/src/confuse.c	75;"	d	file:
 STATE_EOF	confuse-2.5/src/confuse.c	76;"	d	file:
 STATE_ERROR	confuse-2.5/src/confuse.c	77;"	d	file:
-STDC_HEADERS	confuse-2.5/config.h	76;"	d
 STDC_HEADERS	confuse-2.5/windows/borland/config.h	72;"	d
 STDC_HEADERS	confuse-2.5/windows/devcpp/config.h	72;"	d
 STDC_HEADERS	confuse-2.5/windows/msvc6/libConfuse/config.h	75;"	d
 STDC_HEADERS	confuse-2.5/windows/msvs.net/config.h	75;"	d
-STRIP	confuse-2.5/Makefile	/^STRIP = strip$/;"	m
-STRIP	confuse-2.5/doc/Makefile	/^STRIP = strip$/;"	m
-STRIP	confuse-2.5/examples/Makefile	/^STRIP = strip$/;"	m
-STRIP	confuse-2.5/m4/Makefile	/^STRIP = strip$/;"	m
-STRIP	confuse-2.5/src/Makefile	/^STRIP = strip$/;"	m
-STRIP	confuse-2.5/tests/Makefile	/^STRIP = strip$/;"	m
-SUBDIRS	confuse-2.5/Makefile	/^SUBDIRS = m4 po src examples tests doc$/;"	m
-TUTORIAL_CSOURCES	confuse-2.5/doc/Makefile	/^TUTORIAL_CSOURCES = listing1.c listing2.c listing3.c listing4.c listing5.c listing6.c \\$/;"	m
-TUTORIAL_LISTINGS	confuse-2.5/doc/Makefile	/^TUTORIAL_LISTINGS = $(TUTORIAL_CSOURCES:.c=.xml)$/;"	m
-UPDATEPOFILES	confuse-2.5/po/Makefile	/^UPDATEPOFILES =  sv.po-update$/;"	m
-USE_NLS	confuse-2.5/Makefile	/^USE_NLS = yes$/;"	m
-USE_NLS	confuse-2.5/doc/Makefile	/^USE_NLS = yes$/;"	m
-USE_NLS	confuse-2.5/examples/Makefile	/^USE_NLS = yes$/;"	m
-USE_NLS	confuse-2.5/m4/Makefile	/^USE_NLS = yes$/;"	m
-USE_NLS	confuse-2.5/src/Makefile	/^USE_NLS = yes$/;"	m
-USE_NLS	confuse-2.5/tests/Makefile	/^USE_NLS = yes$/;"	m
-VERSION	confuse-2.5/Makefile	/^VERSION = 2.5$/;"	m
-VERSION	confuse-2.5/config.h	79;"	d
-VERSION	confuse-2.5/doc/Makefile	/^VERSION = 2.5$/;"	m
-VERSION	confuse-2.5/examples/Makefile	/^VERSION = 2.5$/;"	m
-VERSION	confuse-2.5/m4/Makefile	/^VERSION = 2.5$/;"	m
-VERSION	confuse-2.5/po/Makefile	/^VERSION = 2.5$/;"	m
-VERSION	confuse-2.5/src/Makefile	/^VERSION = 2.5$/;"	m
-VERSION	confuse-2.5/tests/Makefile	/^VERSION = 2.5$/;"	m
 VERSION	confuse-2.5/windows/borland/config.h	75;"	d
 VERSION	confuse-2.5/windows/devcpp/config.h	75;"	d
 VERSION	confuse-2.5/windows/msvc6/libConfuse/config.h	78;"	d
 VERSION	confuse-2.5/windows/msvs.net/config.h	78;"	d
 VERSION	version.h	1;"	d
-XGETTEXT	confuse-2.5/Makefile	/^XGETTEXT = \/usr\/bin\/xgettext$/;"	m
-XGETTEXT	confuse-2.5/doc/Makefile	/^XGETTEXT = \/usr\/bin\/xgettext$/;"	m
-XGETTEXT	confuse-2.5/examples/Makefile	/^XGETTEXT = \/usr\/bin\/xgettext$/;"	m
-XGETTEXT	confuse-2.5/m4/Makefile	/^XGETTEXT = \/usr\/bin\/xgettext$/;"	m
-XGETTEXT	confuse-2.5/po/Makefile	/^XGETTEXT = \/usr\/bin\/xgettext$/;"	m
-XGETTEXT	confuse-2.5/src/Makefile	/^XGETTEXT = \/usr\/bin\/xgettext$/;"	m
-XGETTEXT	confuse-2.5/tests/Makefile	/^XGETTEXT = \/usr\/bin\/xgettext$/;"	m
-XGETTEXT_OPTIONS	confuse-2.5/po/Makefile	/^XGETTEXT_OPTIONS = --keyword=_ --keyword=N_$/;"	m
 YYSTATE	confuse-2.5/src/lexer.c	104;"	d	file:
 YYSTYPE	confuse-2.5/src/lexer.c	/^typedef char * YYSTYPE;$/;"	t	file:
-YYTEXT_POINTER	confuse-2.5/config.h	83;"	d
 YY_AT_BOL	confuse-2.5/src/lexer.c	280;"	d	file:
 YY_BREAK	confuse-2.5/src/lexer.c	680;"	d	file:
 YY_BUFFER_EOF_PENDING	confuse-2.5/src/lexer.c	216;"	d	file:
@@ -1071,159 +405,14 @@ a96	confuse-2.5/doc/html/confuse_8h.html	/^<a class="anchor" name="a96" doxytag=
 a97	confuse-2.5/doc/html/confuse_8h.html	/^<a class="anchor" name="a97" doxytag="confuse.h::cfg_getnsec" ><\/a><p>$/;"	a
 a98	confuse-2.5/doc/html/confuse_8h.html	/^<a class="anchor" name="a98" doxytag="confuse.h::cfg_opt_gettsec" ><\/a><p>$/;"	a
 a99	confuse-2.5/doc/html/confuse_8h.html	/^<a class="anchor" name="a99" doxytag="confuse.h::cfg_gettsec" ><\/a><p>$/;"	a
-ac_ct_AR	confuse-2.5/Makefile	/^ac_ct_AR = ar$/;"	m
-ac_ct_AR	confuse-2.5/doc/Makefile	/^ac_ct_AR = ar$/;"	m
-ac_ct_AR	confuse-2.5/examples/Makefile	/^ac_ct_AR = ar$/;"	m
-ac_ct_AR	confuse-2.5/m4/Makefile	/^ac_ct_AR = ar$/;"	m
-ac_ct_AR	confuse-2.5/src/Makefile	/^ac_ct_AR = ar$/;"	m
-ac_ct_AR	confuse-2.5/tests/Makefile	/^ac_ct_AR = ar$/;"	m
-ac_ct_CC	confuse-2.5/Makefile	/^ac_ct_CC = gcc$/;"	m
-ac_ct_CC	confuse-2.5/doc/Makefile	/^ac_ct_CC = gcc$/;"	m
-ac_ct_CC	confuse-2.5/examples/Makefile	/^ac_ct_CC = gcc$/;"	m
-ac_ct_CC	confuse-2.5/m4/Makefile	/^ac_ct_CC = gcc$/;"	m
-ac_ct_CC	confuse-2.5/src/Makefile	/^ac_ct_CC = gcc$/;"	m
-ac_ct_CC	confuse-2.5/tests/Makefile	/^ac_ct_CC = gcc$/;"	m
-ac_ct_CXX	confuse-2.5/Makefile	/^ac_ct_CXX = g++$/;"	m
-ac_ct_CXX	confuse-2.5/doc/Makefile	/^ac_ct_CXX = g++$/;"	m
-ac_ct_CXX	confuse-2.5/examples/Makefile	/^ac_ct_CXX = g++$/;"	m
-ac_ct_CXX	confuse-2.5/m4/Makefile	/^ac_ct_CXX = g++$/;"	m
-ac_ct_CXX	confuse-2.5/src/Makefile	/^ac_ct_CXX = g++$/;"	m
-ac_ct_CXX	confuse-2.5/tests/Makefile	/^ac_ct_CXX = g++$/;"	m
-ac_ct_F77	confuse-2.5/Makefile	/^ac_ct_F77 = $/;"	m
-ac_ct_F77	confuse-2.5/doc/Makefile	/^ac_ct_F77 = $/;"	m
-ac_ct_F77	confuse-2.5/examples/Makefile	/^ac_ct_F77 = $/;"	m
-ac_ct_F77	confuse-2.5/m4/Makefile	/^ac_ct_F77 = $/;"	m
-ac_ct_F77	confuse-2.5/src/Makefile	/^ac_ct_F77 = $/;"	m
-ac_ct_F77	confuse-2.5/tests/Makefile	/^ac_ct_F77 = $/;"	m
-ac_ct_RANLIB	confuse-2.5/Makefile	/^ac_ct_RANLIB = ranlib$/;"	m
-ac_ct_RANLIB	confuse-2.5/doc/Makefile	/^ac_ct_RANLIB = ranlib$/;"	m
-ac_ct_RANLIB	confuse-2.5/examples/Makefile	/^ac_ct_RANLIB = ranlib$/;"	m
-ac_ct_RANLIB	confuse-2.5/m4/Makefile	/^ac_ct_RANLIB = ranlib$/;"	m
-ac_ct_RANLIB	confuse-2.5/src/Makefile	/^ac_ct_RANLIB = ranlib$/;"	m
-ac_ct_RANLIB	confuse-2.5/tests/Makefile	/^ac_ct_RANLIB = ranlib$/;"	m
-ac_ct_STRIP	confuse-2.5/Makefile	/^ac_ct_STRIP = strip$/;"	m
-ac_ct_STRIP	confuse-2.5/doc/Makefile	/^ac_ct_STRIP = strip$/;"	m
-ac_ct_STRIP	confuse-2.5/examples/Makefile	/^ac_ct_STRIP = strip$/;"	m
-ac_ct_STRIP	confuse-2.5/m4/Makefile	/^ac_ct_STRIP = strip$/;"	m
-ac_ct_STRIP	confuse-2.5/src/Makefile	/^ac_ct_STRIP = strip$/;"	m
-ac_ct_STRIP	confuse-2.5/tests/Makefile	/^ac_ct_STRIP = strip$/;"	m
 add	patricia.h	/^    } add;$/;"	m	struct:_prefix_t	typeref:union:_prefix_t::__anon1
 addroute	patricia.h	32;"	d
-am__CONFIG_DISTCLEAN_FILES	confuse-2.5/Makefile	/^am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \\$/;"	m
-am__DEPENDENCIES_1	confuse-2.5/tests/Makefile	/^am__DEPENDENCIES_1 =$/;"	m
-am__EXEEXT_1	confuse-2.5/tests/Makefile	/^am__EXEEXT_1 = $/;"	m
-am__aclocal_m4_deps	confuse-2.5/Makefile	/^am__aclocal_m4_deps = $(top_srcdir)\/m4\/ac_config_libconfig_in.m4 \\$/;"	m
-am__aclocal_m4_deps	confuse-2.5/doc/Makefile	/^am__aclocal_m4_deps = $(top_srcdir)\/m4\/ac_config_libconfig_in.m4 \\$/;"	m
-am__aclocal_m4_deps	confuse-2.5/examples/Makefile	/^am__aclocal_m4_deps = $(top_srcdir)\/m4\/ac_config_libconfig_in.m4 \\$/;"	m
-am__aclocal_m4_deps	confuse-2.5/m4/Makefile	/^am__aclocal_m4_deps = $(top_srcdir)\/m4\/ac_config_libconfig_in.m4 \\$/;"	m
-am__aclocal_m4_deps	confuse-2.5/src/Makefile	/^am__aclocal_m4_deps = $(top_srcdir)\/m4\/ac_config_libconfig_in.m4 \\$/;"	m
-am__aclocal_m4_deps	confuse-2.5/tests/Makefile	/^am__aclocal_m4_deps = $(top_srcdir)\/m4\/ac_config_libconfig_in.m4 \\$/;"	m
-am__cd	confuse-2.5/Makefile	/^am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd$/;"	m
-am__cd	confuse-2.5/doc/Makefile	/^am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd$/;"	m
-am__cd	confuse-2.5/examples/Makefile	/^am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd$/;"	m
-am__cd	confuse-2.5/m4/Makefile	/^am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd$/;"	m
-am__cd	confuse-2.5/src/Makefile	/^am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd$/;"	m
-am__cd	confuse-2.5/tests/Makefile	/^am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd$/;"	m
-am__configure_deps	confuse-2.5/Makefile	/^am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \\$/;"	m
-am__configure_deps	confuse-2.5/doc/Makefile	/^am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \\$/;"	m
-am__configure_deps	confuse-2.5/examples/Makefile	/^am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \\$/;"	m
-am__configure_deps	confuse-2.5/m4/Makefile	/^am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \\$/;"	m
-am__configure_deps	confuse-2.5/src/Makefile	/^am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \\$/;"	m
-am__configure_deps	confuse-2.5/tests/Makefile	/^am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \\$/;"	m
-am__depfiles_maybe	confuse-2.5/doc/Makefile	/^am__depfiles_maybe = depfiles$/;"	m
-am__depfiles_maybe	confuse-2.5/examples/Makefile	/^am__depfiles_maybe = depfiles$/;"	m
-am__depfiles_maybe	confuse-2.5/src/Makefile	/^am__depfiles_maybe = depfiles$/;"	m
-am__depfiles_maybe	confuse-2.5/tests/Makefile	/^am__depfiles_maybe = depfiles$/;"	m
-am__fastdepCC_FALSE	confuse-2.5/Makefile	/^am__fastdepCC_FALSE = #$/;"	m
-am__fastdepCC_FALSE	confuse-2.5/doc/Makefile	/^am__fastdepCC_FALSE = #$/;"	m
-am__fastdepCC_FALSE	confuse-2.5/examples/Makefile	/^am__fastdepCC_FALSE = #$/;"	m
-am__fastdepCC_FALSE	confuse-2.5/m4/Makefile	/^am__fastdepCC_FALSE = #$/;"	m
-am__fastdepCC_FALSE	confuse-2.5/src/Makefile	/^am__fastdepCC_FALSE = #$/;"	m
-am__fastdepCC_FALSE	confuse-2.5/tests/Makefile	/^am__fastdepCC_FALSE = #$/;"	m
-am__fastdepCC_TRUE	confuse-2.5/Makefile	/^am__fastdepCC_TRUE = $/;"	m
-am__fastdepCC_TRUE	confuse-2.5/doc/Makefile	/^am__fastdepCC_TRUE = $/;"	m
-am__fastdepCC_TRUE	confuse-2.5/examples/Makefile	/^am__fastdepCC_TRUE = $/;"	m
-am__fastdepCC_TRUE	confuse-2.5/m4/Makefile	/^am__fastdepCC_TRUE = $/;"	m
-am__fastdepCC_TRUE	confuse-2.5/src/Makefile	/^am__fastdepCC_TRUE = $/;"	m
-am__fastdepCC_TRUE	confuse-2.5/tests/Makefile	/^am__fastdepCC_TRUE = $/;"	m
-am__fastdepCXX_FALSE	confuse-2.5/Makefile	/^am__fastdepCXX_FALSE = #$/;"	m
-am__fastdepCXX_FALSE	confuse-2.5/doc/Makefile	/^am__fastdepCXX_FALSE = #$/;"	m
-am__fastdepCXX_FALSE	confuse-2.5/examples/Makefile	/^am__fastdepCXX_FALSE = #$/;"	m
-am__fastdepCXX_FALSE	confuse-2.5/m4/Makefile	/^am__fastdepCXX_FALSE = #$/;"	m
-am__fastdepCXX_FALSE	confuse-2.5/src/Makefile	/^am__fastdepCXX_FALSE = #$/;"	m
-am__fastdepCXX_FALSE	confuse-2.5/tests/Makefile	/^am__fastdepCXX_FALSE = #$/;"	m
-am__fastdepCXX_TRUE	confuse-2.5/Makefile	/^am__fastdepCXX_TRUE = $/;"	m
-am__fastdepCXX_TRUE	confuse-2.5/doc/Makefile	/^am__fastdepCXX_TRUE = $/;"	m
-am__fastdepCXX_TRUE	confuse-2.5/examples/Makefile	/^am__fastdepCXX_TRUE = $/;"	m
-am__fastdepCXX_TRUE	confuse-2.5/m4/Makefile	/^am__fastdepCXX_TRUE = $/;"	m
-am__fastdepCXX_TRUE	confuse-2.5/src/Makefile	/^am__fastdepCXX_TRUE = $/;"	m
-am__fastdepCXX_TRUE	confuse-2.5/tests/Makefile	/^am__fastdepCXX_TRUE = $/;"	m
-am__include	confuse-2.5/Makefile	/^am__include = include$/;"	m
-am__include	confuse-2.5/doc/Makefile	/^am__include = include$/;"	m
-am__include	confuse-2.5/examples/Makefile	/^am__include = include$/;"	m
-am__include	confuse-2.5/m4/Makefile	/^am__include = include$/;"	m
-am__include	confuse-2.5/src/Makefile	/^am__include = include$/;"	m
-am__include	confuse-2.5/tests/Makefile	/^am__include = include$/;"	m
-am__installdirs	confuse-2.5/Makefile	/^am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgconfigdir)"$/;"	m
-am__installdirs	confuse-2.5/src/Makefile	/^am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"$/;"	m
-am__leading_dot	confuse-2.5/Makefile	/^am__leading_dot = .$/;"	m
-am__leading_dot	confuse-2.5/doc/Makefile	/^am__leading_dot = .$/;"	m
-am__leading_dot	confuse-2.5/examples/Makefile	/^am__leading_dot = .$/;"	m
-am__leading_dot	confuse-2.5/m4/Makefile	/^am__leading_dot = .$/;"	m
-am__leading_dot	confuse-2.5/src/Makefile	/^am__leading_dot = .$/;"	m
-am__leading_dot	confuse-2.5/tests/Makefile	/^am__leading_dot = .$/;"	m
-am__quote	confuse-2.5/Makefile	/^am__quote = $/;"	m
-am__quote	confuse-2.5/doc/Makefile	/^am__quote = $/;"	m
-am__quote	confuse-2.5/examples/Makefile	/^am__quote = $/;"	m
-am__quote	confuse-2.5/m4/Makefile	/^am__quote = $/;"	m
-am__quote	confuse-2.5/src/Makefile	/^am__quote = $/;"	m
-am__quote	confuse-2.5/tests/Makefile	/^am__quote = $/;"	m
-am__remove_distdir	confuse-2.5/Makefile	/^am__remove_distdir = \\$/;"	m
-am_check_confuse_OBJECTS	confuse-2.5/tests/Makefile	/^am_check_confuse_OBJECTS = check_confuse.$(OBJEXT) \\$/;"	m
-am_libconfuse_la_OBJECTS	confuse-2.5/src/Makefile	/^am_libconfuse_la_OBJECTS = confuse.lo lexer.lo$/;"	m
 ascii2prefix	patricia.c	/^ascii2prefix(apr_pool_t * pool, int family, char *string)$/;"	f
-binSCRIPT_INSTALL	confuse-2.5/Makefile	/^binSCRIPT_INSTALL = $(INSTALL_SCRIPT)$/;"	m
-bindir	confuse-2.5/Makefile	/^bindir = ${exec_prefix}\/bin$/;"	m
-bindir	confuse-2.5/doc/Makefile	/^bindir = ${exec_prefix}\/bin$/;"	m
-bindir	confuse-2.5/examples/Makefile	/^bindir = ${exec_prefix}\/bin$/;"	m
-bindir	confuse-2.5/m4/Makefile	/^bindir = ${exec_prefix}\/bin$/;"	m
-bindir	confuse-2.5/src/Makefile	/^bindir = ${exec_prefix}\/bin$/;"	m
-bindir	confuse-2.5/tests/Makefile	/^bindir = ${exec_prefix}\/bin$/;"	m
 bit	patricia.h	/^    u_int           bit;        \/* flag if this node used *\/$/;"	m	struct:_patricia_node_t
 bitlen	patricia.h	/^    u_short         bitlen;     \/* same as mask? *\/$/;"	m	struct:_prefix4_t
 bitlen	patricia.h	/^    u_short         bitlen;     \/* same as mask? *\/$/;"	m	struct:_prefix_t
 boolean	confuse-2.5/src/confuse.h	/^    cfg_bool_t boolean;     \/**< boolean value *\/$/;"	m	union:cfg_value_t
 boolean	confuse-2.5/src/confuse.h	/^    cfg_bool_t boolean;     \/**< default boolean value *\/$/;"	m	struct:cfg_defvalue_t
-build	confuse-2.5/Makefile	/^build = i686-pc-linux-gnu$/;"	m
-build	confuse-2.5/doc/Makefile	/^build = i686-pc-linux-gnu$/;"	m
-build	confuse-2.5/examples/Makefile	/^build = i686-pc-linux-gnu$/;"	m
-build	confuse-2.5/m4/Makefile	/^build = i686-pc-linux-gnu$/;"	m
-build	confuse-2.5/src/Makefile	/^build = i686-pc-linux-gnu$/;"	m
-build	confuse-2.5/tests/Makefile	/^build = i686-pc-linux-gnu$/;"	m
-build_alias	confuse-2.5/Makefile	/^build_alias = $/;"	m
-build_alias	confuse-2.5/doc/Makefile	/^build_alias = $/;"	m
-build_alias	confuse-2.5/examples/Makefile	/^build_alias = $/;"	m
-build_alias	confuse-2.5/m4/Makefile	/^build_alias = $/;"	m
-build_alias	confuse-2.5/src/Makefile	/^build_alias = $/;"	m
-build_alias	confuse-2.5/tests/Makefile	/^build_alias = $/;"	m
-build_cpu	confuse-2.5/Makefile	/^build_cpu = i686$/;"	m
-build_cpu	confuse-2.5/doc/Makefile	/^build_cpu = i686$/;"	m
-build_cpu	confuse-2.5/examples/Makefile	/^build_cpu = i686$/;"	m
-build_cpu	confuse-2.5/m4/Makefile	/^build_cpu = i686$/;"	m
-build_cpu	confuse-2.5/src/Makefile	/^build_cpu = i686$/;"	m
-build_cpu	confuse-2.5/tests/Makefile	/^build_cpu = i686$/;"	m
-build_os	confuse-2.5/Makefile	/^build_os = linux-gnu$/;"	m
-build_os	confuse-2.5/doc/Makefile	/^build_os = linux-gnu$/;"	m
-build_os	confuse-2.5/examples/Makefile	/^build_os = linux-gnu$/;"	m
-build_os	confuse-2.5/m4/Makefile	/^build_os = linux-gnu$/;"	m
-build_os	confuse-2.5/src/Makefile	/^build_os = linux-gnu$/;"	m
-build_os	confuse-2.5/tests/Makefile	/^build_os = linux-gnu$/;"	m
-build_vendor	confuse-2.5/Makefile	/^build_vendor = pc$/;"	m
-build_vendor	confuse-2.5/doc/Makefile	/^build_vendor = pc$/;"	m
-build_vendor	confuse-2.5/examples/Makefile	/^build_vendor = pc$/;"	m
-build_vendor	confuse-2.5/m4/Makefile	/^build_vendor = pc$/;"	m
-build_vendor	confuse-2.5/src/Makefile	/^build_vendor = pc$/;"	m
-build_vendor	confuse-2.5/tests/Makefile	/^build_vendor = pc$/;"	m
 call_function	confuse-2.5/src/confuse.c	/^static int call_function(cfg_t *cfg, cfg_opt_t *opt, cfg_opt_t *funcopt)$/;"	f	file:
 callback	filtercloud.h	/^    int             (*callback) (apr_pool_t * pool,$/;"	m	struct:rule_flow
 callbacks	filtercloud.h	/^    struct cloud_callbacks  callbacks; $/;"	m	struct:cloud_filter	typeref:struct:cloud_filter::cloud_callbacks
@@ -1266,7 +455,7 @@ cfg__value__to5	confuse-2.5/doc/html/unioncfg__value__t.html	/^<tr><td class="me
 cfg_addlist	confuse-2.5/src/confuse.c	/^DLLIMPORT void cfg_addlist(cfg_t *cfg, const char *name,$/;"	f
 cfg_addlist_internal	confuse-2.5/src/confuse.c	/^static void cfg_addlist_internal(cfg_opt_t *opt,$/;"	f	file:
 cfg_addval	confuse-2.5/src/confuse.c	/^static cfg_value_t *cfg_addval(cfg_opt_t *opt)$/;"	f	file:
-cfg_bool_t	confuse-2.5/src/confuse.h	/^typedef enum {cfg_false, cfg_true} cfg_bool_t;$/;"	t	typeref:enum:__anon4
+cfg_bool_t	confuse-2.5/src/confuse.h	/^typedef enum {cfg_false, cfg_true} cfg_bool_t;$/;"	t	typeref:enum:__anon5
 cfg_callback_t	confuse-2.5/src/confuse.h	/^typedef int (*cfg_callback_t)(cfg_t *cfg, cfg_opt_t *opt,$/;"	t
 cfg_defvalue_t	confuse-2.5/src/confuse.h	/^struct cfg_defvalue_t {$/;"	s
 cfg_defvalue_t	confuse-2.5/src/confuse.h	/^typedef struct cfg_defvalue_t cfg_defvalue_t;$/;"	t	typeref:struct:cfg_defvalue_t
@@ -1274,7 +463,7 @@ cfg_dummy_function	confuse-2.5/src/lexer.c	/^void cfg_dummy_function(void)$/;"	f
 cfg_dupopt_array	confuse-2.5/src/confuse.c	/^static cfg_opt_t *cfg_dupopt_array(cfg_opt_t *opts)$/;"	f	file:
 cfg_errfunc_t	confuse-2.5/src/confuse.h	/^typedef void (*cfg_errfunc_t)(cfg_t *cfg, const char *fmt, va_list ap);$/;"	t
 cfg_error	confuse-2.5/src/confuse.c	/^DLLIMPORT void cfg_error(cfg_t *cfg, const char *fmt, ...)$/;"	f
-cfg_false	confuse-2.5/src/confuse.h	/^typedef enum {cfg_false, cfg_true} cfg_bool_t;$/;"	e	enum:__anon4
+cfg_false	confuse-2.5/src/confuse.h	/^typedef enum {cfg_false, cfg_true} cfg_bool_t;$/;"	e	enum:__anon5
 cfg_flag_t	confuse-2.5/src/confuse.h	/^typedef int cfg_flag_t;$/;"	t
 cfg_free	confuse-2.5/src/confuse.c	/^DLLIMPORT void cfg_free(cfg_t *cfg)$/;"	f
 cfg_free_func_t	confuse-2.5/src/confuse.h	/^typedef void (*cfg_free_func_t)(void *value);$/;"	t
@@ -1297,7 +486,7 @@ cfg_getsec	confuse-2.5/src/confuse.c	/^DLLIMPORT cfg_t *cfg_getsec(cfg_t *cfg, c
 cfg_getstr	confuse-2.5/src/confuse.c	/^DLLIMPORT char *cfg_getstr(cfg_t *cfg, const char *name)$/;"	f
 cfg_gettsec	confuse-2.5/src/confuse.c	/^DLLIMPORT cfg_t *cfg_gettsec(cfg_t *cfg, const char *name, const char *title)$/;"	f
 cfg_include	confuse-2.5/src/confuse.c	/^DLLIMPORT int cfg_include(cfg_t *cfg, cfg_opt_t *opt, int argc,$/;"	f
-cfg_include_stack	confuse-2.5/src/lexer.c	/^} cfg_include_stack[MAX_INCLUDE_DEPTH];$/;"	v	typeref:struct:__anon3
+cfg_include_stack	confuse-2.5/src/lexer.c	/^} cfg_include_stack[MAX_INCLUDE_DEPTH];$/;"	v	typeref:struct:__anon4
 cfg_include_stack_ptr	confuse-2.5/src/lexer.c	/^int cfg_include_stack_ptr = 0;$/;"	v
 cfg_indent	confuse-2.5/src/confuse.c	/^static void cfg_indent(FILE *fp, int indent)$/;"	f	file:
 cfg_init	confuse-2.5/src/confuse.c	/^DLLIMPORT cfg_t *cfg_init(cfg_opt_t *opts, cfg_flag_t flags)$/;"	f
@@ -1356,7 +545,7 @@ cfg_t	confuse-2.5/src/confuse.h	/^struct cfg_t {$/;"	s
 cfg_t	confuse-2.5/src/confuse.h	/^typedef struct cfg_t cfg_t;$/;"	t	typeref:struct:cfg_t
 cfg_tilde_expand	confuse-2.5/src/confuse.c	/^DLLIMPORT char *cfg_tilde_expand(const char *filename)$/;"	f
 cfg_title	confuse-2.5/src/confuse.c	/^DLLIMPORT const char *cfg_title(cfg_t *cfg)$/;"	f
-cfg_true	confuse-2.5/src/confuse.h	/^typedef enum {cfg_false, cfg_true} cfg_bool_t;$/;"	e	enum:__anon4
+cfg_true	confuse-2.5/src/confuse.h	/^typedef enum {cfg_false, cfg_true} cfg_bool_t;$/;"	e	enum:__anon5
 cfg_type_t	confuse-2.5/src/confuse.h	/^enum cfg_type_t {$/;"	g
 cfg_type_t	confuse-2.5/src/confuse.h	/^typedef enum cfg_type_t cfg_type_t;$/;"	t	typeref:enum:cfg_type_t
 cfg_validate_callback_t	confuse-2.5/src/confuse.h	/^typedef int (*cfg_validate_callback_t)(cfg_t *cfg, cfg_opt_t *opt);$/;"	t
@@ -1364,22 +553,11 @@ cfg_value_t	confuse-2.5/src/confuse.h	/^typedef union cfg_value_t cfg_value_t;$/
 cfg_value_t	confuse-2.5/src/confuse.h	/^union cfg_value_t {$/;"	u
 cfg_yylval	confuse-2.5/src/confuse.c	/^char *cfg_yylval = 0;$/;"	v
 chad_ord_cb	filtercloud.h	/^  void *(*chad_ord_cb)  (apr_pool_t *pool, void *fc_data, const void *usrdata);$/;"	m	struct:cloud_callbacks
-chad_orders	filtercloud.h	/^		apr_hash_t      *chad_orders;$/;"	m	struct:cloud_rule
-check_confuse	confuse-2.5/Makefile	/^check_confuse = $/;"	m
-check_confuse	confuse-2.5/doc/Makefile	/^check_confuse = $/;"	m
-check_confuse	confuse-2.5/examples/Makefile	/^check_confuse = $/;"	m
-check_confuse	confuse-2.5/m4/Makefile	/^check_confuse = $/;"	m
-check_confuse	confuse-2.5/src/Makefile	/^check_confuse = $/;"	m
-check_confuse	confuse-2.5/tests/Makefile	/^check_confuse = $/;"	m
-check_confuse_DEPENDENCIES	confuse-2.5/tests/Makefile	/^check_confuse_DEPENDENCIES = ..\/src\/libconfuse.la \\$/;"	m
-check_confuse_INCLUDES	confuse-2.5/tests/Makefile	/^check_confuse_INCLUDES = -I$(top_srcdir)\/src $/;"	m
-check_confuse_LDADD	confuse-2.5/tests/Makefile	/^check_confuse_LDADD = -L..\/src\/  ..\/src\/libconfuse.la $(LTLIBINTL)$/;"	m
-check_confuse_OBJECTS	confuse-2.5/tests/Makefile	/^check_confuse_OBJECTS = $(am_check_confuse_OBJECTS)$/;"	m
-check_confuse_SOURCES	confuse-2.5/tests/Makefile	/^check_confuse_SOURCES = check_confuse.c suite_single.c suite_dup.c suite_list.c suite_validate.c \\$/;"	m
 cloud_callbacks	filtercloud.h	/^struct cloud_callbacks {$/;"	s
 cloud_callbacks_t	filtercloud.h	/^typedef struct cloud_callbacks cloud_callbacks_t;$/;"	t	typeref:struct:cloud_callbacks
 cloud_filter	filtercloud.h	/^typedef struct cloud_filter {$/;"	s
 cloud_filter_add_rule	filtercloud.c	/^cloud_filter_add_rule(cloud_filter_t * filter, cloud_rule_t * rule)$/;"	f	file:
+cloud_filter_get_rule	filtercloud.c	/^*cloud_filter_get_rule(cloud_filter_t *filter, const char *rule_name)$/;"	f
 cloud_filter_init	filtercloud.c	/^cloud_filter_init(apr_pool_t * parent)$/;"	f
 cloud_filter_t	filtercloud.h	/^} cloud_filter_t;$/;"	t	typeref:struct:cloud_filter
 cloud_flow_from_str	filtercloud.c	/^cloud_flow_from_str(apr_pool_t * pool, char *flowstr)$/;"	f	file:
@@ -1391,16 +569,19 @@ cloud_parse_config	filtercloud.c	/^cloud_parse_config(apr_pool_t * pool, const c
 cloud_register_user_cb	filtercloud.c	/^cloud_register_user_cb(cloud_filter_t *filter, $/;"	f
 cloud_rule	filtercloud.h	/^struct cloud_rule {$/;"	s
 cloud_rule_add_flow	filtercloud.c	/^cloud_rule_add_flow(cloud_rule_t * rule, char *data)$/;"	f	file:
-cloud_rule_add_network	filtercloud.c	/^cloud_rule_add_network(cloud_rule_t * rule,$/;"	f	file:
-cloud_rule_add_string	filtercloud.c	/^cloud_rule_add_string(cloud_rule_t *rule, char *key, char *val)$/;"	f	file:
+cloud_rule_add_network	filtercloud.c	/^cloud_rule_add_network(cloud_rule_t * rule,$/;"	f
+cloud_rule_add_string	filtercloud.c	/^cloud_rule_add_string(cloud_rule_t *rule, char *key, char *val, const int is_regex)$/;"	f	file:
 cloud_rule_flow_init	filtercloud.c	/^cloud_rule_flow_init(apr_pool_t * pool)$/;"	f
 cloud_rule_init	filtercloud.c	/^cloud_rule_init(apr_pool_t * parent)$/;"	f	file:
 cloud_rule_t	filtercloud.h	/^typedef struct cloud_rule cloud_rule_t;$/;"	t	typeref:struct:cloud_rule
 cloud_str2_cb	filtercloud.c	/^void *cloud_str2_cb(apr_pool_t *pool, void *fc_data, const void *d)$/;"	f
+cloud_str3_cb	filtercloud.c	/^void *cloud_str3_cb(apr_pool_t *pool, void *fc_data, const void *d)$/;"	f
 cloud_str_cb	filtercloud.c	/^void *cloud_str_cb(apr_pool_t *pool, void *fc_data, const void *d)$/;"	f
 cloud_tokenize_str	filtercloud.c	/^cloud_tokenize_str(char *string, const char *sep)$/;"	f
 cloud_traverse_filter	filtercloud.c	/^cloud_traverse_filter(cloud_filter_t * filter,$/;"	f
 cmd_config_file	mod_webfw2.c	/^cmd_config_file(cmd_parms * cmd, void *dummy_config, const char *arg)$/;"	f	file:
+cmd_dynamic_srcaddr_rule	mod_webfw2.c	/^cmd_dynamic_srcaddr_rule(cmd_parms *cmd, void *dummy_config, const char *arg)$/;"	f	file:
+cmd_match_variable	mod_webfw2.c	/^cmd_match_variable(cmd_parms *cmd, void *dummy_config, const char *arg, int type)$/;"	f	file:
 cmd_rw_xff	mod_webfw2.c	/^cmd_rw_xff(cmd_parms * cmd, void *dummy_config, const char *arg)$/;"	f	file:
 cmd_update_interval	mod_webfw2.c	/^cmd_update_interval(cmd_parms * cmd, void *dummy_config, const char *arg)$/;"	f	file:
 comment	confuse-2.5/src/lexer.c	535;"	d	file:
@@ -1412,47 +593,13 @@ conf_validate_port	confuse-2.5/examples/ftpconf.c	/^int conf_validate_port(cfg_t
 config_file	mod_webfw2.c	/^    char           *config_file;$/;"	m	struct:webfw2_config	file:
 config_filename	confuse-2.5/examples/reread.c	/^const char *config_filename = ".\/reread.conf";$/;"	v
 confuse_author	confuse-2.5/src/confuse.c	/^const char confuse_author[] = "Martin Hedenfalk <mhe@home.se>";$/;"	v
-confuse_cflags	confuse-2.5/Makefile	/^confuse_cflags = $/;"	m
-confuse_cflags	confuse-2.5/doc/Makefile	/^confuse_cflags = $/;"	m
-confuse_cflags	confuse-2.5/examples/Makefile	/^confuse_cflags = $/;"	m
-confuse_cflags	confuse-2.5/m4/Makefile	/^confuse_cflags = $/;"	m
-confuse_cflags	confuse-2.5/src/Makefile	/^confuse_cflags = $/;"	m
-confuse_cflags	confuse-2.5/tests/Makefile	/^confuse_cflags = $/;"	m
 confuse_copyright	confuse-2.5/src/confuse.c	/^const char confuse_copyright[] = PACKAGE_STRING" by Martin Hedenfalk <mhe@home.se>";$/;"	v
-confuse_cppflags	confuse-2.5/Makefile	/^confuse_cppflags = -I${prefix}\/include$/;"	m
-confuse_cppflags	confuse-2.5/doc/Makefile	/^confuse_cppflags = -I${prefix}\/include$/;"	m
-confuse_cppflags	confuse-2.5/examples/Makefile	/^confuse_cppflags = -I${prefix}\/include$/;"	m
-confuse_cppflags	confuse-2.5/m4/Makefile	/^confuse_cppflags = -I${prefix}\/include$/;"	m
-confuse_cppflags	confuse-2.5/src/Makefile	/^confuse_cppflags = -I${prefix}\/include$/;"	m
-confuse_cppflags	confuse-2.5/tests/Makefile	/^confuse_cppflags = -I${prefix}\/include$/;"	m
-confuse_libs	confuse-2.5/Makefile	/^confuse_libs = -lconfuse $/;"	m
-confuse_libs	confuse-2.5/doc/Makefile	/^confuse_libs = -lconfuse $/;"	m
-confuse_libs	confuse-2.5/examples/Makefile	/^confuse_libs = -lconfuse $/;"	m
-confuse_libs	confuse-2.5/m4/Makefile	/^confuse_libs = -lconfuse $/;"	m
-confuse_libs	confuse-2.5/src/Makefile	/^confuse_libs = -lconfuse $/;"	m
-confuse_libs	confuse-2.5/tests/Makefile	/^confuse_libs = -lconfuse $/;"	m
 confuse_version	confuse-2.5/src/confuse.c	/^const char confuse_version[] = PACKAGE_VERSION;$/;"	v
-copyright	patricia.c	/^static char __attribute__ ((unused)) copyright[] =$/;"	v	file:
 create_config	confuse-2.5/tests/suite_dup.c	/^static cfg_t *create_config(void)$/;"	f	file:
 data	patricia.h	/^    void           *data;       \/* pointer to data *\/$/;"	m	struct:_patricia_node_t
-datadir	confuse-2.5/Makefile	/^datadir = ${prefix}\/share$/;"	m
-datadir	confuse-2.5/doc/Makefile	/^datadir = ${prefix}\/share$/;"	m
-datadir	confuse-2.5/examples/Makefile	/^datadir = ${prefix}\/share$/;"	m
-datadir	confuse-2.5/m4/Makefile	/^datadir = ${prefix}\/share$/;"	m
-datadir	confuse-2.5/po/Makefile	/^datadir = ${prefix}\/share$/;"	m
-datadir	confuse-2.5/src/Makefile	/^datadir = ${prefix}\/share$/;"	m
-datadir	confuse-2.5/tests/Makefile	/^datadir = ${prefix}\/share$/;"	m
-dc_install_base	confuse-2.5/Makefile	/^	dc_install_base=`$(am__cd) $(distdir)\/_inst && pwd | sed -e 's,^[^:\\\\\/]:[\\\\\/],\/,'` \\$/;"	m
 def	confuse-2.5/src/confuse.h	/^    cfg_defvalue_t def;     \/**< Default value *\/$/;"	m	struct:cfg_opt_t
-depcomp	confuse-2.5/doc/Makefile	/^depcomp = $(SHELL) $(top_srcdir)\/support\/depcomp$/;"	m
-depcomp	confuse-2.5/examples/Makefile	/^depcomp = $(SHELL) $(top_srcdir)\/support\/depcomp$/;"	m
-depcomp	confuse-2.5/src/Makefile	/^depcomp = $(SHELL) $(top_srcdir)\/support\/depcomp$/;"	m
-depcomp	confuse-2.5/tests/Makefile	/^depcomp = $(SHELL) $(top_srcdir)\/support\/depcomp$/;"	m
+dest_ip	example_filtercloud_app.c	/^    char           *dest_ip;$/;"	m	struct:my_data_structure	file:
 display_last_error	confuse-2.5/examples/wincfgtest.c	/^static void display_last_error(void)$/;"	f	file:
-distcleancheck_listfiles	confuse-2.5/Makefile	/^distcleancheck_listfiles = find . -type f -print$/;"	m
-distdir	confuse-2.5/Makefile	/^distdir = $(PACKAGE)-$(VERSION)$/;"	m
-distdir	confuse-2.5/po/Makefile	/^distdir = $(top_builddir)\/$(PACKAGE)-$(VERSION)\/$(subdir)$/;"	m
-distuninstallcheck_listfiles	confuse-2.5/Makefile	/^distuninstallcheck_listfiles = find . -type f -print$/;"	m
 dld_link	confuse-2.5/configure	/^dld_link ();$/;"	f
 dlopen	confuse-2.5/configure	/^dlopen ();$/;"	f
 dq_str	confuse-2.5/src/lexer.c	537;"	d	file:
@@ -1460,18 +607,12 @@ dst_addr_cb	filtercloud.c	/^void *dst_addr_cb(apr_pool_t *pool, void *fc_data, c
 dst_addr_cb	filtercloud.h	/^  void *(*dst_addr_cb)  (apr_pool_t *pool, void *fc_data, const void *usrdata);$/;"	m	struct:cloud_callbacks
 dst_addrs	filtercloud.h	/^    patricia_tree_t *dst_addrs;$/;"	m	struct:cloud_rule
 dup_suite	confuse-2.5/tests/suite_dup.c	/^Suite *dup_suite(void) $/;"	f
+dynamic_srcaddr_rule	mod_webfw2.c	/^    char           *dynamic_srcaddr_rule;$/;"	m	struct:webfw2_config	file:
 errfunc	confuse-2.5/src/confuse.h	/^    cfg_errfunc_t errfunc;  \/**< This function (if set with$/;"	m	struct:cfg_t
-exec_prefix	confuse-2.5/Makefile	/^exec_prefix = ${prefix}$/;"	m
-exec_prefix	confuse-2.5/doc/Makefile	/^exec_prefix = ${prefix}$/;"	m
-exec_prefix	confuse-2.5/examples/Makefile	/^exec_prefix = ${prefix}$/;"	m
-exec_prefix	confuse-2.5/m4/Makefile	/^exec_prefix = ${prefix}$/;"	m
-exec_prefix	confuse-2.5/po/Makefile	/^exec_prefix = ${prefix}$/;"	m
-exec_prefix	confuse-2.5/src/Makefile	/^exec_prefix = ${prefix}$/;"	m
-exec_prefix	confuse-2.5/tests/Makefile	/^exec_prefix = ${prefix}$/;"	m
 family	patricia.h	/^    u_short         family;     \/* AF_INET | AF_INET6 *\/$/;"	m	struct:_prefix4_t
 family	patricia.h	/^    u_short         family;     \/* AF_INET | AF_INET6 *\/$/;"	m	struct:_prefix_t
 filename	confuse-2.5/src/confuse.h	/^    char *filename;         \/**< Name of the file being parsed *\/$/;"	m	struct:cfg_t
-filename	confuse-2.5/src/lexer.c	/^    char *filename;$/;"	m	struct:__anon3	file:
+filename	confuse-2.5/src/lexer.c	/^    char *filename;$/;"	m	struct:__anon4	file:
 fileno	confuse-2.5/src/confuse.h	54;"	d
 filter	mod_webfw2.c	/^    cloud_filter_t *filter;$/;"	m	struct:webfw2_filter	file:
 flags	confuse-2.5/src/confuse.h	/^    cfg_flag_t flags;       \/**< Any flags passed to cfg_init() *\/$/;"	m	struct:cfg_t
@@ -1482,101 +623,19 @@ fpnumber	confuse-2.5/src/confuse.h	/^    double fpnumber;        \/**< default f
 fpnumber	confuse-2.5/src/confuse.h	/^    double fpnumber;        \/**< floating point value *\/$/;"	m	union:cfg_value_t
 free_tokens	filtercloud.c	/^free_tokens(char **tokens)$/;"	f
 freecb	confuse-2.5/src/confuse.h	/^    cfg_free_func_t freecb; \/***< user-defined memory release function *\/$/;"	m	struct:cfg_opt_t
-ftpconf_DEPENDENCIES	confuse-2.5/examples/Makefile	/^ftpconf_DEPENDENCIES = ..\/src\/libconfuse.la$/;"	m
-ftpconf_LDADD	confuse-2.5/examples/Makefile	/^ftpconf_LDADD = ..\/src\/libconfuse.la$/;"	m
-ftpconf_OBJECTS	confuse-2.5/examples/Makefile	/^ftpconf_OBJECTS = ftpconf.$(OBJEXT)$/;"	m
-ftpconf_SOURCES	confuse-2.5/examples/Makefile	/^ftpconf_SOURCES = ftpconf.c$/;"	m
 func	confuse-2.5/src/confuse.h	/^    cfg_func_t func;        \/**< Function callback for CFGT_FUNC options *\/$/;"	m	struct:cfg_opt_t
 func_alias	confuse-2.5/tests/suite_func.c	/^int func_alias(cfg_t *cfg, cfg_opt_t *opt, int argc, const char **argv)$/;"	f
 func_alias_called	confuse-2.5/tests/suite_func.c	/^static int func_alias_called = 0;$/;"	v	file:
-func_infer_tag	confuse-2.5/libtool	/^func_infer_tag () {$/;"	f
 func_infer_tag	confuse-2.5/support/ltmain.sh	/^func_infer_tag () {$/;"	f
 func_setup	confuse-2.5/tests/suite_func.c	/^void func_setup(void)$/;"	f
 func_suite	confuse-2.5/tests/suite_func.c	/^Suite *func_suite(void) $/;"	f
 func_teardown	confuse-2.5/tests/suite_func.c	/^void func_teardown(void)$/;"	f
-func_win32_libid	confuse-2.5/libtool	/^func_win32_libid () {$/;"	f
 func_win32_libid	confuse-2.5/support/ltmain.sh	/^func_win32_libid () {$/;"	f
-gettextsrcdir	confuse-2.5/po/Makefile	/^gettextsrcdir = $(datadir)\/gettext\/po$/;"	m
 head	filtercloud.h	/^    cloud_rule_t      *head;$/;"	m	struct:cloud_filter
 head	patricia.h	/^    patricia_node_t *head;$/;"	m	struct:_patricia_tree_t
-host	confuse-2.5/Makefile	/^host = i686-pc-linux-gnu$/;"	m
-host	confuse-2.5/doc/Makefile	/^host = i686-pc-linux-gnu$/;"	m
-host	confuse-2.5/examples/Makefile	/^host = i686-pc-linux-gnu$/;"	m
-host	confuse-2.5/m4/Makefile	/^host = i686-pc-linux-gnu$/;"	m
-host	confuse-2.5/src/Makefile	/^host = i686-pc-linux-gnu$/;"	m
-host	confuse-2.5/tests/Makefile	/^host = i686-pc-linux-gnu$/;"	m
-host_alias	confuse-2.5/Makefile	/^host_alias = $/;"	m
-host_alias	confuse-2.5/doc/Makefile	/^host_alias = $/;"	m
-host_alias	confuse-2.5/examples/Makefile	/^host_alias = $/;"	m
-host_alias	confuse-2.5/m4/Makefile	/^host_alias = $/;"	m
-host_alias	confuse-2.5/src/Makefile	/^host_alias = $/;"	m
-host_alias	confuse-2.5/tests/Makefile	/^host_alias = $/;"	m
-host_cpu	confuse-2.5/Makefile	/^host_cpu = i686$/;"	m
-host_cpu	confuse-2.5/doc/Makefile	/^host_cpu = i686$/;"	m
-host_cpu	confuse-2.5/examples/Makefile	/^host_cpu = i686$/;"	m
-host_cpu	confuse-2.5/m4/Makefile	/^host_cpu = i686$/;"	m
-host_cpu	confuse-2.5/src/Makefile	/^host_cpu = i686$/;"	m
-host_cpu	confuse-2.5/tests/Makefile	/^host_cpu = i686$/;"	m
-host_os	confuse-2.5/Makefile	/^host_os = linux-gnu$/;"	m
-host_os	confuse-2.5/doc/Makefile	/^host_os = linux-gnu$/;"	m
-host_os	confuse-2.5/examples/Makefile	/^host_os = linux-gnu$/;"	m
-host_os	confuse-2.5/m4/Makefile	/^host_os = linux-gnu$/;"	m
-host_os	confuse-2.5/src/Makefile	/^host_os = linux-gnu$/;"	m
-host_os	confuse-2.5/tests/Makefile	/^host_os = linux-gnu$/;"	m
-host_triplet	confuse-2.5/Makefile	/^host_triplet = i686-pc-linux-gnu$/;"	m
-host_triplet	confuse-2.5/doc/Makefile	/^host_triplet = i686-pc-linux-gnu$/;"	m
-host_triplet	confuse-2.5/examples/Makefile	/^host_triplet = i686-pc-linux-gnu$/;"	m
-host_triplet	confuse-2.5/m4/Makefile	/^host_triplet = i686-pc-linux-gnu$/;"	m
-host_triplet	confuse-2.5/src/Makefile	/^host_triplet = i686-pc-linux-gnu$/;"	m
-host_triplet	confuse-2.5/tests/Makefile	/^host_triplet = i686-pc-linux-gnu$/;"	m
-host_vendor	confuse-2.5/Makefile	/^host_vendor = pc$/;"	m
-host_vendor	confuse-2.5/doc/Makefile	/^host_vendor = pc$/;"	m
-host_vendor	confuse-2.5/examples/Makefile	/^host_vendor = pc$/;"	m
-host_vendor	confuse-2.5/m4/Makefile	/^host_vendor = pc$/;"	m
-host_vendor	confuse-2.5/src/Makefile	/^host_vendor = pc$/;"	m
-host_vendor	confuse-2.5/tests/Makefile	/^host_vendor = pc$/;"	m
-id	filtercloud.h	/^    uint32_t        id;$/;"	m	struct:cloud_rule
-includeHEADERS_INSTALL	confuse-2.5/src/Makefile	/^includeHEADERS_INSTALL = $(INSTALL_HEADER)$/;"	m
-include_HEADERS	confuse-2.5/src/Makefile	/^include_HEADERS = confuse.h$/;"	m
-includedir	confuse-2.5/Makefile	/^includedir = ${prefix}\/include$/;"	m
-includedir	confuse-2.5/doc/Makefile	/^includedir = ${prefix}\/include$/;"	m
-includedir	confuse-2.5/examples/Makefile	/^includedir = ${prefix}\/include$/;"	m
-includedir	confuse-2.5/m4/Makefile	/^includedir = ${prefix}\/include$/;"	m
-includedir	confuse-2.5/src/Makefile	/^includedir = ${prefix}\/include$/;"	m
-includedir	confuse-2.5/tests/Makefile	/^includedir = ${prefix}\/include$/;"	m
 index_c	confuse-2.5/doc/html/globals.html	/^Here is a list of all documented functions, variables, defines, enums, and typedefs with links to the documentation:<h3><a class="anchor" name="index_c">- c -<\/a><\/h3><ul>$/;"	a
 index_c	confuse-2.5/doc/html/globals_defs.html	/^<h3><a class="anchor" name="index_c">- c -<\/a><\/h3><ul>$/;"	a
 index_c	confuse-2.5/doc/html/globals_func.html	/^<h3><a class="anchor" name="index_c">- c -<\/a><\/h3><ul>$/;"	a
-infodir	confuse-2.5/Makefile	/^infodir = ${prefix}\/info$/;"	m
-infodir	confuse-2.5/doc/Makefile	/^infodir = ${prefix}\/info$/;"	m
-infodir	confuse-2.5/examples/Makefile	/^infodir = ${prefix}\/info$/;"	m
-infodir	confuse-2.5/m4/Makefile	/^infodir = ${prefix}\/info$/;"	m
-infodir	confuse-2.5/src/Makefile	/^infodir = ${prefix}\/info$/;"	m
-infodir	confuse-2.5/tests/Makefile	/^infodir = ${prefix}\/info$/;"	m
-install_sh	confuse-2.5/Makefile	/^install_sh = \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/install-sh$/;"	m
-install_sh	confuse-2.5/doc/Makefile	/^install_sh = \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/install-sh$/;"	m
-install_sh	confuse-2.5/examples/Makefile	/^install_sh = \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/install-sh$/;"	m
-install_sh	confuse-2.5/m4/Makefile	/^install_sh = \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/install-sh$/;"	m
-install_sh	confuse-2.5/src/Makefile	/^install_sh = \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/install-sh$/;"	m
-install_sh	confuse-2.5/tests/Makefile	/^install_sh = \/home\/mthomas\/mod_webfw2\/confuse-2.5\/support\/install-sh$/;"	m
-install_sh_DATA	confuse-2.5/Makefile	/^install_sh_DATA = $(install_sh) -c -m 644$/;"	m
-install_sh_DATA	confuse-2.5/doc/Makefile	/^install_sh_DATA = $(install_sh) -c -m 644$/;"	m
-install_sh_DATA	confuse-2.5/examples/Makefile	/^install_sh_DATA = $(install_sh) -c -m 644$/;"	m
-install_sh_DATA	confuse-2.5/m4/Makefile	/^install_sh_DATA = $(install_sh) -c -m 644$/;"	m
-install_sh_DATA	confuse-2.5/src/Makefile	/^install_sh_DATA = $(install_sh) -c -m 644$/;"	m
-install_sh_DATA	confuse-2.5/tests/Makefile	/^install_sh_DATA = $(install_sh) -c -m 644$/;"	m
-install_sh_PROGRAM	confuse-2.5/Makefile	/^install_sh_PROGRAM = $(install_sh) -c$/;"	m
-install_sh_PROGRAM	confuse-2.5/doc/Makefile	/^install_sh_PROGRAM = $(install_sh) -c$/;"	m
-install_sh_PROGRAM	confuse-2.5/examples/Makefile	/^install_sh_PROGRAM = $(install_sh) -c$/;"	m
-install_sh_PROGRAM	confuse-2.5/m4/Makefile	/^install_sh_PROGRAM = $(install_sh) -c$/;"	m
-install_sh_PROGRAM	confuse-2.5/src/Makefile	/^install_sh_PROGRAM = $(install_sh) -c$/;"	m
-install_sh_PROGRAM	confuse-2.5/tests/Makefile	/^install_sh_PROGRAM = $(install_sh) -c$/;"	m
-install_sh_SCRIPT	confuse-2.5/Makefile	/^install_sh_SCRIPT = $(install_sh) -c$/;"	m
-install_sh_SCRIPT	confuse-2.5/doc/Makefile	/^install_sh_SCRIPT = $(install_sh) -c$/;"	m
-install_sh_SCRIPT	confuse-2.5/examples/Makefile	/^install_sh_SCRIPT = $(install_sh) -c$/;"	m
-install_sh_SCRIPT	confuse-2.5/m4/Makefile	/^install_sh_SCRIPT = $(install_sh) -c$/;"	m
-install_sh_SCRIPT	confuse-2.5/src/Makefile	/^install_sh_SCRIPT = $(install_sh) -c$/;"	m
-install_sh_SCRIPT	confuse-2.5/tests/Makefile	/^install_sh_SCRIPT = $(install_sh) -c$/;"	m
 intro	confuse-2.5/doc/html/index.html	/^<h3 align="center">2.5 <\/h3><h2><a class="anchor" name="intro">$/;"	a
 is_set	confuse-2.5/src/confuse.c	46;"	d	file:
 isatty	confuse-2.5/src/confuse.h	58;"	d
@@ -1655,61 +714,13 @@ l00486	confuse-2.5/doc/html/confuse_8h-source.html	/^<a name="l00486"><\/a><a cl
 l00507	confuse-2.5/doc/html/confuse_8h-source.html	/^<a name="l00507"><\/a><a class="code" href="confuse_8h.html#a45">00507<\/a> <span class="preprocessor">#define CFG_PTR_CB(name, def, flags, parsecb, freecb) \\<\/span>$/;"	a
 l00512	confuse-2.5/doc/html/confuse_8h-source.html	/^<a name="l00512"><\/a><a class="code" href="confuse_8h.html#a46">00512<\/a> <span class="preprocessor">#define CFG_PTR_LIST_CB(name, def, flags, parsecb, freecb) \\<\/span>$/;"	a
 l00522	confuse-2.5/doc/html/confuse_8h-source.html	/^<a name="l00522"><\/a><a class="code" href="confuse_8h.html#a47">00522<\/a> <span class="preprocessor">#define CFG_END() \\<\/span>$/;"	a
-last_update	mod_webfw2.c	/^    uint32_t        last_update;$/;"	m	struct:webfw2_filter	file:
-libLTLIBRARIES_INSTALL	confuse-2.5/src/Makefile	/^libLTLIBRARIES_INSTALL = $(INSTALL)$/;"	m
-lib_LTLIBRARIES	confuse-2.5/src/Makefile	/^lib_LTLIBRARIES = libconfuse.la$/;"	m
-libconfuse_la_LIBADD	confuse-2.5/src/Makefile	/^libconfuse_la_LIBADD =$/;"	m
-libconfuse_la_OBJECTS	confuse-2.5/src/Makefile	/^libconfuse_la_OBJECTS = $(am_libconfuse_la_OBJECTS)$/;"	m
-libconfuse_la_SOURCES	confuse-2.5/src/Makefile	/^libconfuse_la_SOURCES = confuse.c lexer.l$/;"	m
-libdir	confuse-2.5/Makefile	/^libdir = ${exec_prefix}\/lib$/;"	m
-libdir	confuse-2.5/doc/Makefile	/^libdir = ${exec_prefix}\/lib$/;"	m
-libdir	confuse-2.5/examples/Makefile	/^libdir = ${exec_prefix}\/lib$/;"	m
-libdir	confuse-2.5/m4/Makefile	/^libdir = ${exec_prefix}\/lib$/;"	m
-libdir	confuse-2.5/src/Makefile	/^libdir = ${exec_prefix}\/lib$/;"	m
-libdir	confuse-2.5/tests/Makefile	/^libdir = ${exec_prefix}\/lib$/;"	m
-libexecdir	confuse-2.5/Makefile	/^libexecdir = ${exec_prefix}\/libexec$/;"	m
-libexecdir	confuse-2.5/doc/Makefile	/^libexecdir = ${exec_prefix}\/libexec$/;"	m
-libexecdir	confuse-2.5/examples/Makefile	/^libexecdir = ${exec_prefix}\/libexec$/;"	m
-libexecdir	confuse-2.5/m4/Makefile	/^libexecdir = ${exec_prefix}\/libexec$/;"	m
-libexecdir	confuse-2.5/src/Makefile	/^libexecdir = ${exec_prefix}\/libexec$/;"	m
-libexecdir	confuse-2.5/tests/Makefile	/^libexecdir = ${exec_prefix}\/libexec$/;"	m
+last_modification	mod_webfw2.c	/^    apr_time_t      last_modification;$/;"	m	struct:webfw2_filter	file:
+last_update	mod_webfw2.c	/^    apr_time_t      last_update;$/;"	m	struct:webfw2_filter	file:
 line	confuse-2.5/src/confuse.h	/^    int line;               \/**< Line number in the config file *\/$/;"	m	struct:cfg_t
-line	confuse-2.5/src/lexer.c	/^    unsigned int line;$/;"	m	struct:__anon3	file:
-list	confuse-2.5/Makefile	/^	list='$(SUBDIRS)'; for subdir in $$list; do \\$/;"	m
+line	confuse-2.5/src/lexer.c	/^    unsigned int line;$/;"	m	struct:__anon4	file:
 list_setup	confuse-2.5/tests/suite_list.c	/^void list_setup(void)$/;"	f
 list_suite	confuse-2.5/tests/suite_list.c	/^Suite *list_suite(void) $/;"	f
 list_teardown	confuse-2.5/tests/suite_list.c	/^void list_teardown(void)$/;"	f
-listing1_LDADD	confuse-2.5/doc/Makefile	/^listing1_LDADD = $(LDADD)$/;"	m
-listing1_OBJECTS	confuse-2.5/doc/Makefile	/^listing1_OBJECTS = listing1.$(OBJEXT)$/;"	m
-listing1_SOURCES	confuse-2.5/doc/Makefile	/^listing1_SOURCES = listing1.c$/;"	m
-listing2_DEPENDENCIES	confuse-2.5/doc/Makefile	/^listing2_DEPENDENCIES = ..\/src\/libconfuse.la$/;"	m
-listing2_LDADD	confuse-2.5/doc/Makefile	/^listing2_LDADD = ..\/src\/libconfuse.la$/;"	m
-listing2_OBJECTS	confuse-2.5/doc/Makefile	/^listing2_OBJECTS = listing2.$(OBJEXT)$/;"	m
-listing2_SOURCES	confuse-2.5/doc/Makefile	/^listing2_SOURCES = listing2.c$/;"	m
-listing3_DEPENDENCIES	confuse-2.5/doc/Makefile	/^listing3_DEPENDENCIES = ..\/src\/libconfuse.la$/;"	m
-listing3_LDADD	confuse-2.5/doc/Makefile	/^listing3_LDADD = ..\/src\/libconfuse.la$/;"	m
-listing3_OBJECTS	confuse-2.5/doc/Makefile	/^listing3_OBJECTS = listing3.$(OBJEXT)$/;"	m
-listing3_SOURCES	confuse-2.5/doc/Makefile	/^listing3_SOURCES = listing3.c$/;"	m
-listing4_DEPENDENCIES	confuse-2.5/doc/Makefile	/^listing4_DEPENDENCIES = ..\/src\/libconfuse.la$/;"	m
-listing4_LDADD	confuse-2.5/doc/Makefile	/^listing4_LDADD = ..\/src\/libconfuse.la$/;"	m
-listing4_OBJECTS	confuse-2.5/doc/Makefile	/^listing4_OBJECTS = listing4.$(OBJEXT)$/;"	m
-listing4_SOURCES	confuse-2.5/doc/Makefile	/^listing4_SOURCES = listing4.c$/;"	m
-listing5_DEPENDENCIES	confuse-2.5/doc/Makefile	/^listing5_DEPENDENCIES = ..\/src\/libconfuse.la$/;"	m
-listing5_LDADD	confuse-2.5/doc/Makefile	/^listing5_LDADD = ..\/src\/libconfuse.la$/;"	m
-listing5_OBJECTS	confuse-2.5/doc/Makefile	/^listing5_OBJECTS = listing5.$(OBJEXT)$/;"	m
-listing5_SOURCES	confuse-2.5/doc/Makefile	/^listing5_SOURCES = listing5.c$/;"	m
-listing8_DEPENDENCIES	confuse-2.5/doc/Makefile	/^listing8_DEPENDENCIES = ..\/src\/libconfuse.la$/;"	m
-listing8_LDADD	confuse-2.5/doc/Makefile	/^listing8_LDADD = ..\/src\/libconfuse.la$/;"	m
-listing8_OBJECTS	confuse-2.5/doc/Makefile	/^listing8_OBJECTS = listing8.$(OBJEXT)$/;"	m
-listing8_SOURCES	confuse-2.5/doc/Makefile	/^listing8_SOURCES = listing8.c$/;"	m
-localedir	confuse-2.5/po/Makefile	/^localedir = $(datadir)\/locale$/;"	m
-localedir	confuse-2.5/src/Makefile	/^localedir = $(datadir)\/locale$/;"	m
-localstatedir	confuse-2.5/Makefile	/^localstatedir = ${prefix}\/var$/;"	m
-localstatedir	confuse-2.5/doc/Makefile	/^localstatedir = ${prefix}\/var$/;"	m
-localstatedir	confuse-2.5/examples/Makefile	/^localstatedir = ${prefix}\/var$/;"	m
-localstatedir	confuse-2.5/m4/Makefile	/^localstatedir = ${prefix}\/var$/;"	m
-localstatedir	confuse-2.5/src/Makefile	/^localstatedir = ${prefix}\/var$/;"	m
-localstatedir	confuse-2.5/tests/Makefile	/^localstatedir = ${prefix}\/var$/;"	m
 lookup_then_remove	patricia.c	/^lookup_then_remove(apr_pool_t * pool, patricia_tree_t * tree, char *string)$/;"	f
 loop	confuse-2.5/examples/reread.c	/^static int loop = 1;$/;"	v	file:
 main	confuse-2.5/doc/listing1.c	/^int main(void)$/;"	f
@@ -1728,51 +739,32 @@ main	confuse-2.5/support/config.guess	/^		main()$/;"	f
 main	confuse-2.5/support/config.guess	/^	main ()$/;"	f
 main	confuse-2.5/support/config.guess	/^main ()$/;"	f
 main	confuse-2.5/tests/check_confuse.c	/^int main(void) $/;"	f
+main	example_filtercloud_app.c	/^main(int argc, char **argv)$/;"	f
 main	filtercloud.c	/^main(int argc, char **argv)$/;"	f
 make_and_lookup	patricia.c	/^make_and_lookup(apr_pool_t * pool, patricia_tree_t * tree, char *string)$/;"	f
-mandir	confuse-2.5/Makefile	/^mandir = ${prefix}\/man$/;"	m
-mandir	confuse-2.5/doc/Makefile	/^mandir = ${prefix}\/man$/;"	m
-mandir	confuse-2.5/examples/Makefile	/^mandir = ${prefix}\/man$/;"	m
-mandir	confuse-2.5/m4/Makefile	/^mandir = ${prefix}\/man$/;"	m
-mandir	confuse-2.5/src/Makefile	/^mandir = ${prefix}\/man$/;"	m
-mandir	confuse-2.5/tests/Makefile	/^mandir = ${prefix}\/man$/;"	m
+match_env	mod_webfw2.c	/^    apr_array_header_t *match_env;$/;"	m	struct:webfw2_config	file:
+match_file	mod_webfw2.c	/^    apr_array_header_t *match_file;$/;"	m	struct:webfw2_config	file:
+match_note	mod_webfw2.c	/^    apr_array_header_t *match_note;$/;"	m	struct:webfw2_config	file:
 maxbits	patricia.h	/^    u_int           maxbits;    \/* for IP, 32 bit addresses *\/$/;"	m	struct:_patricia_tree_t
-mkdir_p	confuse-2.5/Makefile	/^mkdir_p = mkdir -p -- .$/;"	m
-mkdir_p	confuse-2.5/doc/Makefile	/^mkdir_p = mkdir -p -- .$/;"	m
-mkdir_p	confuse-2.5/examples/Makefile	/^mkdir_p = mkdir -p -- .$/;"	m
-mkdir_p	confuse-2.5/m4/Makefile	/^mkdir_p = mkdir -p -- .$/;"	m
-mkdir_p	confuse-2.5/src/Makefile	/^mkdir_p = mkdir -p -- .$/;"	m
-mkdir_p	confuse-2.5/tests/Makefile	/^mkdir_p = mkdir -p -- .$/;"	m
-mkinstalldirs	confuse-2.5/Makefile	/^mkinstalldirs = $(SHELL) $(top_srcdir)\/support\/mkinstalldirs$/;"	m
-mkinstalldirs	confuse-2.5/doc/Makefile	/^mkinstalldirs = $(SHELL) $(top_srcdir)\/support\/mkinstalldirs$/;"	m
-mkinstalldirs	confuse-2.5/examples/Makefile	/^mkinstalldirs = $(SHELL) $(top_srcdir)\/support\/mkinstalldirs$/;"	m
-mkinstalldirs	confuse-2.5/m4/Makefile	/^mkinstalldirs = $(SHELL) $(top_srcdir)\/support\/mkinstalldirs$/;"	m
-mkinstalldirs	confuse-2.5/po/Makefile	/^mkinstalldirs = $(SHELL) $(MKINSTALLDIRS)$/;"	m
-mkinstalldirs	confuse-2.5/src/Makefile	/^mkinstalldirs = $(SHELL) $(top_srcdir)\/support\/mkinstalldirs$/;"	m
-mkinstalldirs	confuse-2.5/tests/Makefile	/^mkinstalldirs = $(SHELL) $(top_srcdir)\/support\/mkinstalldirs$/;"	m
+my_data_structure	example_filtercloud_app.c	/^struct my_data_structure {$/;"	s	file:
+my_destination_address_callback	example_filtercloud_app.c	/^my_destination_address_callback(apr_pool_t * pool, void *unused,$/;"	f
 my_inet_pton	patricia.c	/^my_inet_pton(int af, const char *src, void *dst)$/;"	f
+my_source_address_callback	example_filtercloud_app.c	/^my_source_address_callback(apr_pool_t * pool, void *unused,$/;"	f
+my_string_match_callback	example_filtercloud_app.c	/^my_string_match_callback(apr_pool_t *pool, char *string_group,$/;"	f
 n_t_s	filtercloud.c	/^static struct n_t_s {$/;"	s	file:
 name	confuse-2.5/src/confuse.h	/^    char *name;             \/**< The name of the option *\/$/;"	m	struct:cfg_opt_t
 name	confuse-2.5/src/confuse.h	/^    char *name;             \/**< The name of this section, the root$/;"	m	struct:cfg_t
+name	filtercloud.h	/^		char            *name;$/;"	m	struct:cloud_rule
 name_to_int	filtercloud.c	/^} name_to_int[] = {$/;"	v	typeref:struct:n_t_s	file:
 next	filtercloud.h	/^    struct cloud_rule *next;$/;"	m	struct:cloud_rule	typeref:struct:cloud_rule::cloud_rule
 next	filtercloud.h	/^    struct rule_flow *next;$/;"	m	struct:rule_flow	typeref:struct:rule_flow::rule_flow
 next_operator	filtercloud.h	/^    int             next_operator;$/;"	m	struct:rule_flow
-noinst_PROGRAMS	confuse-2.5/doc/Makefile	/^noinst_PROGRAMS = listing1$(EXEEXT) listing2$(EXEEXT) \\$/;"	m
-noinst_PROGRAMS	confuse-2.5/examples/Makefile	/^noinst_PROGRAMS = simple$(EXEEXT) reread$(EXEEXT) ftpconf$(EXEEXT)$/;"	m
-noinst_PROGRAMS	confuse-2.5/tests/Makefile	/^noinst_PROGRAMS = $(am__EXEEXT_1)$/;"	m
 num_active_node	patricia.h	/^    int             num_active_node;    \/* for debug purpose *\/$/;"	m	struct:_patricia_tree_t
 num_active_patricia	patricia.c	/^static int      num_active_patricia = 0;$/;"	v	file:
 number	confuse-2.5/src/confuse.h	/^    long int number;        \/**< default integer value *\/$/;"	m	struct:cfg_defvalue_t
 number	confuse-2.5/src/confuse.h	/^    long int number;        \/**< integer value *\/$/;"	m	union:cfg_value_t
 numopts	confuse-2.5/tests/suite_list.c	/^int numopts = 0;$/;"	v
 nvalues	confuse-2.5/src/confuse.h	/^    unsigned int nvalues;   \/**< Number of values parsed *\/$/;"	m	struct:cfg_opt_t
-oldincludedir	confuse-2.5/Makefile	/^oldincludedir = \/usr\/include$/;"	m
-oldincludedir	confuse-2.5/doc/Makefile	/^oldincludedir = \/usr\/include$/;"	m
-oldincludedir	confuse-2.5/examples/Makefile	/^oldincludedir = \/usr\/include$/;"	m
-oldincludedir	confuse-2.5/m4/Makefile	/^oldincludedir = \/usr\/include$/;"	m
-oldincludedir	confuse-2.5/src/Makefile	/^oldincludedir = \/usr\/include$/;"	m
-oldincludedir	confuse-2.5/tests/Makefile	/^oldincludedir = \/usr\/include$/;"	m
 opts	confuse-2.5/src/confuse.h	/^    cfg_opt_t *opts;        \/**< Array of options *\/$/;"	m	struct:cfg_t
 parent	patricia.h	/^    struct _patricia_node_t *parent;    \/* may be used *\/$/;"	m	struct:_patricia_node_t	typeref:struct:_patricia_node_t::_patricia_node_t
 parse_action	confuse-2.5/tests/suite_validate.c	/^int parse_action(cfg_t *cfg, cfg_opt_t *opt, const char *value, void *result)$/;"	f
@@ -1791,39 +783,11 @@ patricia_search_exact	patricia.c	/^patricia_search_exact(patricia_tree_t * patri
 patricia_tree_t	patricia.h	/^} patricia_tree_t;$/;"	t	typeref:struct:_patricia_tree_t
 patricia_walk_inorder	patricia.c	/^patricia_walk_inorder(patricia_node_t * node, void_fn_t func)$/;"	f
 pf	confuse-2.5/src/confuse.h	/^    cfg_print_func_t pf;    \/**< print callback function *\/$/;"	m	struct:cfg_opt_t
-pkgconfigDATA_INSTALL	confuse-2.5/Makefile	/^pkgconfigDATA_INSTALL = $(INSTALL_DATA)$/;"	m
-pkgconfig_DATA	confuse-2.5/Makefile	/^pkgconfig_DATA = libconfuse.pc$/;"	m
-pkgconfigdir	confuse-2.5/Makefile	/^pkgconfigdir = $(libdir)\/pkgconfig$/;"	m
-pkgdatadir	confuse-2.5/Makefile	/^pkgdatadir = $(datadir)\/confuse$/;"	m
-pkgdatadir	confuse-2.5/doc/Makefile	/^pkgdatadir = $(datadir)\/confuse$/;"	m
-pkgdatadir	confuse-2.5/examples/Makefile	/^pkgdatadir = $(datadir)\/confuse$/;"	m
-pkgdatadir	confuse-2.5/m4/Makefile	/^pkgdatadir = $(datadir)\/confuse$/;"	m
-pkgdatadir	confuse-2.5/src/Makefile	/^pkgdatadir = $(datadir)\/confuse$/;"	m
-pkgdatadir	confuse-2.5/tests/Makefile	/^pkgdatadir = $(datadir)\/confuse$/;"	m
-pkgincludedir	confuse-2.5/Makefile	/^pkgincludedir = $(includedir)\/confuse$/;"	m
-pkgincludedir	confuse-2.5/doc/Makefile	/^pkgincludedir = $(includedir)\/confuse$/;"	m
-pkgincludedir	confuse-2.5/examples/Makefile	/^pkgincludedir = $(includedir)\/confuse$/;"	m
-pkgincludedir	confuse-2.5/m4/Makefile	/^pkgincludedir = $(includedir)\/confuse$/;"	m
-pkgincludedir	confuse-2.5/src/Makefile	/^pkgincludedir = $(includedir)\/confuse$/;"	m
-pkgincludedir	confuse-2.5/tests/Makefile	/^pkgincludedir = $(includedir)\/confuse$/;"	m
-pkglibdir	confuse-2.5/Makefile	/^pkglibdir = $(libdir)\/confuse$/;"	m
-pkglibdir	confuse-2.5/doc/Makefile	/^pkglibdir = $(libdir)\/confuse$/;"	m
-pkglibdir	confuse-2.5/examples/Makefile	/^pkglibdir = $(libdir)\/confuse$/;"	m
-pkglibdir	confuse-2.5/m4/Makefile	/^pkglibdir = $(libdir)\/confuse$/;"	m
-pkglibdir	confuse-2.5/src/Makefile	/^pkglibdir = $(libdir)\/confuse$/;"	m
-pkglibdir	confuse-2.5/tests/Makefile	/^pkglibdir = $(libdir)\/confuse$/;"	m
 pool	filtercloud.h	/^    apr_pool_t        *pool;$/;"	m	struct:cloud_filter
 pool	filtercloud.h	/^    apr_pool_t     *pool;$/;"	m	struct:cloud_rule
 pool	mod_webfw2.c	/^    apr_pool_t     *pool;$/;"	m	struct:webfw2_filter	file:
 pre_fp_scan_state	confuse-2.5/src/lexer.c	/^static YY_BUFFER_STATE pre_fp_scan_state;$/;"	v	file:
 pre_string_scan_state	confuse-2.5/src/lexer.c	/^static YY_BUFFER_STATE pre_string_scan_state = 0;$/;"	v	file:
-prefix	confuse-2.5/Makefile	/^prefix = \/usr\/local$/;"	m
-prefix	confuse-2.5/doc/Makefile	/^prefix = \/usr\/local$/;"	m
-prefix	confuse-2.5/examples/Makefile	/^prefix = \/usr\/local$/;"	m
-prefix	confuse-2.5/m4/Makefile	/^prefix = \/usr\/local$/;"	m
-prefix	confuse-2.5/po/Makefile	/^prefix = \/usr\/local$/;"	m
-prefix	confuse-2.5/src/Makefile	/^prefix = \/usr\/local$/;"	m
-prefix	confuse-2.5/tests/Makefile	/^prefix = \/usr\/local$/;"	m
 prefix	patricia.h	/^    prefix_t       *prefix;     \/* who we are in patricia tree *\/$/;"	m	struct:_patricia_node_t
 prefix4_t	patricia.h	/^} prefix4_t;$/;"	t	typeref:struct:_prefix4_t
 prefix_t	patricia.h	/^} prefix_t;$/;"	t	typeref:struct:_prefix_t
@@ -1832,12 +796,6 @@ prefix_toa2	patricia.c	/^prefix_toa2(prefix_t * prefix, char *buff)$/;"	f
 prefix_toa2x	patricia.c	/^prefix_toa2x(prefix_t * prefix, char *buff, int with_len)$/;"	f
 prefix_tochar	patricia.c	/^prefix_tochar(prefix_t * prefix)$/;"	f
 prefix_touchar	patricia.h	25;"	d
-program_transform_name	confuse-2.5/Makefile	/^program_transform_name = s,x,x,$/;"	m
-program_transform_name	confuse-2.5/doc/Makefile	/^program_transform_name = s,x,x,$/;"	m
-program_transform_name	confuse-2.5/examples/Makefile	/^program_transform_name = s,x,x,$/;"	m
-program_transform_name	confuse-2.5/m4/Makefile	/^program_transform_name = s,x,x,$/;"	m
-program_transform_name	confuse-2.5/src/Makefile	/^program_transform_name = s,x,x,$/;"	m
-program_transform_name	confuse-2.5/tests/Makefile	/^program_transform_name = s,x,x,$/;"	m
 prototypes	confuse-2.5/configure	/^   function prototypes and stuff, but not '\\xHH' hex character constants.$/;"	f
 ptr	confuse-2.5/src/confuse.h	/^    void *ptr;              \/**< user-defined value *\/$/;"	m	union:cfg_value_t
 qputc	confuse-2.5/src/lexer.c	/^static void qputc(char ch)$/;"	f	file:
@@ -1847,34 +805,14 @@ r	patricia.h	/^                   *r;          \/* left and right children *\/$/
 read_config	confuse-2.5/examples/reread.c	/^void read_config(void)$/;"	f
 ref_count	patricia.h	/^    int             ref_count;  \/* reference count *\/$/;"	m	struct:_prefix4_t
 ref_count	patricia.h	/^    int             ref_count;  \/* reference count *\/$/;"	m	struct:_prefix_t
-reread_DEPENDENCIES	confuse-2.5/examples/Makefile	/^reread_DEPENDENCIES = ..\/src\/libconfuse.la$/;"	m
-reread_LDADD	confuse-2.5/examples/Makefile	/^reread_LDADD = ..\/src\/libconfuse.la$/;"	m
-reread_OBJECTS	confuse-2.5/examples/Makefile	/^reread_OBJECTS = reread.$(OBJEXT)$/;"	m
-reread_SOURCES	confuse-2.5/examples/Makefile	/^reread_SOURCES = reread.c$/;"	m
 rule_count	filtercloud.h	/^    uint32_t        rule_count;$/;"	m	struct:cloud_filter
 rule_flow	filtercloud.h	/^struct rule_flow {$/;"	s
 rule_flow_t	filtercloud.h	/^typedef struct rule_flow rule_flow_t;$/;"	t	typeref:struct:rule_flow
 rule_token_to_int	filtercloud.c	/^rule_token_to_int(char *token)$/;"	f	file:
 rwlock	mod_webfw2.c	/^    apr_thread_rwlock_t *rwlock;$/;"	m	struct:webfw2_filter	file:
-sbindir	confuse-2.5/Makefile	/^sbindir = ${exec_prefix}\/sbin$/;"	m
-sbindir	confuse-2.5/doc/Makefile	/^sbindir = ${exec_prefix}\/sbin$/;"	m
-sbindir	confuse-2.5/examples/Makefile	/^sbindir = ${exec_prefix}\/sbin$/;"	m
-sbindir	confuse-2.5/m4/Makefile	/^sbindir = ${exec_prefix}\/sbin$/;"	m
-sbindir	confuse-2.5/src/Makefile	/^sbindir = ${exec_prefix}\/sbin$/;"	m
-sbindir	confuse-2.5/tests/Makefile	/^sbindir = ${exec_prefix}\/sbin$/;"	m
 section	confuse-2.5/src/confuse.h	/^    cfg_t *section;         \/**< section value *\/$/;"	m	union:cfg_value_t
-sharedstatedir	confuse-2.5/Makefile	/^sharedstatedir = ${prefix}\/com$/;"	m
-sharedstatedir	confuse-2.5/doc/Makefile	/^sharedstatedir = ${prefix}\/com$/;"	m
-sharedstatedir	confuse-2.5/examples/Makefile	/^sharedstatedir = ${prefix}\/com$/;"	m
-sharedstatedir	confuse-2.5/m4/Makefile	/^sharedstatedir = ${prefix}\/com$/;"	m
-sharedstatedir	confuse-2.5/src/Makefile	/^sharedstatedir = ${prefix}\/com$/;"	m
-sharedstatedir	confuse-2.5/tests/Makefile	/^sharedstatedir = ${prefix}\/com$/;"	m
 shl_load	confuse-2.5/configure	/^shl_load ();$/;"	f
 sighandler	confuse-2.5/examples/reread.c	/^void sighandler(int sig)$/;"	f
-simple_DEPENDENCIES	confuse-2.5/examples/Makefile	/^simple_DEPENDENCIES = ..\/src\/libconfuse.la$/;"	m
-simple_LDADD	confuse-2.5/examples/Makefile	/^simple_LDADD = ..\/src\/libconfuse.la$/;"	m
-simple_OBJECTS	confuse-2.5/examples/Makefile	/^simple_OBJECTS = simple.$(OBJEXT)$/;"	m
-simple_SOURCES	confuse-2.5/examples/Makefile	/^simple_SOURCES = simple.c$/;"	m
 simple_value	confuse-2.5/src/confuse.h	/^    void *simple_value;     \/**< Pointer to user-specified variable to$/;"	m	struct:cfg_opt_t
 sin	patricia.h	/^        struct in_addr  sin;$/;"	m	union:_prefix_t::__anon1	typeref:struct:_prefix_t::__anon1::in_addr
 sin	patricia.h	/^    struct in_addr  sin;$/;"	m	struct:_prefix4_t	typeref:struct:_prefix4_t::in_addr
@@ -1882,80 +820,29 @@ sin6	patricia.h	/^        struct in6_addr sin6;$/;"	m	union:_prefix_t::__anon1	t
 single_setup	confuse-2.5/tests/suite_single.c	/^void single_setup(void)$/;"	f
 single_suite	confuse-2.5/tests/suite_single.c	/^Suite *single_suite(void) $/;"	f
 single_teardown	confuse-2.5/tests/suite_single.c	/^void single_teardown(void)$/;"	f
+source_ip	example_filtercloud_app.c	/^    char           *source_ip;$/;"	m	struct:my_data_structure	file:
 sq_str	confuse-2.5/src/lexer.c	539;"	d	file:
 src_addr_cb	filtercloud.c	/^void *src_addr_cb(apr_pool_t *pool, void *fc_data, const void *d)$/;"	f
 src_addr_cb	filtercloud.h	/^  void *(*src_addr_cb)  (apr_pool_t *pool, void *fc_data, const void *usrdata);$/;"	m	struct:cloud_callbacks
 src_addrs	filtercloud.h	/^    patricia_tree_t *src_addrs;$/;"	m	struct:cloud_rule
-srcdir	confuse-2.5/Makefile	/^srcdir = .$/;"	m
-srcdir	confuse-2.5/doc/Makefile	/^srcdir = .$/;"	m
-srcdir	confuse-2.5/examples/Makefile	/^srcdir = .$/;"	m
-srcdir	confuse-2.5/m4/Makefile	/^srcdir = .$/;"	m
-srcdir	confuse-2.5/po/Makefile	/^srcdir = .$/;"	m
-srcdir	confuse-2.5/src/Makefile	/^srcdir = .$/;"	m
-srcdir	confuse-2.5/tests/Makefile	/^srcdir = .$/;"	m
-state	confuse-2.5/src/lexer.c	/^    YY_BUFFER_STATE state;$/;"	m	struct:__anon3	file:
+state	confuse-2.5/src/lexer.c	/^    YY_BUFFER_STATE state;$/;"	m	struct:__anon4	file:
 strcasecmp	confuse-2.5/src/confuse.c	/^static int strcasecmp(const char *a, const char *b)$/;"	f	file:
 strdup	confuse-2.5/src/confuse.c	/^static char *strdup(const char *s)$/;"	f	file:
 strdup	confuse-2.5/src/confuse.c	81;"	d	file:
 string	confuse-2.5/src/confuse.h	/^    char *string;           \/**< default string value *\/$/;"	m	struct:cfg_defvalue_t
 string	confuse-2.5/src/confuse.h	/^    char *string;           \/**< string value *\/$/;"	m	union:cfg_value_t
+string	example_filtercloud_app.c	/^    char           *string;$/;"	m	struct:my_data_structure	file:
 string_callbacks	filtercloud.h	/^  apr_hash_t *string_callbacks;$/;"	m	struct:cloud_callbacks
 string_scan_state	confuse-2.5/src/lexer.c	/^static YY_BUFFER_STATE string_scan_state = 0;$/;"	v	file:
 strings	filtercloud.h	/^		apr_hash_t      *strings;$/;"	m	struct:cloud_rule
+strings_have_regex	filtercloud.h	/^    uint8_t          strings_have_regex;$/;"	m	struct:cloud_rule
 strndup	confuse-2.5/src/confuse.c	/^static char *strndup(const char *s, size_t n)$/;"	f	file:
 strval	filtercloud.c	/^    const char     *strval;$/;"	m	struct:n_t_s	file:
-subdir	confuse-2.5/Makefile	/^subdir = .$/;"	m
-subdir	confuse-2.5/doc/Makefile	/^subdir = doc$/;"	m
-subdir	confuse-2.5/examples/Makefile	/^subdir = examples$/;"	m
-subdir	confuse-2.5/m4/Makefile	/^subdir = m4$/;"	m
-subdir	confuse-2.5/po/Makefile	/^subdir = po$/;"	m
-subdir	confuse-2.5/src/Makefile	/^subdir = src$/;"	m
-subdir	confuse-2.5/tests/Makefile	/^subdir = tests$/;"	m
 subopts	confuse-2.5/src/confuse.h	/^    cfg_opt_t *subopts;     \/**< Suboptions (only applies to sections) *\/$/;"	m	struct:cfg_opt_t
 suppress_errors	confuse-2.5/tests/check_confuse.c	/^void suppress_errors(cfg_t *cfg, const char *fmt, va_list ap)$/;"	f
-sysconfdir	confuse-2.5/Makefile	/^sysconfdir = ${prefix}\/etc$/;"	m
-sysconfdir	confuse-2.5/doc/Makefile	/^sysconfdir = ${prefix}\/etc$/;"	m
-sysconfdir	confuse-2.5/examples/Makefile	/^sysconfdir = ${prefix}\/etc$/;"	m
-sysconfdir	confuse-2.5/m4/Makefile	/^sysconfdir = ${prefix}\/etc$/;"	m
-sysconfdir	confuse-2.5/src/Makefile	/^sysconfdir = ${prefix}\/etc$/;"	m
-sysconfdir	confuse-2.5/tests/Makefile	/^sysconfdir = ${prefix}\/etc$/;"	m
 tail	filtercloud.h	/^    cloud_rule_t      *tail;$/;"	m	struct:cloud_filter
-target	confuse-2.5/Makefile	/^target = $/;"	m
-target	confuse-2.5/doc/Makefile	/^target = $/;"	m
-target	confuse-2.5/examples/Makefile	/^target = $/;"	m
-target	confuse-2.5/m4/Makefile	/^target = $/;"	m
-target	confuse-2.5/src/Makefile	/^target = $/;"	m
-target	confuse-2.5/tests/Makefile	/^target = $/;"	m
-target_alias	confuse-2.5/Makefile	/^target_alias = $/;"	m
-target_alias	confuse-2.5/doc/Makefile	/^target_alias = $/;"	m
-target_alias	confuse-2.5/examples/Makefile	/^target_alias = $/;"	m
-target_alias	confuse-2.5/m4/Makefile	/^target_alias = $/;"	m
-target_alias	confuse-2.5/src/Makefile	/^target_alias = $/;"	m
-target_alias	confuse-2.5/tests/Makefile	/^target_alias = $/;"	m
-test	mod_webfw2.c	/^    int             test;$/;"	m	struct:webfw2_filter	file:
 this_operator	filtercloud.h	/^    int             this_operator;$/;"	m	struct:rule_flow
 title	confuse-2.5/src/confuse.h	/^    char *title;            \/**< Optional title for this section, only$/;"	m	struct:cfg_t
-top_builddir	confuse-2.5/Makefile	/^top_builddir = .$/;"	m
-top_builddir	confuse-2.5/doc/Makefile	/^top_builddir = ..$/;"	m
-top_builddir	confuse-2.5/examples/Makefile	/^top_builddir = ..$/;"	m
-top_builddir	confuse-2.5/m4/Makefile	/^top_builddir = ..$/;"	m
-top_builddir	confuse-2.5/po/Makefile	/^top_builddir = ..$/;"	m
-top_builddir	confuse-2.5/src/Makefile	/^top_builddir = ..$/;"	m
-top_builddir	confuse-2.5/tests/Makefile	/^top_builddir = ..$/;"	m
-top_distdir	confuse-2.5/Makefile	/^top_distdir = $(distdir)$/;"	m
-top_srcdir	confuse-2.5/Makefile	/^top_srcdir = .$/;"	m
-top_srcdir	confuse-2.5/doc/Makefile	/^top_srcdir = ..$/;"	m
-top_srcdir	confuse-2.5/examples/Makefile	/^top_srcdir = ..$/;"	m
-top_srcdir	confuse-2.5/m4/Makefile	/^top_srcdir = ..$/;"	m
-top_srcdir	confuse-2.5/po/Makefile	/^top_srcdir = ..$/;"	m
-top_srcdir	confuse-2.5/src/Makefile	/^top_srcdir = ..$/;"	m
-top_srcdir	confuse-2.5/tests/Makefile	/^top_srcdir = ..$/;"	m
-transform	confuse-2.5/Makefile	/^transform = $(program_transform_name)$/;"	m
-transform	confuse-2.5/doc/Makefile	/^transform = $(program_transform_name)$/;"	m
-transform	confuse-2.5/examples/Makefile	/^transform = $(program_transform_name)$/;"	m
-transform	confuse-2.5/m4/Makefile	/^transform = $(program_transform_name)$/;"	m
-transform	confuse-2.5/src/Makefile	/^transform = $(program_transform_name)$/;"	m
-transform	confuse-2.5/tests/Makefile	/^transform = $(program_transform_name)$/;"	m
 try_search_best	patricia.c	/^try_search_best(apr_pool_t * pool, patricia_tree_t * tree, char *string)$/;"	f
 try_search_exact	patricia.c	/^try_search_exact(apr_pool_t * pool, patricia_tree_t * tree, char *string)$/;"	f
 type	confuse-2.5/src/confuse.h	/^    cfg_type_t type;        \/**< Type of option *\/$/;"	m	struct:cfg_opt_t
@@ -1983,15 +870,19 @@ webfw2_config_t	mod_webfw2.c	/^} webfw2_config_t;$/;"	t	typeref:struct:webfw2_co
 webfw2_directives	mod_webfw2.c	/^const command_rec webfw2_directives[] = {$/;"	v
 webfw2_dstaddr_cb	mod_webfw2.c	/^webfw2_dstaddr_cb(apr_pool_t *pool, void *fc_data, const void **userdata)$/;"	f	file:
 webfw2_filter	mod_webfw2.c	/^typedef struct webfw2_filter {$/;"	s	file:
+webfw2_filter_init	mod_webfw2.c	/^webfw2_filter_init(apr_pool_t *pool, webfw2_config_t *config)$/;"	f	file:
+webfw2_filter_parse	mod_webfw2.c	/^webfw2_filter_parse(apr_pool_t *pool, webfw2_config_t *config, $/;"	f	file:
 webfw2_filter_t	mod_webfw2.c	/^} webfw2_filter_t;$/;"	t	typeref:struct:webfw2_filter	file:
-webfw2_find_all_sources	mod_webfw2.c	/^webfw2_find_all_sources(request_rec * rec)$/;"	f
+webfw2_find_all_sources	mod_webfw2.c	/^webfw2_find_all_sources(request_rec * rec)$/;"	f	file:
 webfw2_handler	mod_webfw2.c	/^webfw2_handler(request_rec * rec)$/;"	f	file:
 webfw2_hooker	mod_webfw2.c	/^webfw2_hooker(apr_pool_t * pool)$/;"	f	file:
-webfw2_init_config	mod_webfw2.c	/^webfw2_init_config(apr_pool_t * pool, server_rec * svr)$/;"	f
+webfw2_init_config	mod_webfw2.c	/^webfw2_init_config(apr_pool_t * pool, server_rec * svr)$/;"	f	file:
 webfw2_module	mod_webfw2.c	/^module AP_MODULE_DECLARE_DATA webfw2_module = {$/;"	v
 webfw2_module	mod_webfw2.c	/^module AP_MODULE_DECLARE_DATA webfw2_module;$/;"	v
 webfw2_note_cb	mod_webfw2.c	/^webfw2_note_cb(apr_pool_t *pool, void *fc_data, const void **userdata)$/;"	f	file:
+webfw2_register_callbacks	mod_webfw2.c	/^webfw2_register_callbacks(apr_pool_t *pool, webfw2_config_t *config,$/;"	f	file:
 webfw2_srcaddr_cb	mod_webfw2.c	/^webfw2_srcaddr_cb(apr_pool_t *pool, void *fc_data, const void **usrdata)$/;"	f	file:
+webfw2_updater	mod_webfw2.c	/^webfw2_updater(request_rec *rec)$/;"	f	file:
 xff_headers	mod_webfw2.c	/^    apr_table_t    *xff_headers;$/;"	m	struct:webfw2_config	file:
 yy_accept	confuse-2.5/src/lexer.c	/^static yyconst short int yy_accept[81] =$/;"	v	file:
 yy_at_bol	confuse-2.5/src/lexer.c	/^	int yy_at_bol;$/;"	m	struct:yy_buffer_state	file:

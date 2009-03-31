@@ -11,3 +11,20 @@ webfw2_match_note "CHADHDO-accept-encoding"
 #webfw2_match_note "CHADHDO-accept-charset"
 ### Useful mod_ipintell notes
 webfw2_match_note "COUNTRY"
+webfw2_match_note "chad"
+webfw2_match_note "chadmethod"
+
+# new "interesting" notes
+# webfw2_match_note "__wf2-uri__"
+# webfw2_match_note "__wf2-canonical-filename__"
+# webfw2_match_note "__wf2-unparsed-uri__"
+# webfw2_match_note "__wf2-hostname__"
+# in the case that those notes return NULL
+# the following string will be returned:
+# __wf2-NULL__
+
+# dynamic rule updating
+# webfw2_dynamic_srcaddr_block "test_dynamic"
+
+
+

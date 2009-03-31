@@ -25,12 +25,11 @@ struct cloud_callbacks {
 };
 
 struct cloud_rule {
-    uint32_t        id;
 		char            *name;
     patricia_tree_t *src_addrs;
     patricia_tree_t *dst_addrs;
-		apr_hash_t      *chad_orders;
 		apr_hash_t      *strings;
+    uint8_t          strings_have_regex;
     rule_flow_t    *flow;
     apr_pool_t     *pool;
     struct cloud_rule *next;
@@ -60,4 +59,7 @@ int cloud_match_rule(apr_pool_t *, cloud_rule_t *, const char *,
 cloud_rule_t *cloud_traverse_filter(cloud_filter_t *, const void *);
 cloud_filter_t *cloud_parse_config(apr_pool_t *, const char *);
 char **cloud_tokenize_str(char *, const char *);
-void free_tokens(char **tokens);
+void free_tokens(char **);
+int cloud_register_user_cb(cloud_filter_t *, void *(*cb)(apr_pool_t *, void *, const void *), int, void *);
+cloud_rule_t *cloud_filter_get_rule(cloud_filter_t *filter, const char *rule_name);
+int cloud_rule_add_network(cloud_rule_t *, const char *, const int, void *);

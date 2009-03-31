@@ -7,20 +7,21 @@ DFLAGS       = -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
 
 libconfuse: 
 	@echo "  [*] Checking for libconfuse existance..."
-	@if test -f confuse-2.5/src/libconfuse.la; then echo "  [*] libconfuse already configured..."; else echo "  [*] Configuring libconfuse..."; cd confuse-2.5 && ./configure --enable-static 2>&1 >/dev/null; echo "  [*] Making libconfuse";  make 2>&1 >/dev/null; fi
+	@if test -f confuse-2.5/src/libconfuse.la; then echo "  [*] libconfuse already configured..."; else echo "  [*] Configuring libconfuse..."; cd confuse-2.5 && ./configure CFLAGS=-fPIC --disable-nls 2>&1 >/dev/null; echo "  [*] Making libconfuse";  make 2>&1 >/dev/null; fi
 	@cp confuse-2.5/src/.libs/libconfuse.a .
 
 patricia.o: patricia.c 
 	@echo "  [*] Compiling libpatricia..."
-	@gcc $(DFLAGS) $(APR_INCLUDES) -c -o patricia.o patricia.c -ggdb 
+	@gcc $(DFLAGS) $(APR_INCLUDES) -fPIC -c -o patricia.o patricia.c -ggdb 
 
 filtercloud.o: filtercloud.c 
 	@echo "  [*] Compiling libfiltercloud..."
-	@gcc $(DFLAGS) $(APR_INCLUDES) -I. -Iconfuse-2.5/src/ -c -o filtercloud.o filtercloud.c -ggdb 
+	@gcc $(DFLAGS) $(APR_INCLUDES) -I. -Iconfuse-2.5/src/ -fPIC -c -o filtercloud.o filtercloud.c -ggdb 
+ 
 
 filtercloud: filtercloud.c patricia.o libconfuse archives
 	@echo "  [*] Compiling test version of filtercloud..."
-	@gcc  -DTEST_FILTERCLOUD $(DFLAGS) -I. -L. $(APR_INCLUDES) $(APR_LIBS) -Iconfuse-2.5/src/ filtercloud.c -o filtercloud -lpatricia -lapr-1 -lconfuse -ggdb
+	@gcc  -DDEBUG -DTEST_FILTERCLOUD $(DFLAGS) -I. -L. $(APR_INCLUDES) $(APR_LIBS) -Iconfuse-2.5/src/ filtercloud.c -o filtercloud -lpatricia -lapr-1 -lconfuse -ggdb
  
 archives:
 	@echo "  [*] Creating libfiltercloud/libpatricia shared archives..."
@@ -29,8 +30,11 @@ archives:
 
 mod_webfw2: filtercloud.c mod_webfw2.c patricia.c filtercloud.o patricia.o libconfuse archives
 	@echo "  [*] Creating Apache modules..."
-	@~/sandbox/bin/apxs -c -I. -Iconfuse-2.5/src/ -L. mod_webfw2.c -ggdb -lfiltercloud -lpatricia -lconfuse -ggdb 2>&1 >/dev/null 
-	@~/sandbox/bin/apxs -i -a -n webfw2 mod_webfw2.la 2>&1 >/dev/null
+	@${APXS_BIN} -c -I. -Iconfuse-2.5/src/ -L. mod_webfw2.c -ggdb -lfiltercloud -lpatricia -lconfuse -ggdb 2>&1 >/dev/null 
+	@${APXS_BIN} -i -a -n webfw2 mod_webfw2.la 2>&1 >/dev/null
+
+example_filtercloud_app:
+	gcc $(DFLAGS) -I. -L. $(APR_INCLUDES) $(APR_LIBS) -Iconfuse-2.5/src/ example_filtercloud_app.c -o example_filtercloud_app -lapr-1 -lfiltercloud -lconfuse -lpatricia
 
 distclean: clean
 	@cd confuse-2.5 && make distclean 2>&1 >/dev/null
@@ -40,3 +44,5 @@ clean:
 	@rm -rf *.o *.la *.slo *.lo *.a 
 	@rm -rf filtercloud
 	@rm -rf ./.libs/
+	@rm -rf example_filtercloud_app
+

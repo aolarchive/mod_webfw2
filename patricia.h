@@ -18,7 +18,7 @@
 /*
  * typedef unsigned int u_int; 
  */
-typedef void    (*void_fn_t) ();
+typedef void  (*void_fn_t)();
 /*
  * { from defs.h 
  */

@@ -1,27 +1,15 @@
-/*
- * $Id: patricia.c,v 1.1.1.1 2006/10/18 16:57:05 jacka Exp $
- * Dave Plonka <plonka@doit.wisc.edu>
- *
- * This product includes software developed by the University of Michigan,
- * Merit Network, Inc., and their contributors. 
- */
-
-static char __attribute__ ((unused)) copyright[] =
-    "This product includes software developed by the University of Michigan, Merit"
-    "Network, Inc., and their contributors.";
-
-#include <assert.h>             /* assert */
-#include <ctype.h>              /* isdigit */
-#include <errno.h>              /* errno */
-#include <math.h>               /* sin */
-#include <stddef.h>             /* NULL */
-#include <stdio.h>              /* sprintf, fprintf, stderr */
-#include <stdlib.h>             /* free, atol, calloc */
-#include <string.h>             /* memcpy, strchr, strlen */
-#include <sys/types.h>          /* BSD: for inet_addr */
-#include <sys/socket.h>         /* BSD, Linux: for inet_addr */
-#include <netinet/in.h>         /* BSD, Linux: for inet_addr */
-#include <arpa/inet.h>          /* BSD, Linux, Solaris: for inet_addr */
+#include <assert.h>
+#include <ctype.h> 
+#include <errno.h> 
+#include <math.h>
+#include <stddef.h>
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include "apr.h"
 #include "apr_pools.h"
 #include "patricia.h"
