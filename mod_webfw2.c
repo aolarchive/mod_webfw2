@@ -181,7 +181,10 @@ webfw2_updater(request_rec * rec)
 
 
 #ifdef APR_HAS_THREADS
-    apr_thread_rwlock_wrlock(wf2_filter->rwlock);
+    if(apr_thread_rwlock_trywrlock(wf2_filter->rwlock) != APR_SUCCESS)
+	return 0;
+
+    //apr_thread_rwlock_wrlock(wf2_filter->rwlock);
 #endif
 
     now = apr_time_now();
@@ -357,7 +360,13 @@ webfw2_handler(request_rec * rec)
 
     ap_assert(wf2_filter);
 #ifdef APR_HAS_THREADS
+
+#ifndef RADIX_IS_REENTRANT
     apr_thread_rwlock_rdlock(wf2_filter->rwlock);
+#else
+    apr_thread_rwlock_wrlock(wf2_filter->rwlock);
+#endif
+
 #endif
 
     webfw2_set_interesting_notes(rec);
@@ -411,11 +420,13 @@ webfw2_handler(request_rec * rec)
                     break;
 
 #ifdef APR_HAS_THREADS
+#ifndef RADIX_IS_REENTRANT
                 /*
                  * we have to unlock our reader, and set a write lock 
                  */
                 apr_thread_rwlock_unlock(wf2_filter->rwlock);
                 apr_thread_rwlock_wrlock(wf2_filter->rwlock);
+#endif
 #endif
                 /*
                  * now insert our src addr into our dynamic rule 

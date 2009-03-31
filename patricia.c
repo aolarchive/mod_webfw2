@@ -97,6 +97,7 @@ prefix_toa2x(prefix_t * prefix, char *buff, int with_len)
             u_int           i;
         }              *buffp;
 
+	/* not thread safe */
         static struct buffer local_buff;
         buffp = &local_buff;
 
@@ -185,7 +186,10 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
     char save[MAXLINE];
 
     if (string == NULL)
+    {
+//	free(save);
         return (NULL);
+    }
 
     /*
      * easy way to handle both families 
@@ -212,7 +216,10 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
 
     if (family == AF_INET) {
         if ((result = my_inet_pton(AF_INET, string, &sin)) <= 0)
+	{
+	    //free(save);
             return (NULL);
+	}
         return (New_Prefix(pool, AF_INET, &sin, bitlen));
     } else
         return (NULL);
@@ -255,8 +262,8 @@ Deref_Prefix(prefix_t * prefix)
 }
 
 
-
-static int      num_active_patricia = 0;
+/* not thread safe, nor is it really used */
+// static int      num_active_patricia = 0;
 
 /*
  * these routines support continuous mask only 
@@ -270,7 +277,7 @@ New_Patricia(apr_pool_t * pool, int maxbits)
     patricia->head = NULL;
     patricia->num_active_node = 0;
     assert(maxbits <= PATRICIA_MAXBITS);        /* XXX */
-    num_active_patricia++;
+    //num_active_patricia++;
     return (patricia);
 }
 
@@ -286,6 +293,7 @@ Clear_Patricia(patricia_tree_t * patricia, void_fn_t func)
     assert(patricia);
     if (patricia->head) {
 
+	/* not thread safe */
         patricia_node_t *Xstack[PATRICIA_MAXBITS + 1];
         patricia_node_t **Xsp = Xstack;
         patricia_node_t *Xrn = patricia->head;
@@ -330,7 +338,7 @@ Destroy_Patricia(patricia_tree_t * patricia, void_fn_t func)
 {
     Clear_Patricia(patricia, func);
     // Delete(patricia);
-    num_active_patricia--;
+    //num_active_patricia--;
 }
 
 
