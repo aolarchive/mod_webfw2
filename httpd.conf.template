@@ -1,0 +1,13 @@
+webfw2_rw_xff X-Forwarded-For
+#webfw_rw_xff X-NSCLIENT-IP
+webfw2_update_interval 10
+webfw2_config /opt/sinkhole/conf/webfw2_rules.conf
+### Useful mod_chad notes
+webfw2_match_note "chadorder"
+webfw2_match_note "chadccount"
+webfw2_match_note "CHADHDO-accept"
+webfw2_match_note "CHADHDO-accept-encoding"
+#webfw2_match_note "CHADHDO-accept-language"
+#webfw2_match_note "CHADHDO-accept-charset"
+### Useful mod_ipintell notes
+webfw2_match_note "COUNTRY"
