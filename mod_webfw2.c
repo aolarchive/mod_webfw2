@@ -339,6 +339,9 @@ webfw2_set_interesting_notes(request_rec *rec)
     apr_table_set(rec->notes,
 	    "__wf2-unparsed-uri__",
 	    rec->unparsed_uri);
+    apr_table_set(rec->notes,
+	    "__wf2-protocol__",
+	    rec->protocol);
 
 }
 
