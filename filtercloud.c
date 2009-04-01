@@ -42,8 +42,10 @@ static struct n_t_s {
     RULE_MATCH_STRING, "match_string"}, {
     RULE_MATCH_OPERATOR_OR, "||"}, {
     RULE_MATCH_OPERATOR_AND, "&&"}, {
+    RULE_MATCH_NOT_SRCADDR,"!match_src_addr"}, {
+    RULE_MATCH_NOT_DSTADDR,"!match_dst_addr"}, {
+    RULE_MATCH_NOT_STRING, "!match_string"}, {
     0, NULL}
-
 };
 
 void
@@ -125,6 +127,32 @@ cloud_match_srcaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data,
         return 1;
 
     return 0;
+}
+
+static int
+cloud_match_not_dstaddr(apr_pool_t *pool, cloud_rule_t *rule, void *data,
+	void *usrdata)
+{
+    if (!rule->dst_addrs)
+	return 1;
+
+    if ((try_search_best(pool, rule->dst_addrs, (char *)data)))
+	return 0;
+
+    return 1;
+}
+
+static int
+cloud_match_not_srcaddr(apr_pool_t *pool, cloud_rule_t *rule, void *data,
+	void *usrdata)
+{
+    if(!rule->src_addrs)
+	return 1;
+
+    if ((try_search_best(pool, rule->src_addrs, (char *)data)))
+	return 0;
+
+    return 1;
 }
 
 static int
@@ -284,6 +312,34 @@ cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
                 tail = new_flow;
             }
             break;
+	case RULE_MATCH_NOT_SRCADDR:
+	    PRINT_DEBUG("Foudn a RULE_MATCH_NOT_SRCADDR\n");
+	    new_flow = cloud_rule_flow_init(pool);
+	    new_flow->callback = cloud_match_not_srcaddr;
+	    new_flow->type = RULE_MATCH_NOT_SRCADDR;
+
+	    if(!flow)
+		flow = tail = new_flow;
+	    else {
+		new_flow->this_operator = tail->next_operator;
+		tail->next = new_flow;
+		tail = new_flow;
+	    }
+	    break;
+	case RULE_MATCH_NOT_DSTADDR:
+	    PRINT_DEBUG("Found a RULE_MATCH_NOT_DSTADDR\n");
+	    new_flow = cloud_rule_flow_init(pool);
+	    new_flow->callback = cloud_match_not_dstaddr;
+	    new_flow->type = RULE_MATCH_NOT_DSTADDR;
+
+	    if(!flow)
+		flow = tail = new_flow;
+	    else {
+		new_flow->this_operator = tail->next_operator;
+		tail->next = new_flow;
+		tail = new_flow;
+	    }
+	    break;
         case RULE_MATCH_OPERATOR_OR:
             PRINT_DEBUG("Found a RULE_MATCH_OPERATOR_OR\n");
             if (!flow)
@@ -529,6 +585,7 @@ cloud_match_rulen(apr_pool_t * pool, cloud_filter_t * filter,
         extra = NULL;
 
         switch (flows->type) {
+	case RULE_MATCH_NOT_SRCADDR:
         case RULE_MATCH_SRCADDR:
 	    PRINT_DEBUG("Processing flow SRCADDD\n");
             if (!filter->callbacks.src_addr_cb) {
@@ -538,6 +595,7 @@ cloud_match_rulen(apr_pool_t * pool, cloud_filter_t * filter,
             }
             data = filter->callbacks.src_addr_cb(pool, NULL, usrdata);
             break;
+	case RULE_MATCH_NOT_DSTADDR:
         case RULE_MATCH_DSTADDR:
 	    PRINT_DEBUG("Processing flow DSTADDR\n");
             if (!filter->callbacks.dst_addr_cb) {
@@ -574,7 +632,7 @@ cloud_match_rulen(apr_pool_t * pool, cloud_filter_t * filter,
             /*
              * We matched something in this callback. 
              */
-	    PRINT_DEBUG("Flow matched\n");
+	    PRINT_DEBUG("Flow matched!\n");
             if (flows->next_operator == RULE_MATCH_OPERATOR_OR) {
 		PRINT_DEBUG("Next operator is an OR, flow processing complete\n");
                 matched_rule = 1;
@@ -592,28 +650,29 @@ cloud_match_rulen(apr_pool_t * pool, cloud_filter_t * filter,
                 matched_rule = 1;
                 break;
             }
-        }
+        } 
+	    
+	PRINT_DEBUG("FLOW did NOT match!\n");
 
-        if (flows->next_operator == RULE_MATCH_OPERATOR_AND) {
-            /*
-             * we didn't match this, so if the next is AND we need to stop 
-             * right here. 
-             */
-            matched_rule = 0;
-            break;
-        }
+	/* we didn't match this, we need to find the next OR flow */
+	rule_flow_t  *find_or_flow = flows;
 
-        if (flows->this_operator == RULE_MATCH_OPERATOR_AND
-            && flows->next_operator != RULE_MATCH_OPERATOR_OR) {
-            matched_rule = 0;
-            break;
-        }
+	while(find_or_flow != NULL)
+	{
+	    if (find_or_flow->next_operator == RULE_MATCH_OPERATOR_OR)
+	    {
+		/* found that the next operator is OR, so set 
+		 * the current flow to this, we let the final
+		 * flows = flows->next handle the transition
+		 */
+		flows = find_or_flow;
+		break;
+	    }
+	    find_or_flow = find_or_flow->next;
+	}
 
-        if (flows->this_operator == RULE_MATCH_OPERATOR_OR
-            && flows->next_operator == RULE_MATCH_OPERATOR_AND) {
-            matched_rule = 0;
-            break;
-        }
+	if(!find_or_flow)
+	    break;
 
         flows = flows->next;
     }
