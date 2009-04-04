@@ -17,9 +17,8 @@
 #include "apr_strings.h"
 #include "apr_tables.h"
 #include "patricia.h"
-#include "filtercloud.h"
+#include "filter.h"
 #include "confuse.h"
-
 
 
 #ifdef DEBUG
@@ -222,6 +221,15 @@ cloud_match_string(apr_pool_t * pool,
     return 0;
 }
 
+#define APPEND_FLOW(cflow, ctail, new) \
+    do { \
+        if(!cflow) cflow = ctail = new; \
+        else { \
+            new->this_operator = ctail->next_operator; \
+            ctail->next = new; \
+            ctail = new; \
+        } \
+    } while(0);
 
 static rule_flow_t *
 cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
@@ -251,23 +259,9 @@ cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
             new_flow->callback = cloud_match_srcaddr;
             new_flow->type = RULE_MATCH_SRCADDR;
 
-            if (!flow) {
-                PRINT_DEBUG("No other flows defined, adding new flow %p\n",
-                            new_flow);
-                flow = tail = new_flow;
-            }
+	    APPEND_FLOW(flow, tail, new_flow);
 
-            else {
-                PRINT_DEBUG("Appending new flow %p to list of flows\n",
-                            new_flow);
-                new_flow->this_operator = tail->next_operator;
-                PRINT_DEBUG("new_flow->this_operator == %d\n",
-                            new_flow->this_operator);
-                tail->next = new_flow;
-                tail = new_flow;
-            }
             break;
-
         case RULE_MATCH_DSTADDR:
             PRINT_DEBUG("Found a RULE_MATCH_DSTADDR\n");
 
@@ -275,14 +269,7 @@ cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
             new_flow->callback = cloud_match_dstaddr;
             new_flow->type = RULE_MATCH_DSTADDR;
 
-
-            if (!flow)
-                flow = tail = new_flow;
-            else {
-                new_flow->this_operator = tail->next_operator;
-                tail->next = new_flow;
-                tail = new_flow;
-            }
+	    APPEND_FLOW(flow, tail, new_flow);
 
             break;
         case RULE_MATCH_STRING:
@@ -304,13 +291,8 @@ cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
             new_flow->type = RULE_MATCH_STRING;
             new_flow->user_data = (void *) apr_pstrdup(pool, tok);
 
-            if (!flow)
-                flow = tail = new_flow;
-            else {
-                new_flow->this_operator = tail->next_operator;
-                tail->next = new_flow;
-                tail = new_flow;
-            }
+	    APPEND_FLOW(flow, tail, new_flow);
+
             break;
 	case RULE_MATCH_NOT_SRCADDR:
 	    PRINT_DEBUG("Foudn a RULE_MATCH_NOT_SRCADDR\n");
@@ -318,13 +300,7 @@ cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
 	    new_flow->callback = cloud_match_not_srcaddr;
 	    new_flow->type = RULE_MATCH_NOT_SRCADDR;
 
-	    if(!flow)
-		flow = tail = new_flow;
-	    else {
-		new_flow->this_operator = tail->next_operator;
-		tail->next = new_flow;
-		tail = new_flow;
-	    }
+	    APPEND_FLOW(flow, tail, new_flow);
 	    break;
 	case RULE_MATCH_NOT_DSTADDR:
 	    PRINT_DEBUG("Found a RULE_MATCH_NOT_DSTADDR\n");
@@ -332,13 +308,7 @@ cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
 	    new_flow->callback = cloud_match_not_dstaddr;
 	    new_flow->type = RULE_MATCH_NOT_DSTADDR;
 
-	    if(!flow)
-		flow = tail = new_flow;
-	    else {
-		new_flow->this_operator = tail->next_operator;
-		tail->next = new_flow;
-		tail = new_flow;
-	    }
+	    APPEND_FLOW(flow, tail, new_flow);
 	    break;
         case RULE_MATCH_OPERATOR_OR:
             PRINT_DEBUG("Found a RULE_MATCH_OPERATOR_OR\n");
@@ -438,6 +408,26 @@ cloud_filter_add_rule(cloud_filter_t * filter, cloud_rule_t * rule)
     filter->tail = rule;
     return 0;
 }
+
+int
+cloud_rule_set_action(cloud_rule_t * rule, 
+	const char *actionstr)
+{
+    int action;
+
+    if(!strcmp(actionstr, "permit"))
+	action = FILTER_PERMIT;
+    else if (!strcmp(actionstr, "deny"))
+	action = FILTER_DENY;
+    else 
+	/* application controlled action */
+	action = atoi(actionstr);
+
+    rule->action = action;
+
+    return 0;
+}
+
 
 int
 cloud_rule_add_network(cloud_rule_t * rule,
@@ -578,7 +568,6 @@ cloud_match_rulen(apr_pool_t * pool, cloud_filter_t * filter,
     int             matched_rule = 0;
     rule_flow_t    *flows = rule->flow;
 
-
     while (flows != NULL) {
         void           *data,
                        *extra;
@@ -651,6 +640,8 @@ cloud_match_rulen(apr_pool_t * pool, cloud_filter_t * filter,
                 break;
             }
         } 
+
+	matched_rule = 0;
 	    
 	PRINT_DEBUG("FLOW did NOT match!\n");
 
@@ -677,12 +668,7 @@ cloud_match_rulen(apr_pool_t * pool, cloud_filter_t * filter,
         flows = flows->next;
     }
 
-
-    if (matched_rule)
-        return 1;
-
-
-    return 0;
+    return matched_rule;
 }
 
 cloud_rule_t   *
@@ -760,6 +746,7 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
         CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
+	CFG_STR("action", "deny", CFGF_NONE),
         CFG_END()
     };
 
@@ -769,6 +756,7 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
     };
 
     cfg = cfg_init(opts, CFGF_NOCASE);
+
     if(cfg_parse(cfg, filename) == CFG_PARSE_ERROR)
 	return NULL;
 
@@ -782,6 +770,7 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
         char           *unflowed;
         int             addr_cnt;
         cloud_rule_t   *cloud_rule;
+	char *action;
         cfg_t          *rule;
         unflowed = NULL;
 
@@ -790,13 +779,16 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
         rule = cfg_getnsec(cfg, "rule", i);
         flow = cfg_getstr(rule, "flow");
 
-
         cloud_rule = cloud_rule_init(filter->pool);
         cloud_rule->name = apr_pstrdup(pool, cfg_title(rule));
 
         PRINT_DEBUG("Rule name: %s\n", cloud_rule->name);
         PRINT_DEBUG("Found flow '%s'\n", flow);
+
         cloud_rule_add_flow(cloud_rule, (char *) apr_pstrdup(pool, flow));
+
+	if ((action=cfg_getstr(rule, "action")))
+	    cloud_rule_set_action(cloud_rule, action);
 
         PRINT_DEBUG("%d src_addrs defined\n", cfg_size(rule, "src_addrs"));
 
@@ -806,18 +798,17 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
                 cfg_getnstr(rule, "src_addrs", addr_cnt);
 
             PRINT_DEBUG("Adding %s to our src_addr radix tree\n", addr);
-            cloud_rule_add_network(cloud_rule, addr, RULE_MATCH_SRCADDR,
-                                   NULL);
+            cloud_rule_add_network(cloud_rule, addr, RULE_MATCH_SRCADDR, NULL);
         }
 
         PRINT_DEBUG("%d dst_addrs defined\n", cfg_size(rule, "dst_addrs"));
+
         for (addr_cnt = 0; addr_cnt < cfg_size(rule, "dst_addrs");
              addr_cnt++) {
             char           *addr =
                 cfg_getnstr(rule, "dst_addrs", addr_cnt);
             PRINT_DEBUG("Adding %s to our dst_addr radix tree\n", addr);
-            cloud_rule_add_network(cloud_rule, addr, RULE_MATCH_DSTADDR,
-                                   NULL);
+            cloud_rule_add_network(cloud_rule, addr, RULE_MATCH_DSTADDR, NULL);
         }
 
         int             str_match_size = cfg_size(rule, "match_string");
@@ -874,21 +865,18 @@ dst_addr_cb(apr_pool_t * pool, void *fc_data, const void *d)
 {
     char          **argv = (char **) d;
 
-    printf("%s\n", __FUNCTION__);
     return argv[2];
 }
 
 void           *
 cloud_str_cb(apr_pool_t * pool, void *fc_data, const void *d)
 {
-    printf("%s\n", __FUNCTION__);
     return "abcdef";
 }
 
 void           *
 cloud_str2_cb(apr_pool_t * pool, void *fc_data, const void *d)
 {
-    printf("%s\n", __FUNCTION__);
     return "derr";
 }
 
@@ -919,6 +907,7 @@ main(int argc, char **argv)
                            "stuff");
     cloud_register_user_cb(filter, cloud_str2_cb, RULE_MATCH_STRING,
                            "lame");
+    cloud_register_user_cb(filter, cloud_str2_cb, RULE_MATCH_STRING, "guh");
     cloud_register_user_cb(filter, cloud_str3_cb, RULE_MATCH_STRING,
                            "chadorder");
 

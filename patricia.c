@@ -761,29 +761,6 @@ make_and_lookup(apr_pool_t * pool, patricia_tree_t * tree, char *string)
 }
 
 patricia_node_t *
-try_search_exact(apr_pool_t * pool, patricia_tree_t * tree, char *string)
-{
-    prefix_t       *prefix;
-    patricia_node_t *node;
-
-    prefix = ascii2prefix(pool, AF_INET, string);
-    if ((node = patricia_search_exact(tree, prefix)) == NULL) {
-    } else {
-    }
-    Deref_Prefix(prefix);
-    return (node);
-}
-
-void
-lookup_then_remove(apr_pool_t * pool, patricia_tree_t * tree, char *string)
-{
-    patricia_node_t *node;
-
-    if ((node = try_search_exact(pool, tree, string)))
-        patricia_remove(tree, node);
-}
-
-patricia_node_t *
 try_search_best(apr_pool_t * pool, patricia_tree_t * tree, char *string)
 {
     prefix_t       *prefix;

@@ -22,13 +22,19 @@
 #include "http_request.h"
 #include "apr_reslist.h"
 #include "apr_thread_rwlock.h"
-#include "patricia.h"
-#include "filtercloud.h"
+#include "filter.h"
 #include "version.h"
 
 #define FILTER_CONFIG_KEY "webfw2_filter_config"
 
 module AP_MODULE_DECLARE_DATA webfw2_module;
+
+#if 0
+typedef struct webfw2_shm_config {
+    char *shm_file;
+    char *shm_lock_file;
+};
+#endif
 
 typedef struct webfw2_config {
     char           *config_file;
@@ -183,8 +189,6 @@ webfw2_updater(request_rec * rec)
 #ifdef APR_HAS_THREADS
     if(apr_thread_rwlock_trywrlock(wf2_filter->rwlock) != APR_SUCCESS)
 	return 0;
-
-    //apr_thread_rwlock_wrlock(wf2_filter->rwlock);
 #endif
 
     now = apr_time_now();
@@ -346,6 +350,29 @@ webfw2_set_interesting_notes(request_rec *rec)
 }
 
 static int
+webfw2_status(webfw2_config_t *config, webfw2_filter_t *filter, 
+	cloud_rule_t *rule)
+{
+    switch(rule->action)
+    {
+	case FILTER_DENY:
+	    return 542;
+	case FILTER_PERMIT:
+	    return DECLINED;
+	/* 
+	 * in the near future we will have application 
+	 * specific actions here where we can do uhh.....
+	 * oh I dunno...logging or something. Whatever.
+	 */
+	default:
+	    return DECLINED;
+    }
+
+    /* should never actually get here */
+    return DECLINED;
+}
+	    
+static int
 webfw2_handler(request_rec * rec)
 {
     int             ret;
@@ -408,7 +435,8 @@ webfw2_handler(request_rec * rec)
 	    apr_table_set(rec->subprocess_env, 
 		    "webfw2_rule", rule->name);
 
-            ret = 542;
+	    ret = webfw2_status(config, wf2_filter, rule);
+            //ret = 542;
 
             /*
              * XXX This should be fixed to be a bit more dynamic in both
@@ -616,11 +644,6 @@ const command_rec webfw2_directives[] = {
                   RSRC_CONF,
                   "Dynamically update the source-addresses within this filter if another "
                   "rule matches"),
-
-#if 0
-    AP_INIT_TAKE1("webfw2_match_file", cmd_match_file, NULL, RSRC_CONF,
-                  "Pass the parsed filename to filtercloud"),
-#endif
     {NULL}
 };
 
