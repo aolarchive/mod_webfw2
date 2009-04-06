@@ -678,6 +678,9 @@ cloud_traverse_filter(cloud_filter_t * filter, const void *usrdata)
     cloud_rule_t   *rule = filter->head;
     apr_pool_t     *subpool;
 
+    if (!filter)
+	return NULL;
+
     apr_pool_create(&subpool, NULL);
 
     while (rule != NULL) {
