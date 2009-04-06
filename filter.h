@@ -1,5 +1,4 @@
 #include "patricia.h"
-
 typedef struct cloud_rule cloud_rule_t;
 typedef struct rule_flow rule_flow_t;
 typedef struct cloud_callbacks cloud_callbacks_t;
@@ -32,6 +31,7 @@ struct cloud_callbacks {
 struct cloud_rule {
 		char            *name;
 		int              action;
+		char             dynamic;
     patricia_tree_t *src_addrs;
     patricia_tree_t *dst_addrs;
 		apr_hash_t      *strings;

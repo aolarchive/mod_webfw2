@@ -29,13 +29,6 @@
 
 module AP_MODULE_DECLARE_DATA webfw2_module;
 
-#if 0
-typedef struct webfw2_shm_config {
-    char *shm_file;
-    char *shm_lock_file;
-};
-#endif
-
 typedef struct webfw2_config {
     char           *config_file;
     char           *dynamic_srcaddr_rule;

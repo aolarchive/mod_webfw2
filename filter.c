@@ -604,7 +604,8 @@ cloud_match_rulen(apr_pool_t * pool, cloud_filter_t * filter,
                 void           *(*cb) (apr_pool_t * pool, void *fc_data,
                                        const void *usrdata);
 
-                if (!(cb = apr_hash_get(filter->callbacks.string_callbacks,
+                if (!filter->callbacks.string_callbacks || 
+			!(cb = apr_hash_get(filter->callbacks.string_callbacks,
                                         flows->user_data,
                                         APR_HASH_KEY_STRING))) {
 		    PRINT_DEBUG("No string callback defined\n");
@@ -732,7 +733,6 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
 
     PRINT_DEBUG("Parsing configuration.\n");
     cfg_opt_t       str_match_opts[] = {
-        CFG_BOOL("case_sensitive", cfg_true, CFGF_NONE),
         CFG_STR_LIST("values", 0, CFGF_MULTI),
         CFG_STR_LIST("regex", 0, CFGF_MULTI),
         CFG_END()
@@ -743,6 +743,7 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
                 "match_src_addr && match_dst_addr || match_http_header",
                 CFGF_NONE),
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
+	CFG_BOOL("dynamic", cfg_false, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
         CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
@@ -765,7 +766,9 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
     n = cfg_size(cfg, "rule");
     PRINT_DEBUG("Found %d rules in configuration\n", n);
 
+    /* it gets ugly right around...(to be continued) */
     for (i = 0; i < n; i++) {
+	/* re: ugly [ HERE!! ] */
         char           *flow;
         char           *unflowed;
         int             addr_cnt;
@@ -784,6 +787,18 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
 
         PRINT_DEBUG("Rule name: %s\n", cloud_rule->name);
         PRINT_DEBUG("Found flow '%s'\n", flow);
+	
+	if(cfg_getbool(rule, "dynamic")) 
+	{
+	    /* 
+	     * dynamic rules can only have matches on source 
+	     * addresses. If you don't feel as if this is 
+	     * enough - make another rule that matches your 
+	     * particular problem and use that instead :) 
+	     */
+	    flow = "match_src_addrs";
+	    cloud_rule->dynamic = 1;
+	}
 
         cloud_rule_add_flow(cloud_rule, (char *) apr_pstrdup(pool, flow));
 
