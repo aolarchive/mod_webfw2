@@ -675,11 +675,13 @@ cloud_match_rulen(apr_pool_t * pool, cloud_filter_t * filter,
 cloud_rule_t   *
 cloud_traverse_filter(cloud_filter_t * filter, const void *usrdata)
 {
-    cloud_rule_t   *rule = filter->head;
+    cloud_rule_t   *rule;
     apr_pool_t     *subpool;
 
     if (!filter)
 	return NULL;
+
+    rule = filter->head;
 
     apr_pool_create(&subpool, NULL);
 
