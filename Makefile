@@ -3,7 +3,8 @@ all: mod_webfw2 testfilter
 APR_INCLUDES = -I../chad-libs/apr-1/include
 APR_LIBS     = -L../chad-libs/apr-1/.libs
 APXS_BIN     = ~/sandbox/bin/apxs
-DFLAGS       = -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+THRASHER     = -DWITH_THRASHER
+DFLAGS       = -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
 
 libconfuse: 
 	@if test -f confuse-2.5/src/libconfuse.la; then echo "[*] libconfuse already configured..."; else echo "[*] Configuring libconfuse..."; cd confuse-2.5 && ./configure CFLAGS=-fPIC --disable-nls 2>&1 >/dev/null; echo "[*] Making libconfuse";  make 2>&1 >/dev/null; fi
@@ -25,7 +26,7 @@ archives: filter.c patricia.c filter.o patricia.o libconfuse
 	#ar rcs libpatricia.a patricia.o
 
 mod_webfw2: filter.c mod_webfw2.c archives 
-	${APXS_BIN} -c -I. -Iconfuse-2.5/src/ -L. mod_webfw2.c -ggdb -lfilter -ggdb 2>&1 >/dev/null 
+	${APXS_BIN} -c -I. $(DFLAGS) -Iconfuse-2.5/src/ -L. mod_webfw2.c -ggdb -lfilter -ggdb 2>&1 >/dev/null 
 	${APXS_BIN} -i -a -n webfw2 mod_webfw2.la 2>&1 >/dev/null
 
 distclean: clean

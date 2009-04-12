@@ -1,4 +1,11 @@
+#include "apr.h"
+#include "apr_hash.h"
+#include "apr_pools.h"
+#include "apr_strings.h"
+#include "apr_tables.h"
+#include "apr_network_io.h"
 #include "patricia.h"
+
 typedef struct cloud_rule cloud_rule_t;
 typedef struct rule_flow rule_flow_t;
 typedef struct cloud_callbacks cloud_callbacks_t;
