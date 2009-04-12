@@ -601,7 +601,7 @@ webfw2_handler(request_rec * rec)
              */
 	    /* 1972 is the return code for thrasher, we don't want to
 	     * update our dynamic srcaddr rule if this is the case */
-            if (ret != FILTER_THRASHER && config->dynamic_srcaddr_rule) {
+            if (rule->action != FILTER_THRASHER && config->dynamic_srcaddr_rule) {
                 cloud_rule_t   *dynamic_rule;
 
                 if ((dynamic_rule =
