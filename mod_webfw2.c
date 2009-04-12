@@ -29,6 +29,7 @@
 #define FILTER_CONFIG_KEY "webfw2_filter_config"
 
 #define FILTER_THRASHER 1972
+#define FILTER_THRASHER_PROFILE 1973
 
 module AP_MODULE_DECLARE_DATA webfw2_module;
 
@@ -516,7 +517,10 @@ webfw2_status(request_rec *rec, webfw2_config_t *config, webfw2_filter_t *filter
 	case FILTER_THRASHER:
 	    /* send this information on over to thrasher */
 	    return webfw2_thrasher(rec, config, filter, src_ip);
-//	    return DECLINED;
+	case FILTER_THRASHER_PROFILE:
+	    if (webfw2_thrasher(rec, config, filter, src_ip) != DECLINED)
+		return FILTER_THRASHER_PROFILE;
+	    return DECLINED;
 	/* 
 	 * in the near future we will have application 
 	 * specific actions here where we can do uhh.....
@@ -588,12 +592,29 @@ webfw2_handler(request_rec * rec)
                                                (void *) callback_data)))
                 continue;
 
-            apr_table_set(rec->notes, 
-		    "webfw2_rule", rule->name);
-	    apr_table_set(rec->subprocess_env, 
-		    "webfw2_rule", rule->name);
-
 	    ret = webfw2_status(rec, config, wf2_filter, rule, src_ip);
+
+
+	    if ((rule->action == FILTER_THRASHER && ret != DECLINED) ||
+		(rule->action != FILTER_THRASHER))
+	    {
+
+		if (rule->action == FILTER_THRASHER_PROFILE && 
+			ret != FILTER_THRASHER_PROFILE)
+		    break;
+
+		apr_table_set(rec->notes, 
+	    		"webfw2_rule", rule->name);
+    		apr_table_set(rec->subprocess_env, 
+			"webfw2_rule", rule->name);
+	    }
+
+	    if (rule->action == FILTER_THRASHER_PROFILE && 
+		    ret == FILTER_THRASHER_PROFILE)
+	    {
+		ret = DECLINED;
+		break;
+	    }
 
             /*
              * XXX This should be fixed to be a bit more dynamic in both
