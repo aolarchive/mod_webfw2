@@ -436,6 +436,9 @@ patricia_search_best2(apr_pool_t * pool,
     u_int           bitlen;
     int             cnt = 0;
 
+    if (!patricia || !prefix)
+	return NULL;
+
     assert(patricia);
     assert(prefix);
     assert(prefix->bitlen <= patricia->maxbits);

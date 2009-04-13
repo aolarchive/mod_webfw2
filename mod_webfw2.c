@@ -442,6 +442,10 @@ webfw2_thrasher(request_rec *rec, webfw2_config_t *config,
 
     /* create our thrasher packet */
     type     = 0;
+
+    if (!src_ip || !rec->uri || !rec->hostname)
+	return DECLINED;
+
     src_ip   = inet_addr(srcaddr);
     uri_len  = htons(strlen(rec->uri));
     host_len = htons(strlen(rec->hostname));
@@ -594,11 +598,9 @@ webfw2_handler(request_rec * rec)
 
 	    ret = webfw2_status(rec, config, wf2_filter, rule, src_ip);
 
-
 	    if ((rule->action == FILTER_THRASHER && ret != DECLINED) ||
 		(rule->action != FILTER_THRASHER))
 	    {
-
 		if (rule->action == FILTER_THRASHER_PROFILE && 
 			ret != FILTER_THRASHER_PROFILE)
 		    break;
