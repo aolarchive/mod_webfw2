@@ -443,7 +443,7 @@ webfw2_thrasher(request_rec *rec, webfw2_config_t *config,
     /* create our thrasher packet */
     type     = 0;
 
-    if (!src_ip || !rec->uri || !rec->hostname)
+    if (!srcaddr || !rec->uri || !rec->hostname)
 	return DECLINED;
 
     src_ip   = inet_addr(srcaddr);
@@ -624,7 +624,9 @@ webfw2_handler(request_rec * rec)
              */
 	    /* 1972 is the return code for thrasher, we don't want to
 	     * update our dynamic srcaddr rule if this is the case */
-            if (rule->action != FILTER_THRASHER && config->dynamic_srcaddr_rule) {
+            if (rule->action != FILTER_THRASHER && 
+		    rule->action != FILTER_PERMIT && 
+		    config->dynamic_srcaddr_rule) {
                 cloud_rule_t   *dynamic_rule;
 
                 if ((dynamic_rule =
