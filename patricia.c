@@ -51,6 +51,7 @@ my_inet_pton(int af, const char *src, void *dst)
         int             i,
                         c,
                         val;
+	/* not thread safe */
         u_char          xp[4] = { 0, 0, 0, 0 };
 
         for (i = 0;; i++) {
@@ -187,20 +188,10 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
 
     if (string == NULL)
     {
-//	free(save);
         return (NULL);
     }
 
-    /*
-     * easy way to handle both families 
-     */
-    if (family == 0) {
-        family = AF_INET;
-    }
-
-    if (family == AF_INET) {
-        maxbitlen = 32;
-    }
+    maxbitlen = 32;
 
     if ((cp = strchr(string, '/')) != NULL) {
         bitlen = atol(cp + 1);
@@ -217,7 +208,6 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
     if (family == AF_INET) {
         if ((result = my_inet_pton(AF_INET, string, &sin)) <= 0)
 	{
-	    //free(save);
             return (NULL);
 	}
         return (New_Prefix(pool, AF_INET, &sin, bitlen));

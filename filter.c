@@ -41,9 +41,17 @@ static struct n_t_s {
     0, NULL}
 };
 
+/** 
+  test 1 2 3
+  @param tokens blah 
+*/
 void
 free_tokens(char **tokens)
 {
+    /**
+       Testing 1 2 3 
+       @param blah this is an integer blah 
+    */
     char           *tok;
     int             i = 0;
 
@@ -724,14 +732,70 @@ cloud_register_user_cb(cloud_filter_t * filter,
     return 0;
 }
 
+static cloud_rule_t *parse_whitelist(cloud_filter_t *filter, 
+        const char *filename)
+{
+    FILE *wlf;
+    cloud_rule_t *cloud_rule;
+    char *buf;
+    char *bptr;
+
+    if (!filename)
+        return NULL;
+
+    wlf = fopen(filename, "r");
+
+    if (!wlf)
+        return NULL;
+
+    if (!(cloud_rule = cloud_rule_init(filter->pool)))
+        return NULL;
+
+    cloud_rule->name = apr_pstrdup(filter->pool, 
+            "__whitelist__");
+
+    cloud_rule_add_flow(cloud_rule,
+            "match_src_addrs");
+
+    cloud_rule_set_action(cloud_rule, "permit");
+
+    buf = malloc(1024);
+
+    while((bptr=fgets(buf, 1023, wlf)))
+    {
+	int i;
+	/* trim off whitespaces */
+	for (i = 0; i < strlen(buf); i++)
+	{
+	    if(buf[i] == '\n' || buf[i] == '\r')
+	    {
+		buf[i] = '\0';
+		break;
+	    }
+	}
+
+	if (*buf == '\0')
+	    continue;
+
+        cloud_rule_add_network(cloud_rule, buf,
+                RULE_MATCH_SRCADDR, NULL);
+    }
+
+    free(buf);
+    fclose(wlf);
+
+    return cloud_rule;
+}
 
 cloud_filter_t *
-cloud_parse_config(apr_pool_t * pool, const char *filename)
+cloud_parse_config(apr_pool_t * pool, const char *whitelist, 
+	const char *filename)
 {
     cfg_t          *cfg;
     cloud_filter_t *filter;
     unsigned int    n,
                     i;
+
     PRINT_DEBUG("Parsing configuration.\n");
     cfg_opt_t       str_match_opts[] = {
         CFG_STR_LIST("values", 0, CFGF_MULTI),
@@ -763,6 +827,15 @@ cloud_parse_config(apr_pool_t * pool, const char *filename)
         return NULL;
 
     filter = cloud_filter_init(pool);
+
+    /* first setup a rule for our whitelist if needed */
+    if (whitelist) 
+    {
+	cloud_rule_t *whitelist_rule;
+	whitelist_rule = parse_whitelist(filter, whitelist);
+	if (whitelist_rule)
+	    cloud_filter_add_rule(filter, whitelist_rule);
+    }
 
     n = cfg_size(cfg, "rule");
     PRINT_DEBUG("Found %d rules in configuration\n", n);

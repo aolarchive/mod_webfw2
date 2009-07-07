@@ -73,7 +73,7 @@ cloud_filter_t *cloud_filter_init(apr_pool_t *);
 int cloud_match_rule(apr_pool_t *, cloud_rule_t *, const char *, 
     const char *, const void *);
 cloud_rule_t *cloud_traverse_filter(cloud_filter_t *, const void *);
-cloud_filter_t *cloud_parse_config(apr_pool_t *, const char *);
+cloud_filter_t *cloud_parse_config(apr_pool_t *, const char *, const char *);
 char **cloud_tokenize_str(char *, const char *);
 void free_tokens(char **);
 int cloud_register_user_cb(cloud_filter_t *, void *(*cb)(apr_pool_t *, void *, const void *), int, void *);
