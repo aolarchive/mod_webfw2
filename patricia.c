@@ -498,9 +498,19 @@ patricia_lookup(apr_pool_t * pool, patricia_tree_t * patricia,
                     j,
                     r;
 
+
+    if (!patricia || ! prefix || prefix->bitlen > patricia->maxbits)
+	return NULL;
+#if 0
+    if (!patricia || !prefix || 
+	    prefix->bitlen >= patricia->maxbits)
+	return NULL;
+    printf("%p %p\n", patricia, prefix);
+
     assert(patricia);
     assert(prefix);
     assert(prefix->bitlen <= patricia->maxbits);
+#endif
 
     if (patricia->head == NULL) {
         node = apr_pcalloc(pool, sizeof *node);

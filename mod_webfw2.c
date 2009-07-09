@@ -35,7 +35,6 @@ module AP_MODULE_DECLARE_DATA webfw2_module;
 
 typedef struct webfw2_config {
     char           *config_file;
-    char           *whitelist_file;
     char           *dynamic_srcaddr_rule;
     uint32_t        update_interval;
     char           *thrasher_host;
@@ -180,8 +179,7 @@ webfw2_filter_parse(apr_pool_t * pool, webfw2_config_t * config,
 	return;
     }
 
-    filter->filter = cloud_parse_config(filter->pool, 
-	    config->whitelist_file, config->config_file);
+    filter->filter = cloud_parse_config(filter->pool, config->config_file);
 
     if(!filter->filter)
     {
@@ -245,15 +243,21 @@ static webfw2_filter_t *
 webfw2_filter_init(apr_pool_t * pool, webfw2_config_t * config)
 {
     webfw2_filter_t *filter;
+    apr_finfo_t sb;
+
 
     filter = apr_pcalloc(pool, sizeof(webfw2_filter_t));
-
     webfw2_filter_parse(pool, config, filter);
+
+    /* fetch the current date on the config file */
+    apr_stat(&sb, config->config_file, APR_FINFO_MTIME, pool);
+    filter->last_modification = sb.mtime;
 
 #ifdef APR_HAS_THREADS
     ap_assert(apr_thread_rwlock_create(&filter->rwlock, pool) ==
               APR_SUCCESS);
 #endif
+
 
 
     if (config->thrasher_host && config->thrasher_port) {
@@ -667,9 +671,12 @@ webfw2_handler(request_rec * rec)
                     ret != FILTER_THRASHER_PROFILE)
                     break;
 
-                apr_table_set(rec->notes, "webfw2_rule", rule->name);
-                apr_table_set(rec->subprocess_env,
+		if (rule->log)
+		{
+		    apr_table_set(rec->notes, "webfw2_rule", rule->name);
+		    apr_table_set(rec->subprocess_env,
                               "webfw2_rule", rule->name);
+		}
             }
 
             if (rule->action == FILTER_THRASHER_PROFILE &&
@@ -900,21 +907,6 @@ cmd_set_action(cmd_parms *cmd, void *dummy_config, const char *arg)
 }
 
 static const char *
-cmd_whitelist(cmd_parms *cmd, void *dummy_config, const char *arg)
-{
-    webfw2_config_t *config;
-
-    config = ap_get_module_config(cmd->server->module_config,
-	    &webfw2_module);
-
-    ap_assert(config);
-
-    config->whitelist_file = apr_pstrdup(cmd->pool, arg);
-
-    return NULL;
-}
-
-static const char *
 cmd_match_variable(cmd_parms * cmd, void *dummy_config, const char *arg)
 {
     webfw2_config_t *config;
@@ -1000,9 +992,6 @@ const command_rec webfw2_directives[] = {
 	    NULL, RSRC_CONF,
 	    "If thrasher server is down, wait this long before webfw2 "
 	    "attempts a reconnect"),
-    AP_INIT_TAKE1("webfw2_whitelist", cmd_whitelist,
-	    NULL, RSRC_CONF,
-	    "Use this files list of IP addresses/networks to never block"),
     /*
      * webfw2_dynamic_srcaddr_block "test_dynamic" 
      */

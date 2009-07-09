@@ -21,7 +21,7 @@ main(int argc, char **argv)
     apr_initialize();
     apr_pool_create(&root_pool, NULL);
 
-    filter = cloud_parse_config(root_pool, NULL, argv[1]);
+    filter = cloud_parse_config(root_pool, argv[1]);
 
     printf("Filter passed? %s\n", filter?"yes":"no");
 

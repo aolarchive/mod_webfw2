@@ -777,8 +777,14 @@ static cloud_rule_t *parse_whitelist(cloud_filter_t *filter,
 	if (*buf == '\0')
 	    continue;
 
-        cloud_rule_add_network(cloud_rule, buf,
-                RULE_MATCH_SRCADDR, NULL);
+        if(cloud_rule_add_network(cloud_rule, buf,
+                RULE_MATCH_SRCADDR, NULL)==-1)
+	{
+	    free(buf);
+	    fclose(wlf);
+	    return NULL;
+	}
+
     }
 
     free(buf);
@@ -788,11 +794,11 @@ static cloud_rule_t *parse_whitelist(cloud_filter_t *filter,
 }
 
 cloud_filter_t *
-cloud_parse_config(apr_pool_t * pool, const char *whitelist, 
-	const char *filename)
+cloud_parse_config(apr_pool_t * pool, const char *filename)
 {
     cfg_t          *cfg;
     cloud_filter_t *filter;
+    char           *whitelist_file;
     unsigned int    n,
                     i;
 
@@ -809,6 +815,7 @@ cloud_parse_config(apr_pool_t * pool, const char *whitelist,
                 CFGF_NONE),
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
         CFG_BOOL("dynamic", cfg_false, CFGF_NONE),
+	CFG_BOOL("log", cfg_true, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
         CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
@@ -817,6 +824,8 @@ cloud_parse_config(apr_pool_t * pool, const char *whitelist,
     };
 
     cfg_opt_t       opts[] = {
+	CFG_STR("whitelist-file", NULL, CFGF_NONE),
+	CFG_BOOL("whitelist-log", cfg_true, CFGF_NONE),
         CFG_SEC("rule", rule_opts, CFGF_MULTI | CFGF_TITLE),
         CFG_END()
     };
@@ -824,17 +833,35 @@ cloud_parse_config(apr_pool_t * pool, const char *whitelist,
     cfg = cfg_init(opts, CFGF_NOCASE);
 
     if (cfg_parse(cfg, filename) == CFG_PARSE_ERROR)
+    {
+	cfg_free(cfg);
         return NULL;
+    }
 
     filter = cloud_filter_init(pool);
+    whitelist_file = cfg_getstr(cfg, "whitelist-file");
 
     /* first setup a rule for our whitelist if needed */
-    if (whitelist) 
+    if (whitelist_file) 
     {
 	cloud_rule_t *whitelist_rule;
-	whitelist_rule = parse_whitelist(filter, whitelist);
+	whitelist_rule = parse_whitelist(filter, whitelist_file);
 	if (whitelist_rule)
+	{
 	    cloud_filter_add_rule(filter, whitelist_rule);
+
+	    if (cfg_getbool(cfg, "whitelist-log"))
+		whitelist_rule->log = 1;
+	    else 
+		whitelist_rule->log = 0;
+	}
+	else
+	{
+	    cfg_error(cfg, "Unable to parse whitelist: %s",
+		    whitelist_file);
+	    cfg_free(cfg);
+	    return NULL;
+	}
     }
 
     n = cfg_size(cfg, "rule");
@@ -861,7 +888,8 @@ cloud_parse_config(apr_pool_t * pool, const char *whitelist,
         flow = cfg_getstr(rule, "flow");
 
         cloud_rule = cloud_rule_init(filter->pool);
-        cloud_rule->name = apr_pstrdup(pool, cfg_title(rule));
+        cloud_rule->name = apr_pstrdup(cloud_rule->pool, cfg_title(rule));
+	cloud_rule->log = cfg_getbool(rule, "log");
 
         PRINT_DEBUG("Rule name: %s\n", cloud_rule->name);
         PRINT_DEBUG("Found flow '%s'\n", flow);
@@ -877,7 +905,8 @@ cloud_parse_config(apr_pool_t * pool, const char *whitelist,
             cloud_rule->dynamic = 1;
         }
 
-        cloud_rule_add_flow(cloud_rule, (char *) apr_pstrdup(pool, flow));
+        cloud_rule_add_flow(cloud_rule, 
+		(char *) apr_pstrdup(cloud_rule->pool, flow));
 
         if ((action = cfg_getstr(rule, "action")))
             cloud_rule_set_action(cloud_rule, action);
