@@ -1,0 +1,13 @@
+mod_webfw2's memory tree. 
+base_child_pool
+|
+` webfw2 filter sub-pool
+  |
+  ` cloud filter sub-sub-pool
+    |
+    ` rule1 sub-sub-sub pool
+    |
+    ` rule2 sub-sub-sub pool
+    |
+    ` rule3....    
+
