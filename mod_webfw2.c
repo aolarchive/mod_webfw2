@@ -10,55 +10,9 @@
 #include <arpa/inet.h>
 #include <time.h>
 #include <unistd.h>
-#include "httpd.h"
-#include "http_core.h"
-#include "apr_pools.h"
-#include "apr_tables.h"
-#include "http_protocol.h"
-#include "http_config.h"
-#include "http_log.h"
-#include "apr_hash.h"
-#include "apr_strings.h"
-#include "http_request.h"
-#include "apr_reslist.h"
-#include "apr_thread_rwlock.h"
-#include "apr_network_io.h"
-#include "filter.h"
-#include "version.h"
-
-#define FILTER_CONFIG_KEY "webfw2_filter_config"
-
-#define FILTER_THRASHER 1972
-#define FILTER_THRASHER_PROFILE 1973
+#include "mod_webfw2.h"
 
 module AP_MODULE_DECLARE_DATA webfw2_module;
-
-typedef struct webfw2_config {
-    char           *config_file;
-    char           *dynamic_srcaddr_rule;
-    uint32_t        update_interval;
-    char           *thrasher_host;
-    int             thrasher_port;
-    int             thrasher_timeout;
-    int             thrasher_retry;
-    int             default_action;
-    apr_table_t    *xff_headers;
-    apr_array_header_t *match_env;
-    apr_array_header_t *match_note;
-    apr_array_header_t *match_file;
-    apr_array_header_t *match_header;
-} webfw2_config_t;
-
-typedef struct webfw2_filter {
-    apr_time_t      last_update;
-    apr_time_t      last_modification;
-    cloud_filter_t *filter;
-    apr_pool_t     *pool;
-    apr_thread_rwlock_t *rwlock;
-    apr_socket_t   *thrasher_sock;
-    /* what time did webfw2 deem thrasher was down? */
-    uint32_t        thrasher_downed;
-} webfw2_filter_t;
 
 apr_socket_t   *webfw2_thrasher_connect(apr_pool_t *, const char *,
                                         const int, const int);
@@ -111,49 +65,49 @@ webfw2_note_cb(apr_pool_t * pool, void *fc_data, const void **userdata)
     return data ? data : "__wf2-NULL__";
 }
 
-static void  *
-webfw2_header_cb(apr_pool_t *pool, void *fc_data, const void **userdata)
+static void    *
+webfw2_header_cb(apr_pool_t * pool, void *fc_data, const void **userdata)
 {
-    request_rec *rec;
-    char *data;
+    request_rec    *rec;
+    char           *data;
 
-    if(!userdata || !fc_data)
-	return NULL;
+    if (!userdata || !fc_data)
+        return NULL;
 
     rec = (request_rec *) userdata[0];
-    data = (char *)apr_table_get(rec->headers_in, (char *)fc_data);
+    data = (char *) apr_table_get(rec->headers_in, (char *) fc_data);
 
-    return data ? data:"__wf2-NULL__";
+    return data ? data : "__wf2-NULL__";
 }
 
 static void
 webfw2_register_callbacks(apr_pool_t * pool, webfw2_config_t * config,
                           webfw2_filter_t * filter)
 {
-    int i;
-    char **list;
+    int             i;
+    char          **list;
 
-    cloud_register_user_cb(filter->filter,
+    filter_register_user_cb(filter->filter,
                            (void *) webfw2_srcaddr_cb, RULE_MATCH_SRCADDR,
                            NULL);
 
-    cloud_register_user_cb(filter->filter, (void *) webfw2_dstaddr_cb,
+    filter_register_user_cb(filter->filter, (void *) webfw2_dstaddr_cb,
                            RULE_MATCH_DSTADDR, NULL);
 
-    if (config->match_header)
-    {
-	list = (char **) config->match_header->elts;
+    if (config->match_header) {
+        list = (char **) config->match_header->elts;
 
-	for (i = 0; i < config->match_header->nelts; i++)
-	    cloud_register_user_cb(filter->filter, (void *) webfw2_header_cb,
-		    RULE_MATCH_STRING, list[i]);
+        for (i = 0; i < config->match_header->nelts; i++)
+            filter_register_user_cb(filter->filter,
+                                   (void *) webfw2_header_cb,
+                                   RULE_MATCH_STRING, list[i]);
     }
 
     if (config->match_note) {
         list = (char **) config->match_note->elts;
 
         for (i = 0; i < config->match_note->nelts; i++)
-            cloud_register_user_cb(filter->filter, (void *) webfw2_note_cb,
+            filter_register_user_cb(filter->filter, (void *) webfw2_note_cb,
                                    RULE_MATCH_STRING, list[i]);
     }
 
@@ -161,7 +115,7 @@ webfw2_register_callbacks(apr_pool_t * pool, webfw2_config_t * config,
         list = (char **) config->match_env->elts;
 
         for (i = 0; i < config->match_env->nelts; i++)
-            cloud_register_user_cb(filter->filter, (void *) webfw2_env_cb,
+            filter_register_user_cb(filter->filter, (void *) webfw2_env_cb,
                                    RULE_MATCH_STRING, list[i]);
     }
 }
@@ -172,20 +126,18 @@ webfw2_filter_parse(apr_pool_t * pool, webfw2_config_t * config,
 {
     apr_pool_create(&filter->pool, pool);
 
-    if (!config->config_file)
-    {
-	ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
-		"No configuration file specified for webfw2! NO RULES LOADED!");
-	return;
+    if (!config->config_file) {
+        ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+                     "No configuration file specified for webfw2! NO RULES LOADED!");
+        return;
     }
 
-    filter->filter = cloud_parse_config(filter->pool, config->config_file);
+    filter->filter = filter_parse_config(filter->pool, config->config_file);
 
-    if(!filter->filter)
-    {
-	ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
-		"webfw2 configuration syntax error! NO RULES LOADED!!!!!");
-	return;
+    if (!filter->filter) {
+        ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+                     "webfw2 configuration syntax error! NO RULES LOADED!!!!!");
+        return;
     }
 
     webfw2_register_callbacks(filter->pool, config, filter);
@@ -194,11 +146,13 @@ webfw2_filter_parse(apr_pool_t * pool, webfw2_config_t * config,
 apr_socket_t
     * webfw2_thrasher_connect(apr_pool_t * pool,
                               const char *host, const int port,
-			      const int timeout)
+                              const int timeout)
 {
     apr_status_t    rv;
     apr_sockaddr_t *sockaddr;
     apr_socket_t   *sock;
+
+    sock = NULL;
 
     do {
 
@@ -232,7 +186,8 @@ apr_socket_t
     } while (0);
 
     if (rv != APR_SUCCESS) {
-        apr_socket_close(sock);
+	if (sock)
+	    apr_socket_close(sock);
         return NULL;
     }
 
@@ -243,13 +198,15 @@ static webfw2_filter_t *
 webfw2_filter_init(apr_pool_t * pool, webfw2_config_t * config)
 {
     webfw2_filter_t *filter;
-    apr_finfo_t sb;
+    apr_finfo_t     sb;
 
 
     filter = apr_pcalloc(pool, sizeof(webfw2_filter_t));
     webfw2_filter_parse(pool, config, filter);
 
-    /* fetch the current date on the config file */
+    /*
+     * fetch the current date on the config file 
+     */
     apr_stat(&sb, config->config_file, APR_FINFO_MTIME, pool);
     filter->last_modification = sb.mtime;
 
@@ -265,14 +222,17 @@ webfw2_filter_init(apr_pool_t * pool, webfw2_config_t * config)
          * create our thrasher socket 
          */
         if (!(filter->thrasher_sock = webfw2_thrasher_connect(pool,
-			config->thrasher_host,
-			config->thrasher_port,
-			config->thrasher_timeout)))
-	{
+                                                              config->
+                                                              thrasher_host,
+                                                              config->
+                                                              thrasher_port,
+                                                              config->
+                                                              thrasher_timeout)))
+        {
             ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
                          "webfw2 could not connect to thrasher host");
-	    filter->thrasher_downed = time(NULL);
-	}
+            filter->thrasher_downed = time(NULL);
+        }
 
     }
 
@@ -326,7 +286,7 @@ webfw2_updater(request_rec * rec)
             break;
 
         /*
-         * the file has infact changed, lets re-read the config and start
+         * the file has in-fact changed, lets re-read the config and start
          * over 
          */
 
@@ -336,9 +296,9 @@ webfw2_updater(request_rec * rec)
         subpool = wf2_filter->pool;
         apr_pool_destroy(subpool);
 
-	ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
-		"Changes found within webfw2 configuration "
-		"reloading rules!");
+        ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+                     "Changes found within webfw2 configuration "
+                     "reloading rules!");
 
         webfw2_filter_parse(rec->server->process->pool,
                             config, wf2_filter);
@@ -377,6 +337,9 @@ webfw2_child_init(apr_pool_t * pool, server_rec * rec)
 static apr_array_header_t *
 webfw2_find_all_sources(request_rec * rec)
 {
+    /* go through every address we can find, whether that be 
+       within an XFF type header, or the real source and add
+       it to an array we can filter on */
     webfw2_config_t *config;
     apr_array_header_t *addr_array;
     apr_table_entry_t *hdrs;
@@ -385,13 +348,13 @@ webfw2_find_all_sources(request_rec * rec)
 
     config =
         ap_get_module_config(rec->server->module_config, &webfw2_module);
-
     ap_assert(config);
 
     addr_array = apr_array_make(rec->pool, 1, sizeof(char *));
     ap_assert(addr_array);
 
     if (!config->xff_headers) {
+	/* no xff headers defined, so we only look at the remote addr */
         *(const char **) apr_array_push(addr_array) =
             rec->connection->remote_ip;
         return addr_array;
@@ -399,29 +362,106 @@ webfw2_find_all_sources(request_rec * rec)
 
     hdrs_arr = (apr_array_header_t *)
         apr_table_elts(config->xff_headers);
-
     hdrs = (apr_table_entry_t *) hdrs_arr->elts;
 
     for (i = 0; i < hdrs_arr->nelts; i++) {
-        char           *value;
-        char           *addr;
-        char          **addrs;
-        char          **addrs_ptr;
+	/* go through each defined XFF header from httpd.conf, check for
+	   its existence in the request_rec, and if found run through it
+	   and stick each addr in an array */
+
+        webfw2_xff_opts_t *xff_opts;
+        char            *addr;
+        char           **addrs;
+        char           **addrs_ptr;
+	int              nelts, i;
+	char            *header_in_value;
 
         if (!hdrs[i].key)
             continue;
 
-        value = (char *) apr_table_get(rec->headers_in, hdrs[i].key);
+        header_in_value = 
+	    (char *) apr_table_get(rec->headers_in, hdrs[i].key);
 
-        if (!value)
+        if (!header_in_value)
             continue;
 
-        addrs = cloud_tokenize_str(value, ",");
+	xff_opts = (webfw2_xff_opts_t *)hdrs[i].val;
+
+        /* first check to make sure if the source_ip filter for XFF
+           headers is enabled and that we are coming from a trusted 
+           source. */
+        if(xff_opts && xff_opts->source_ip && 
+                !apr_hash_get(xff_opts->source_ip,
+                    (char *)rec->connection->remote_ip, 
+                    APR_HASH_KEY_STRING))
+	{
+	    printf("Untrusted source address for XFF %s\n", 
+		    rec->connection->remote_ip);
+            continue;
+	}
+
+	/* XXX need to cut white spaces out of each entry */
+        if(!(addrs = filter_tokenize_str(header_in_value, ",", &nelts)))
+	    continue;
+
         addrs_ptr = addrs;
 
-        while ((addr = *addrs++))
-            *(const char **) apr_array_push(addr_array) =
-                apr_pstrdup(rec->pool, addr);
+	/* do we need to include every address within this array? */
+	if (!xff_opts || xff_opts->first + xff_opts->last >= nelts ||
+		(xff_opts->first == 0 && xff_opts->last == 0))
+	{
+	    /* we need to add every single address to the returned 
+	       array */
+	    printf("Copying over every single address into the array\n");
+	    while((addr = *addrs++))
+	    {
+		if (!filter_validate_ip(addr))
+		    continue;
+
+		*(const char **) apr_array_push(addr_array) =
+		    apr_pstrdup(rec->pool, addr);
+	    }
+	}
+	else 
+	{
+	    /* only add first X and last X entries to our array */
+	    int x;
+
+	    if (xff_opts->first != 0)
+	    {
+		/* stuff the first X into the array */
+		for (x = 0; x < xff_opts->first; x++)
+		{
+		    if(!filter_validate_ip(addrs_ptr[x]))
+			continue;
+
+		    printf("Copying first entries %s\n", addrs_ptr[x]);
+		    *(const char **) apr_array_push(addr_array) =
+			apr_pstrdup(rec->pool, addrs_ptr[x]);
+		}
+	    }
+
+	    if (xff_opts->last != 0)
+	    {
+		/* stuff the last X into the array */
+
+		/* we skip past the last NULL byte by setting the initializer 
+		   to nelts - 1. */
+		for (x = nelts - 1; x >= nelts - xff_opts->last; x--)
+		{
+		    /* we skip over the first NULL on the end of the array */
+		    if (addrs_ptr[x] == NULL)
+			continue;
+
+		    if (!filter_validate_ip(addrs_ptr[x]))
+		       continue;	
+
+		    printf("Copying last entries %s\n", addrs_ptr[x]);
+		    *(const char **) apr_array_push(addr_array) =
+			apr_pstrdup(rec->pool, addrs_ptr[x]);
+		}
+	    }
+	}
 
         free_tokens(addrs_ptr);
     }
@@ -473,34 +513,29 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     if (!config->thrasher_host || !config->thrasher_port)
         return DECLINED;
 
-    if (!filter->thrasher_sock) 
-    {
-	time_t          currtime;
+    if (!filter->thrasher_sock) {
+        time_t          currtime;
 
-	currtime = time(NULL);
-	    
-	if (currtime - filter->thrasher_downed >
-		config->thrasher_retry)
-	{
-	    /*
-	     * try reconnecting to the socket 
-	     */
-	    filter->thrasher_sock =
-		webfw2_thrasher_connect(filter->pool,
-                                    config->thrasher_host,
-                                    config->thrasher_port,
-				    config->thrasher_timeout);
+        currtime = time(NULL);
 
-	    if (!filter->thrasher_sock)
-	    {
-		ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL, 
-			"webfw2 could not connect to thrasher host");
-		filter->thrasher_downed = time(NULL);
-		return DECLINED;
-	    }
-	}
-	else 
-	    return DECLINED;
+        if (currtime - filter->thrasher_downed > config->thrasher_retry) {
+            /*
+             * try reconnecting to the socket 
+             */
+            filter->thrasher_sock =
+                webfw2_thrasher_connect(filter->pool,
+                                        config->thrasher_host,
+                                        config->thrasher_port,
+                                        config->thrasher_timeout);
+
+            if (!filter->thrasher_sock) {
+                ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+                             "webfw2 could not connect to thrasher host");
+                filter->thrasher_downed = time(NULL);
+                return DECLINED;
+            }
+        } else
+            return DECLINED;
     }
 
     /*
@@ -559,21 +594,23 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     } while (0);
 
     if (sockerr) {
-        apr_socket_close(filter->thrasher_sock);
+	if(filter->thrasher_sock)
+	    apr_socket_close(filter->thrasher_sock);
+
         filter->thrasher_sock = NULL;
-	filter->thrasher_downed = time(NULL);
+        filter->thrasher_downed = time(NULL);
         return DECLINED;
     }
 
     if (resp)
-        return 543;
+        return config->default_taction;
 
     return DECLINED;
 }
 
 static int
 webfw2_status(request_rec * rec, webfw2_config_t * config,
-              webfw2_filter_t * filter, cloud_rule_t * rule,
+              webfw2_filter_t * filter, filter_rule_t * rule,
               const char *src_ip)
 {
     switch (rule->action) {
@@ -645,7 +682,7 @@ webfw2_handler(request_rec * rec)
             break;
 
         for (i = 0; i < addrs->nelts; i++) {
-            cloud_rule_t   *rule;
+            filter_rule_t   *rule;
             const char     *src_ip;
             const char     *dst_ip;
             void          **callback_data;
@@ -659,7 +696,7 @@ webfw2_handler(request_rec * rec)
             callback_data[1] = (void *) src_ip;
             callback_data[2] = (void *) dst_ip;
 
-            if (!(rule = cloud_traverse_filter(wf2_filter->filter,
+            if (!(rule = filter_traverse_filter(wf2_filter->filter,
                                                (void *) callback_data)))
                 continue;
 
@@ -671,12 +708,11 @@ webfw2_handler(request_rec * rec)
                     ret != FILTER_THRASHER_PROFILE)
                     break;
 
-		if (rule->log)
-		{
-		    apr_table_set(rec->notes, "webfw2_rule", rule->name);
-		    apr_table_set(rec->subprocess_env,
-                              "webfw2_rule", rule->name);
-		}
+                if (rule->log) {
+                    apr_table_set(rec->notes, "webfw2_rule", rule->name);
+                    apr_table_set(rec->subprocess_env,
+                                  "webfw2_rule", rule->name);
+                }
             }
 
             if (rule->action == FILTER_THRASHER_PROFILE &&
@@ -688,20 +724,19 @@ webfw2_handler(request_rec * rec)
             /*
              * XXX This should be fixed to be a bit more dynamic in both
              * configuration and matching 
-             */
-            /*
+             * 
              * 1972 is the return code for thrasher, we don't want to
              * update our dynamic srcaddr rule if this is the case 
              */
             if (rule->action != FILTER_THRASHER &&
                 rule->action != FILTER_PERMIT &&
                 config->dynamic_srcaddr_rule) {
-                cloud_rule_t   *dynamic_rule;
+                filter_rule_t   *dynamic_rule;
 
                 if ((dynamic_rule =
-                     cloud_filter_get_rule(wf2_filter->filter,
-                                           config->
-                                           dynamic_srcaddr_rule)) == rule)
+                     filter_get_rule(wf2_filter->filter,
+                                           config->dynamic_srcaddr_rule))
+                    == rule)
                     break;
 
                 if (dynamic_rule == NULL)
@@ -720,7 +755,7 @@ webfw2_handler(request_rec * rec)
                 /*
                  * now insert our src addr into our dynamic rule 
                  */
-                cloud_rule_add_network(dynamic_rule,
+                filter_rule_add_network(dynamic_rule,
                                        src_ip, RULE_MATCH_SRCADDR, NULL);
 
             }
@@ -755,13 +790,20 @@ webfw2_init_config(apr_pool_t * pool, server_rec * svr)
         (webfw2_config_t *) apr_pcalloc(svr->process->pool,
                                         sizeof(*config));
 
-    /* default the retry to 5000 usec */
+    /*
+     * default the retry to 5000 usec 
+     */
     config->thrasher_timeout = 5000;
 
-    /* set the default return action to 542 */
-    config->default_action = 542; 
+    /*
+     * set the default return action to 542 
+     */
+    config->default_action = 418;
+    config->default_taction = 420;
 
-    /* set default retry for every 60 seconds if error */
+    /*
+     * set default retry for every 60 seconds if error 
+     */
     config->thrasher_retry = 60;
 
     return config;
@@ -783,13 +825,12 @@ cmd_dynamic_srcaddr_rule(cmd_parms * cmd, void *dummy_config,
 }
 
 static const char *
-cmd_thrasher_timeout(cmd_parms *cmd, void *dummy_config,
-	const char *arg)
+cmd_thrasher_timeout(cmd_parms * cmd, void *dummy_config, const char *arg)
 {
     webfw2_config_t *config;
 
     config = ap_get_module_config(cmd->server->module_config,
-	    &webfw2_module);
+                                  &webfw2_module);
 
     ap_assert(config);
     config->thrasher_timeout = atoi(arg);
@@ -797,13 +838,12 @@ cmd_thrasher_timeout(cmd_parms *cmd, void *dummy_config,
 }
 
 static const char *
-cmd_thrasher_retry(cmd_parms *cmd, void *dummy_config,
-	const char *arg)
+cmd_thrasher_retry(cmd_parms * cmd, void *dummy_config, const char *arg)
 {
     webfw2_config_t *config;
 
     config = ap_get_module_config(cmd->server->module_config,
-	    &webfw2_module);
+                                  &webfw2_module);
 
     ap_assert(config);
     config->thrasher_retry = atoi(arg);
@@ -866,11 +906,108 @@ cmd_update_interval(cmd_parms * cmd, void *dummy_config, const char *arg)
     return NULL;
 }
 
-static const char *
-cmd_rw_xff(cmd_parms * cmd, void *dummy_config, const char *arg)
+enum {
+	XFF_OPT_SRCIP,
+	XFF_OPT_LAST,
+	XFF_OPT_FIRST
+};
+
+static struct xo_t_s {
+    int val;
+    const char *strval;
+} name_to_int[] = {
+    {XFF_OPT_SRCIP, "src-ip"}, 
+    {XFF_OPT_LAST, "last"}, 
+    {XFF_OPT_FIRST, "first"}, 
+    {0, NULL}
+};
+
+static int
+xffopt_tok_to_int(char *token)
 {
-    webfw2_config_t *config;
-    char           *xff_header;
+    int i;
+
+    for(i=0; name_to_int[i].strval != NULL; i++)
+       if(!strncasecmp(name_to_int[i].strval, token,
+	   strlen(name_to_int[i].strval)))
+	   return name_to_int[i].val;
+
+    return -1;
+}
+
+static webfw2_xff_opts_t *
+parse_xff_opts(apr_pool_t *pool, char *xff_header, const char *str)
+{
+    /* XFF ACL EBNF:
+       start      := directives
+       directives := ((src_ip)+ | last | first), ws?
+       src_ip     := ws?, "src_ip", ws, IP_ADDR
+       last       := ws?, "last", ws, INT
+       first      := ws?, "first", ws, INT
+     */
+
+    char **tokens, *tok;
+    webfw2_xff_opts_t *xff_opts;
+    int i = 0;
+
+    xff_opts = apr_pcalloc(pool, sizeof(webfw2_xff_opts_t));
+    ap_assert(xff_opts);
+
+    xff_opts->xff_header = xff_header;
+
+    if (!str)
+	/* no acl, just return the empty structure */
+	return xff_opts;
+
+    tokens = filter_tokenize_str((char *)str, " ", NULL);
+
+    while ((tok = tokens[i++]) != NULL)
+    {
+	/* tok is now the key, tokens[i] points to the value */
+	if (tokens[i] == NULL)
+	{
+	    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+		    "XFF Token %s has no value", tokens[i]);
+	    free_tokens(tokens);
+	    return NULL;
+	}
+
+	switch(xffopt_tok_to_int(tok))
+	{
+	    case XFF_OPT_SRCIP:
+		if (!xff_opts->source_ip)
+		    xff_opts->source_ip = apr_hash_make(pool);
+
+		apr_hash_set(xff_opts->source_ip, 
+			apr_pstrdup(pool, tokens[i]), 
+			APR_HASH_KEY_STRING, xff_opts);
+		break;
+	    case XFF_OPT_LAST:
+		xff_opts->last = atoi(tokens[i]);
+		break;
+	    case XFF_OPT_FIRST:
+		xff_opts->first = atoi(tokens[i]);
+		break;
+	    default:
+		ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+			"XFF Unknown token key %s", tokens[i]);
+		exit(1);
+	}
+
+	i++;
+    }
+
+    free_tokens(tokens);
+    return xff_opts;
+}
+
+static const char *
+cmd_rw_xff(cmd_parms * cmd, void *dummy_config, const char *arg1, 
+	const char *arg2)
+{
+    webfw2_config_t   *config;
+    webfw2_xff_opts_t *xffopts;
+    char              *xff_header;
 
     config = ap_get_module_config(cmd->server->module_config,
                                   &webfw2_module);
@@ -882,26 +1019,32 @@ cmd_rw_xff(cmd_parms * cmd, void *dummy_config, const char *arg)
 
     ap_assert(config->xff_headers);
 
-    xff_header = apr_pstrdup(cmd->pool, arg);
+    xff_header = apr_pstrdup(cmd->pool, arg1);
     ap_assert(xff_header);
     ap_str_tolower(xff_header);
 
-    apr_table_setn(config->xff_headers, xff_header, (void *) 1);
+    xffopts = parse_xff_opts(cmd->pool, xff_header, arg2); 
+
+    apr_table_setn(config->xff_headers, xff_header, (void *)xffopts);
+
     return NULL;
 }
 
 static const char *
-cmd_set_action(cmd_parms *cmd, void *dummy_config, const char *arg)
+cmd_set_action(cmd_parms * cmd, void *dummy_config, const char *arg)
 {
     webfw2_config_t *config;
-    char *val;
+    char           *val;
 
     config = ap_get_module_config(cmd->server->module_config,
-	    &webfw2_module);
+                                  &webfw2_module);
 
     ap_assert(config);
 
-    config->default_action = atoi(arg);
+    if(!strcmp(arg, "denied"))
+	config->default_action = atoi(arg);
+    else if (!strcmp(arg, "thrasher"))
+	config->default_taction = atoi(arg);
 
     return NULL;
 }
@@ -926,7 +1069,7 @@ cmd_match_variable(cmd_parms * cmd, void *dummy_config, const char *arg)
     else if (!strcmp(type, "env"))
         array = &config->match_env;
     else if (!strcmp(type, "header"))
-	array = &config->match_header;
+        array = &config->match_header;
     else
         return NULL;
 
@@ -966,32 +1109,38 @@ const command_rec webfw2_directives[] = {
     AP_INIT_TAKE1("webfw2_update_interval", cmd_update_interval,
                   NULL, RSRC_CONF,
                   "The time (in seconds) to check for configuration changes"),
-    AP_INIT_TAKE1("webfw2_rw_xff", cmd_rw_xff, NULL, RSRC_CONF,
-                  "If this header is present, we use this IP address to filter"),
+    AP_INIT_TAKE12("webfw2_rw_xff", cmd_rw_xff, NULL, RSRC_CONF,
+                  "If this header is present, we use this IP address to filter."
+		  "Note: This has an optional XFF ACL that may be applied"),
     AP_INIT_TAKE1("webfw2_match_note", cmd_match_variable, "note",
                   RSRC_CONF,
-                  "Pass a note to filtercloud"),
+                  "Pass a note to filterfilter"),
     AP_INIT_TAKE1("webfw2_match_env", cmd_match_variable, "env", RSRC_CONF,
-                  "Pass an env to the filtercloud"),
-    AP_INIT_TAKE1("webfw2_match_header", cmd_match_variable, "header", RSRC_CONF,
-	          "Pass a client header to the filter"),
-    AP_INIT_TAKE1("webfw2_default_action", cmd_set_action, NULL,
-	    RSRC_CONF, "The default return status for a blocked connection"),
+                  "Pass an env to the filterfilter"),
+    AP_INIT_TAKE1("webfw2_match_header", cmd_match_variable, "header",
+                  RSRC_CONF,
+                  "Pass a client header to the filter"),
+    AP_INIT_TAKE1("webfw2_default_action", cmd_set_action, "denied",
+                  RSRC_CONF,
+                  "The default return status for a blocked connection"),
+    AP_INIT_TAKE1("webfw2_default_thrash_action", cmd_set_action, "thrasher",
+	          RSRC_CONF,
+		  "The default return status for a thrashed connection"),
     AP_INIT_TAKE1("webfw2_thrasher_host", cmd_thrasher_host,
                   NULL, RSRC_CONF,
                   "Enable thrasher and connect to this host"),
     AP_INIT_TAKE1("webfw2_thrasher_port", cmd_thrasher_port,
                   NULL, RSRC_CONF,
                   "Enable thrasher and connect to this port"),
-    AP_INIT_TAKE1("webfw2_thrasher_timeout", 
-	    cmd_thrasher_timeout,
-	    NULL, RSRC_CONF,
-	    "Timeout (in usec) for any thrasher socket operation"),
+    AP_INIT_TAKE1("webfw2_thrasher_timeout",
+                  cmd_thrasher_timeout,
+                  NULL, RSRC_CONF,
+                  "Timeout (in usec) for any thrasher socket operation"),
     AP_INIT_TAKE1("webfw2_thrasher_retry",
-	    cmd_thrasher_retry,
-	    NULL, RSRC_CONF,
-	    "If thrasher server is down, wait this long before webfw2 "
-	    "attempts a reconnect"),
+                  cmd_thrasher_retry,
+                  NULL, RSRC_CONF,
+                  "If thrasher server is down, wait this long before webfw2 "
+                  "attempts a reconnect"),
     /*
      * webfw2_dynamic_srcaddr_block "test_dynamic" 
      */
