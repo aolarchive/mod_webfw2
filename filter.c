@@ -132,18 +132,18 @@ filter_tokenize_str(char *string, const char *sep, int *nelts)
     /*
      * get an initial size of the array 
      */
-    arr = calloc(sizeof(char *), 32);
-    arrsize = 32;
+    arr = calloc(sizeof(char *), 128);
+    arrsize = 128;
     ncount = 0;
 
     str_copy = strdup(string);
 
     for (tok = strtok_r(str_copy, sep, &endptr);
          tok != NULL; tok = strtok_r(NULL, sep, &endptr)) {
-        if (ncount >= arrsize) {
-            free_tokens(arr);
-            return NULL;
-        }
+
+        if (ncount >= arrsize-1) 
+	    /* leave enough room for the last NULL */
+	    break;
 
 	tok = filter_trim_str(tok);
 
