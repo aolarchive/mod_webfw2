@@ -774,7 +774,7 @@ static cloud_rule_t *parse_whitelist(cloud_filter_t *filter,
 	    }
 	}
 
-	if (*buf == '\0')
+	if (*buf == '\0' || *buf == '#')
 	    continue;
 
         if(cloud_rule_add_network(cloud_rule, buf,
