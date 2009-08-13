@@ -566,7 +566,7 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     }
 
     if (resp)
-        return 543;
+        return 420;
 
     return DECLINED;
 }
@@ -759,7 +759,7 @@ webfw2_init_config(apr_pool_t * pool, server_rec * svr)
     config->thrasher_timeout = 5000;
 
     /* set the default return action to 542 */
-    config->default_action = 542; 
+    config->default_action = 418; 
 
     /* set default retry for every 60 seconds if error */
     config->thrasher_retry = 60;
