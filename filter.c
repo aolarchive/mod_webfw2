@@ -820,7 +820,7 @@ parse_whitelist(filter_t * filter, const char *filename)
             }
         }
 
-        if (*buf == '\0')
+        if (*buf == '\0' || *buf == '#')
             continue;
 
         if (filter_rule_add_network(filter_rule, buf,
