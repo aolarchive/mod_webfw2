@@ -1,8 +1,18 @@
 all: mod_webfw2 testfilter 
 
-APR_INCLUDES = -I../chad-libs/apr-1/include
-APR_LIBS     = -L../chad-libs/apr-1/.libs
+# ~/sandbox/bin/apr-1-config --includes --cflags --libs --ldflags  --link-ld
+APR_CONFIG   = /home/mthomas/sandbox/bin/apr-1-config
+APR_INCLUDES = `$(APR_CONFIG) --includes`
+APR_LIBS     = `$(APR_CONFIG) --libs`
+APR_CFLAGS   = `$(APR_CONFIG) --cflags`
+APR_LDFLAGS  = `$(APR_CONFIG) --ldflags`
+APR_LINK     = `$(APR_CONFIG) --link-ld`
+
+
+#APR_INCLUDES = -I../chad-libs/apr-1/include
+#APR_LIBS     = -L../chad-libs/apr-1/.libs
 APXS_BIN     = ~/sandbox/bin/apxs
+
 THRASHER     = -DWITH_THRASHER
 DFLAGS       = -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
 
@@ -15,6 +25,9 @@ patricia.o: patricia.c
 filter.o: filter.c 
 	gcc $(DFLAGS) $(APR_INCLUDES) -I. -Iconfuse-2.5/src/ -fPIC -c -o filter.o filter.c -ggdb 
 
+callbacks.o:
+	gcc $(DFLAGS) $(APR_INCLUDES) -I. -fPIC -c -o callbacks.o callbacks.c -ggdb
+
 testfilter: testfilter.c filter.c filter.o patricia.o libconfuse archives
 	gcc $(DFLAGS) -I. -L. $(APR_INCLUDES) $(APR_LIBS) -Iconfuse-2.5/src/ testfilter.c -o testfilter -lfilter -lapr-1 -ggdb
 
@@ -23,10 +36,9 @@ filter: filter.c filter.o patricia.o libconfuse archives
  
 archives: filter.c patricia.c filter.o patricia.o libconfuse 
 	ar rcs libfilter.a filter.o patricia.o confuse-2.5/src/lexer.o confuse-2.5/src/confuse.o 
-	#ar rcs libpatricia.a patricia.o
 
-mod_webfw2: filter.c mod_webfw2.c archives 
-	${APXS_BIN} -c -I. $(DFLAGS) -Iconfuse-2.5/src/ -L. mod_webfw2.c -ggdb -lfilter -ggdb 2>&1 >/dev/null 
+mod_webfw2: filter.c mod_webfw2.c archives callbacks.o 
+	${APXS_BIN} -c -I. $(DFLAGS) -Iconfuse-2.5/src/ -L. mod_webfw2.c callbacks.o -lfilter -ggdb 2>&1 >/dev/null 
 	${APXS_BIN} -i -a -n webfw2 mod_webfw2.la 2>&1 >/dev/null
 
 distclean: clean

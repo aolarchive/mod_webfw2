@@ -809,18 +809,10 @@ parse_whitelist(filter_t * filter, const char *filename)
     buf = malloc(1024);
 
     while ((bptr = fgets(buf, 1023, wlf))) {
-        int             i;
-        /*
-         * trim off whitespaces 
-         */
-        for (i = 0; i < strlen(buf); i++) {
-            if (buf[i] == '\n' || buf[i] == '\r') {
-                buf[i] = '\0';
-                break;
-            }
-        }
+	
+	buf = filter_trim_str(buf);
 
-        if (*buf == '\0' || *buf == '#')
+        if (!buf || *buf == '\0' || *buf == '#')
             continue;
 
         if (filter_rule_add_network(filter_rule, buf,
