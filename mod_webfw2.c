@@ -34,6 +34,8 @@
 module AP_MODULE_DECLARE_DATA webfw2_module;
 
 typedef struct webfw2_config {
+    uint8_t         hook_translate;
+    uint8_t         hook_access;
     char           *config_file;
     char           *dynamic_srcaddr_rule;
     uint32_t        update_interval;
@@ -622,14 +624,9 @@ webfw2_handler(request_rec * rec)
                           FILTER_CONFIG_KEY, rec->server->process->pool);
 
     ap_assert(wf2_filter);
+
 #ifdef APR_HAS_THREADS
-
-#ifdef RADIX_IS_REENTRANT
-    apr_thread_rwlock_rdlock(wf2_filter->rwlock);
-#else
     apr_thread_rwlock_wrlock(wf2_filter->rwlock);
-#endif
-
 #endif
 
     webfw2_set_interesting_notes(rec);
@@ -707,16 +704,6 @@ webfw2_handler(request_rec * rec)
                 if (dynamic_rule == NULL)
                     break;
 
-
-#ifdef APR_HAS_THREADS
-#ifdef RADIX_IS_REENTRANT
-                /*
-                 * we have to unlock our reader, and set a write lock 
-                 */
-                apr_thread_rwlock_unlock(wf2_filter->rwlock);
-                apr_thread_rwlock_wrlock(wf2_filter->rwlock);
-#endif
-#endif
                 /*
                  * now insert our src addr into our dynamic rule 
                  */
@@ -733,6 +720,36 @@ webfw2_handler(request_rec * rec)
     apr_thread_rwlock_unlock(wf2_filter->rwlock);
 #endif
     return ret;
+}
+
+/* frontend for hooking inside access checker hook */
+static int
+webfw2_handler_access_hook(request_rec *rec)
+{
+    webfw2_config_t *config;
+
+    config = ap_get_module_config(rec->server->module_config,
+	    &webfw2_module);
+
+    if (!config->hook_access)
+	return DECLINED;
+
+    return webfw2_handler(rec);
+}
+
+/* frontend for hooking inside translation hook */
+static int
+webfw2_handler_translate_hook(request_rec *rec)
+{
+    webfw2_config_t *config;
+
+    config = ap_get_module_config(rec->server->module_config,
+	    &webfw2_module);
+
+    if (!config->hook_translate)
+	return DECLINED;
+
+    return webfw2_handler(rec);
 }
 
 static void    *
@@ -763,6 +780,10 @@ webfw2_init_config(apr_pool_t * pool, server_rec * svr)
 
     /* set default retry for every 60 seconds if error */
     config->thrasher_retry = 60;
+
+    /* by default we want to hook into the check_access request processing. */
+    config->hook_access = 1;
+    config->hook_translate = 0;
 
     return config;
 }
@@ -941,7 +962,36 @@ cmd_match_variable(cmd_parms * cmd, void *dummy_config, const char *arg)
     return NULL;
 }
 
-static void
+static const char *
+cmd_hook_level(cmd_parms * cmd, void *dummy_config, const char *arg)
+{
+    webfw2_config_t *config;
+    char *type;
+
+    type = cmd->info;
+
+    config = ap_get_module_config(cmd->server->module_config,
+	    &webfw2_module);
+
+    ap_assert(config);
+
+    if (!strcmp(type, "access"))
+    {
+	config->hook_translate = 0;
+	config->hook_access    = 1;
+    } 
+    else if (!strcmp(type, "translate"))
+    {
+	config->hook_translate = 1;
+	config->hook_access    = 0;
+    }
+    else 
+	return NULL;
+
+    return NULL;
+}
+
+static void 
 webfw2_hooker(apr_pool_t * pool)
 {
     static const char *beforeme_list[] = {
@@ -949,57 +999,142 @@ webfw2_hooker(apr_pool_t * pool)
         NULL
     };
 
+    static const char *afterme_list[] = {
+	"mod_rewrite.c",
+	"mod_proxy.c",
+	NULL
+    };
+
     ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
                  "initializing mod_webfw2 v%s", VERSION);
-    ap_hook_child_init(webfw2_child_init, NULL, NULL, APR_HOOK_MIDDLE);
-    ap_hook_access_checker(webfw2_handler, beforeme_list,
-                           NULL, APR_HOOK_MIDDLE);
-    ap_hook_log_transaction(webfw2_updater, NULL, NULL,
-                            APR_HOOK_REALLY_LAST);
+
+    ap_hook_child_init(
+	    webfw2_child_init, 
+	    NULL, 
+	    NULL, 
+	    APR_HOOK_MIDDLE);
+
+    ap_hook_translate_name(
+	    webfw2_handler_translate_hook, 
+	    beforeme_list,
+	    afterme_list, 
+	    APR_HOOK_MIDDLE);
+
+    ap_hook_access_checker(
+	    webfw2_handler_access_hook, 
+	    beforeme_list,
+	    afterme_list, 
+	    APR_HOOK_MIDDLE);
+
+    ap_hook_log_transaction(
+	    webfw2_updater, 
+	    NULL, 
+	    NULL,
+	    APR_HOOK_REALLY_LAST);
 }
 
 const command_rec webfw2_directives[] = {
 
-    AP_INIT_TAKE1("webfw2_config", cmd_config_file,
-                  NULL, RSRC_CONF,
-                  "The full path to where the webfw2 configuration lives"),
-    AP_INIT_TAKE1("webfw2_update_interval", cmd_update_interval,
-                  NULL, RSRC_CONF,
-                  "The time (in seconds) to check for configuration changes"),
-    AP_INIT_TAKE1("webfw2_rw_xff", cmd_rw_xff, NULL, RSRC_CONF,
-                  "If this header is present, we use this IP address to filter"),
-    AP_INIT_TAKE1("webfw2_match_note", cmd_match_variable, "note",
-                  RSRC_CONF,
-                  "Pass a note to filtercloud"),
-    AP_INIT_TAKE1("webfw2_match_env", cmd_match_variable, "env", RSRC_CONF,
-                  "Pass an env to the filtercloud"),
-    AP_INIT_TAKE1("webfw2_match_header", cmd_match_variable, "header", RSRC_CONF,
-	          "Pass a client header to the filter"),
-    AP_INIT_TAKE1("webfw2_default_action", cmd_set_action, NULL,
-	    RSRC_CONF, "The default return status for a blocked connection"),
-    AP_INIT_TAKE1("webfw2_thrasher_host", cmd_thrasher_host,
-                  NULL, RSRC_CONF,
-                  "Enable thrasher and connect to this host"),
-    AP_INIT_TAKE1("webfw2_thrasher_port", cmd_thrasher_port,
-                  NULL, RSRC_CONF,
-                  "Enable thrasher and connect to this port"),
-    AP_INIT_TAKE1("webfw2_thrasher_timeout", 
+    AP_INIT_TAKE1(
+	    "webfw2_config", 
+	    cmd_config_file,
+	    NULL, 
+	    RSRC_CONF,
+	    "The full path to where the webfw2 configuration lives"),
+
+    AP_INIT_TAKE1(
+	    "webfw2_update_interval", 
+	    cmd_update_interval,
+	    NULL, 
+	    RSRC_CONF,
+	    "The time (in seconds) to check for configuration changes"),
+
+    AP_INIT_TAKE1(
+	    "webfw2_rw_xff", 
+	    cmd_rw_xff, 
+	    NULL, 
+	    RSRC_CONF,
+	    "If this header is present, we use this IP address to filter"),
+
+    AP_INIT_TAKE1(
+	    "webfw2_match_note", 
+	    cmd_match_variable, 
+	    "note",
+	    RSRC_CONF,
+	    "Pass a note to filtercloud"),
+
+    AP_INIT_TAKE1(
+	    "webfw2_match_env", 
+	    cmd_match_variable, 
+	    "env", 
+	    RSRC_CONF,
+	    "Pass an env to the filtercloud"),
+
+    AP_INIT_TAKE1(
+	    "webfw2_match_header", 
+	    cmd_match_variable, 
+	    "header", 
+	    RSRC_CONF,
+	    "Pass a client header to the filter"),
+
+    AP_INIT_TAKE1(
+	    "webfw2_default_action", 
+	    cmd_set_action, 
+	    NULL,
+	    RSRC_CONF, 
+	    "The default return status for a blocked connection"),
+
+    AP_INIT_TAKE1(
+	    "webfw2_thrasher_host", 
+	    cmd_thrasher_host,
+	    NULL, 
+	    RSRC_CONF,
+	    "Enable thrasher and connect to this host"),
+
+    AP_INIT_TAKE1(
+	    "webfw2_thrasher_port", 
+	    cmd_thrasher_port,
+	    NULL, 
+	    RSRC_CONF,
+	    "Enable thrasher and connect to this port"),
+
+    AP_INIT_TAKE1(
+	    "webfw2_thrasher_timeout", 
 	    cmd_thrasher_timeout,
-	    NULL, RSRC_CONF,
+	    NULL, 
+	    RSRC_CONF,
 	    "Timeout (in usec) for any thrasher socket operation"),
-    AP_INIT_TAKE1("webfw2_thrasher_retry",
+
+    AP_INIT_TAKE1(
+	    "webfw2_thrasher_retry",
 	    cmd_thrasher_retry,
-	    NULL, RSRC_CONF,
+	    NULL, 
+	    RSRC_CONF,
 	    "If thrasher server is down, wait this long before webfw2 "
 	    "attempts a reconnect"),
-    /*
-     * webfw2_dynamic_srcaddr_block "test_dynamic" 
-     */
-    AP_INIT_TAKE1("webfw2_dynamic_srcaddr_block", cmd_dynamic_srcaddr_rule,
-                  NULL,
-                  RSRC_CONF,
-                  "Dynamically update the source-addresses within this filter if another "
-                  "rule matches"),
+
+    AP_INIT_FLAG(
+	    "webfw2_hook_translate", 
+	    cmd_hook_level,
+	    "translate", 
+	    RSRC_CONF,
+	    "Hook inside the ap_hook_translate_name() portion of the request "
+	    "processing. This is good to process pre mod_rewrite/proxy"),
+
+    AP_INIT_FLAG(
+	    "webfw2_hook_access", 
+	    cmd_hook_level, 
+	    "access", 
+	    RSRC_CONF,
+	    "Hook inside the ap_hook_access_checker() request processing"),
+
+    AP_INIT_TAKE1(
+	    "webfw2_dynamic_srcaddr_block", 
+	    cmd_dynamic_srcaddr_rule,
+	    NULL,
+	    RSRC_CONF,
+	    "Dynamically update the source-addresses within this filter if another "
+	    "rule matches"),
     {NULL}
 };
 
