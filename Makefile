@@ -2,7 +2,7 @@ all: mod_webfw2 testfilter
 
 APR_INCLUDES = -I../chad-libs/apr-1/include
 APR_LIBS     = -L../chad-libs/apr-1/.libs
-APXS_BIN     = ~/sandbox/bin/apxs
+APXS_BIN     = ~/sandbox/bin/apxs 
 THRASHER     = -DWITH_THRASHER
 DFLAGS       = -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
 
