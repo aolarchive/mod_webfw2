@@ -1,0 +1,45 @@
+1.1r1
+
+Updates and new features
+
+* Many functions were broken up into their own files
+  for ease of management.
+* XFF ACL options implemented.
+  ==== EBNF =====
+  start      := directives
+  directives := ((src_ip)+ | last | first), ws?
+  src_ip     := ws?, "src_ip", ws, IP_ADDR
+  last       := ws?, "last", ws, INT
+  first      := ws?, "first", ws, INT
+  ==== /EBNF ====
+
+  Example:
+  webfw2_rw_xff X-Test "src-ip 127.0.0.1 first 2 last 1"
+
+  This tells mod_webfw2 that the header X-Test should 
+  only be processed if the real source address is 
+  127.0.0.1. Furthermore this will only pick out the
+  first 2 IP's within this header, along with the last
+  1 IP.
+
+* IP Validation added.
+* NOT string matches not work correctly.
+* new action types "thrash", "thrash_profile" and "pass"
+* the pass action allows a user to match on a rule, and 
+  if matched go to the next rule.
+* new filter argument "update-rule". This allows an
+  administrator to, if matched, update another rule
+  with the source IP in the request. (Replaces the 
+  static config within httpd.conf)
+* Administrator can now set where he wants webfw2 to sit
+  within the apache processing lifecycle. 
+  webfw2_hook_access (On|Off)
+  webfw2_hook_translate (On|Off)
+  webfw2_hook_post_read (On|Off)
+* Fixed some while() logic bugs.
+* IP addresses are now checked for validity.
+* New apache note variable "webfw2_passed" which includes
+  every rule the query successfully matched before 
+  hitting a block or the end of the ruleset. 
+* New apache env/note "webfw2_matched_ip" which will display
+  the actual IP address that was matched.

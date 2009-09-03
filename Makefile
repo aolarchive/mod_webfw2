@@ -14,7 +14,7 @@ APR_LINK     = `$(APR_CONFIG) --link-ld`
 APXS_BIN     = ~/sandbox/bin/apxs
 
 THRASHER     = -DWITH_THRASHER
-DFLAGS       = -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
+DFLAGS       =  -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
 
 libconfuse: 
 	@if test -f confuse-2.5/src/libconfuse.la; then echo "[*] libconfuse already configured..."; else echo "[*] Configuring libconfuse..."; cd confuse-2.5 && ./configure CFLAGS=-fPIC --disable-nls 2>&1 >/dev/null; echo "[*] Making libconfuse";  make 2>&1 >/dev/null; fi

@@ -10,8 +10,19 @@ typedef struct filter_rule filter_rule_t;
 typedef struct rule_flow rule_flow_t;
 typedef struct filter_callbacks filter_callbacks_t;
 
-#define FILTER_DENY 0
-#define FILTER_PERMIT 1
+#define FILTER_DENY     			1
+#define FILTER_PERMIT   			2
+#define FILTER_PASS     			3
+#define FILTER_THRASH   			1972
+#define FILTER_THRASH_PROFILE 1973
+
+#ifdef DEBUG
+#define PRINT_DEBUG(format, args...) \
+    printf("[%s] %-25s: \033[31m"format"\033[0m", \
+            __FILE__, __PRETTY_FUNCTION__, ##args);
+#else
+#define PRINT_DEBUG(format, args...)
+#endif
 
 struct rule_flow {
     int             type;
@@ -28,7 +39,6 @@ struct rule_flow {
 struct filter_callbacks {
   void *(*src_addr_cb)  (apr_pool_t *pool, void *fc_data, const void *usrdata);
   void *(*dst_addr_cb)  (apr_pool_t *pool, void *fc_data, const void *usrdata);
-  void *(*chad_ord_cb)  (apr_pool_t *pool, void *fc_data, const void *usrdata);
   /* when you register a callback for a RULE_MATCH_STRING you define 
    * a key in which your callback will be stored. The value will be
    * the callback in the parent application */
@@ -38,7 +48,6 @@ struct filter_callbacks {
 struct filter_rule {
 		char            *name;
 		int              action;
-		char             dynamic;
     uint8_t          log;
     patricia_tree_t *src_addrs;
     patricia_tree_t *dst_addrs;
@@ -47,6 +56,7 @@ struct filter_rule {
     rule_flow_t    *flow;
     apr_pool_t     *pool;
     struct filter_rule *next;
+		struct filter_rule *update_rule;
 };
 
 typedef struct filter {
@@ -73,7 +83,7 @@ rule_flow_t *filter_rule_flow_init(apr_pool_t *);
 filter_t *filter_init(apr_pool_t *);
 int filter_match_rule(apr_pool_t *, filter_rule_t *, const char *, 
     const char *, const void *);
-filter_rule_t *filter_traverse_filter(filter_t *, const void *);
+filter_rule_t *filter_traverse_filter(filter_t *, filter_rule_t *, const void *);
 filter_t *filter_parse_config(apr_pool_t *, const char *);
 char **filter_tokenize_str(char *, const char *, int *nelts);
 void free_tokens(char **);

@@ -15,14 +15,6 @@
 #include "confuse.h"
 
 
-#ifdef DEBUG
-#define PRINT_DEBUG(format, args...) \
-    printf("[%s] %-25s: \033[31m"format"\033[0m", \
-	    __FILE__, __PRETTY_FUNCTION__, ##args);
-#else
-#define PRINT_DEBUG(format, args...)
-#endif
-
 #define REGEX_KEY "$_R_$_E_$_G_$_X_$"
 
 static struct n_t_s {
@@ -44,15 +36,14 @@ static struct n_t_s {
 int
 filter_validate_ip(char *addrstr)
 {
-    struct sockaddr_in sa;
+    struct in_addr sa;
 
-
-    if(inet_pton(AF_INET, addrstr, &(sa.sin_addr)))
+    if(inet_pton(AF_INET, addrstr, &sa))
 	return 1;
 
     PRINT_DEBUG("%s is not a valid IP address!\n", addrstr);
 
-    return 1;
+    return 0;
 } 
 
 void
@@ -272,6 +263,73 @@ filter_match_string(apr_pool_t * pool,
     return 0;
 }
 
+static int 
+filter_match_not_string(apr_pool_t *pool,
+        filter_rule_t *rule, void *val, void *key)
+{
+    apr_hash_t *string_hash;
+
+    if (!rule->strings)
+        /* there are no strings defined, this is a match */
+    {
+	PRINT_DEBUG("No strings loaded in rule\n");
+        return 1;
+    }
+
+    if (!key || !val)
+    {
+	PRINT_DEBUG("No key/val %p %p\n", key, val);
+        return 0;
+    }
+
+    string_hash = apr_hash_get(rule->strings, (char *)key, 
+            APR_HASH_KEY_STRING);
+
+    if (!string_hash)
+	/* the hash for the key was not found, this means
+	   the thing doesn't even exist in our rule, so return a 
+	   non-match */
+    {
+	PRINT_DEBUG("%s was not found as a likely candidate in the hash\n",
+		(char *)key); 
+
+        return 0;
+    }
+
+    if (apr_hash_get(string_hash, (char *)val, APR_HASH_KEY_STRING))
+	/* this value was found within our hash, so in this case
+	   we want to return a non match */
+    {
+	PRINT_DEBUG("%s was found\n", (char *)val);
+	return 0;
+    }
+
+    if (rule->strings_have_regex)
+    {
+	apr_array_header_t *regex_array;
+	int i;
+
+	regex_array = (apr_array_header_t *)
+	    apr_hash_get(string_hash, REGEX_KEY, APR_HASH_KEY_STRING);
+
+	if (!regex_array)
+	    return 0;
+
+	for (i = 0; i < regex_array->nelts; i++)
+	{
+	    /* if any of these matched, return a non found. */
+	    regex_t *tomatch = ((regex_t **)regex_array->elts)[i];
+
+	    PRINT_DEBUG("Comparing value %s to %p\n", (char *)val, tomatch);
+
+	    if (regexec(tomatch, val, 0, NULL, 0) == 0)
+		return 0;
+	}
+    }
+
+    return 1;
+}
+
 #define APPEND_FLOW(cflow, ctail, new) \
     do { \
         if(!cflow) cflow = ctail = new; \
@@ -345,6 +403,18 @@ filter_flow_from_str(apr_pool_t * pool, char *flowstr)
             APPEND_FLOW(flow, tail, new_flow);
 
             break;
+	case RULE_MATCH_NOT_STRING:
+	    PRINT_DEBUG("Found a RULE_MATCH_NOT_STRING\n");
+	    tok[strlen(tok) - 1] = 0;
+	    tok = &tok[14];
+
+	    PRINT_DEBUG("Token is %s\n", tok);
+	    new_flow = filter_rule_flow_init(pool);
+	    new_flow->callback = filter_match_not_string;
+	    new_flow->type = RULE_MATCH_NOT_STRING;
+	    new_flow->user_data = (void *) apr_pstrdup(pool, tok);
+	    APPEND_FLOW(flow, tail, new_flow);
+	    break;
         case RULE_MATCH_NOT_SRCADDR:
             PRINT_DEBUG("Foudn a RULE_MATCH_NOT_SRCADDR\n");
             new_flow = filter_rule_flow_init(pool);
@@ -469,7 +539,13 @@ filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
         action = FILTER_PERMIT;
     else if (!strcmp(actionstr, "deny"))
         action = FILTER_DENY;
-    else
+    else if (!strcmp(actionstr, "thrash"))
+	action = FILTER_THRASH;
+    else if (!strcmp(actionstr, "thrash_profile"))
+	action = FILTER_THRASH_PROFILE;
+    else if (!strcmp(actionstr, "pass"))
+	action = FILTER_PASS;
+    else 
         /*
          * application controlled action 
          */
@@ -618,6 +694,8 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
     int             matched_rule = 0;
     rule_flow_t    *flows = rule->flow;
 
+    PRINT_DEBUG("Checking out rule %s\n", rule->name);
+
     while (flows != NULL) {
         void           *data,
                        *extra;
@@ -644,6 +722,7 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
             }
             data = filter->callbacks.dst_addr_cb(pool, NULL, usrdata);
             break;
+	case RULE_MATCH_NOT_STRING:
         case RULE_MATCH_STRING:
             /*
              * first we must find the callback associated with this
@@ -726,7 +805,8 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
 }
 
 filter_rule_t   *
-filter_traverse_filter(filter_t * filter, const void *usrdata)
+filter_traverse_filter(filter_t * filter, filter_rule_t *start_rule, 
+	const void *usrdata)
 {
     filter_rule_t   *rule;
     apr_pool_t     *subpool;
@@ -734,7 +814,10 @@ filter_traverse_filter(filter_t * filter, const void *usrdata)
     if (!filter)
         return NULL;
 
-    rule = filter->head;
+    if (start_rule)
+	rule = start_rule;
+    else
+	rule = filter->head;
 
     apr_pool_create(&subpool, NULL);
 
@@ -851,12 +934,13 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
                 "match_src_addr && match_dst_addr || match_http_header",
                 CFGF_NONE),
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
-        CFG_BOOL("dynamic", cfg_false, CFGF_NONE),
         CFG_BOOL("log", cfg_true, CFGF_NONE),
+	CFG_BOOL("pass", cfg_false, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
         CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
         CFG_STR("action", "deny", CFGF_NONE),
+	CFG_STR("update-rule", NULL, CFGF_NONE),
         CFG_END()
     };
 
@@ -909,17 +993,17 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
          * re: ugly [ HERE!! ] 
          */
         char           *flow;
-        char           *unflowed;
+	char           *update_rule;
         int             addr_cnt;
         filter_rule_t   *filter_rule;
         char           *action;
         cfg_t          *rule;
-        unflowed = NULL;
 
         PRINT_DEBUG("Parsing rule %d\n", i);
 
-        rule = cfg_getnsec(cfg, "rule", i);
-        flow = cfg_getstr(rule, "flow");
+        rule        = cfg_getnsec(cfg, "rule", i);
+        flow        = cfg_getstr(rule, "flow");
+	update_rule = cfg_getstr(rule, "update-rule");
 
         filter_rule = filter_rule_init(filter->pool);
         filter_rule->name = apr_pstrdup(filter_rule->pool, cfg_title(rule));
@@ -927,17 +1011,6 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
 
         PRINT_DEBUG("Rule name: %s\n", filter_rule->name);
         PRINT_DEBUG("Found flow '%s'\n", flow);
-
-        if (cfg_getbool(rule, "dynamic")) {
-            /*
-             * dynamic rules can only have matches on source 
-             * addresses. If you don't feel as if this is 
-             * enough - make another rule that matches your 
-             * particular problem and use that instead :) 
-             */
-            flow = "match_src_addrs";
-            filter_rule->dynamic = 1;
-        }
 
         filter_rule_add_flow(filter_rule,
                             (char *) apr_pstrdup(filter_rule->pool, flow));
@@ -998,6 +1071,16 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
             }
 
         }
+
+	if (update_rule)
+	{
+	    filter_rule_t *ud_rule;
+
+	    ud_rule = filter_get_rule(filter, update_rule);
+
+	    if (ud_rule)
+		filter_rule->update_rule = ud_rule;
+	}
 
         filter_add_rule(filter, filter_rule);
     }

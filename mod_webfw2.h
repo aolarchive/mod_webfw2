@@ -27,6 +27,9 @@ typedef struct webfw2_xff_opts {
 } webfw2_xff_opts_t;
 
 typedef struct webfw2_config {
+    uint8_t         hook_translate;
+    uint8_t         hook_access;
+		uint8_t         hook_post_read;
     char           *config_file;
     char           *dynamic_srcaddr_rule;
     uint32_t        update_interval;
