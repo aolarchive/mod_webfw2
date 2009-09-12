@@ -466,6 +466,7 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     struct iovec    vec[6];
     apr_size_t      sent;
     apr_size_t      packetlen;
+    apr_size_t torecv;
     int             sockerr = 0;
     int             packet_sent;
     uint8_t         resp;
@@ -536,40 +537,21 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
 
     rv = apr_socket_sendv(filter->thrasher_sock, vec, 6, &sent);
 
-    packet_sent = 0;
+    if (rv != APR_SUCCESS) goto error;
 
-    do {
-        if (APR_STATUS_IS_TIMEUP(rv)) {
-            sockerr = 1;
-            break;
-        }
+    torecv = 1;
+    rv = apr_socket_recv(filter->thrasher_sock, (char *) &resp, &torecv);
 
-        if (APR_STATUS_IS_EOF(rv) || sent != packetlen) {
-            sockerr = 1;
-            break;
-        }
+    if (rv != APR_SUCCESS) goto error;
+    if (resp > 1)          goto error;
+    if (resp == 1)         return 420;
 
-        if (packet_sent)
-            break;
+    return DECLINED;
 
-        packet_sent = 1;
-        packetlen = 1;
-
-        rv = apr_socket_recv(filter->thrasher_sock, (char *) &resp, &sent);
-
-        continue;
-    } while (0);
-
-    if (sockerr) {
-        apr_socket_close(filter->thrasher_sock);
-        filter->thrasher_sock = NULL;
-	filter->thrasher_downed = time(NULL);
-        return DECLINED;
-    }
-
-    if (resp)
-        return 420;
-
+error:
+    apr_socket_close(filter->thrasher_sock);
+    filter->thrasher_sock   = NULL;
+    filter->thrasher_downed = time(NULL);
     return DECLINED;
 }
 
