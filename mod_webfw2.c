@@ -470,8 +470,8 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     int             sockerr = 0;
     int             packet_sent;
     uint8_t         resp;
-    char *errbuf_where = "none";
     char errbuf[1024];
+    char *errbuf_where = "none";
 
     sent = 0;
     ret  = DECLINED;
@@ -564,7 +564,10 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     return DECLINED;
 
 error:
-    printf("HGKLDJFLDSJFSD (%s) %s\n", errbuf_where, apr_strerror(rv, errbuf, 1024));
+    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+	    "thrasher socket error (%s): %s", 
+	    errbuf_where, apr_strerror(rv, errbuf, 1024));
+
     apr_socket_close(filter->thrasher_sock);
     filter->thrasher_sock   = NULL;
     filter->thrasher_downed = time(NULL);
