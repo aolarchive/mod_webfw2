@@ -471,7 +471,8 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     int             packet_sent;
     uint8_t         resp;
 
-    ret = DECLINED;
+    sent = 0;
+    ret  = DECLINED;
 
     if (!config->thrasher_host || !config->thrasher_port)
         return DECLINED;
@@ -537,18 +538,25 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
 
     rv = apr_socket_sendv(filter->thrasher_sock, vec, 6, &sent);
 
-    if (rv != APR_SUCCESS) goto error;
+    if (rv != APR_SUCCESS) 
+	goto error;
 
     torecv = 1;
     rv = apr_socket_recv(filter->thrasher_sock, (char *) &resp, &torecv);
 
-    if (rv != APR_SUCCESS) goto error;
-    if (resp > 1)          goto error;
-    if (resp == 1)         return 420;
+    if (rv != APR_SUCCESS) 
+	goto error;
+
+    if (resp > 1)          
+	goto error;
+
+    if (resp == 1)         
+	return 420;
 
     return DECLINED;
 
 error:
+    printf("HGKLDJFLDSJFSD\n");
     apr_socket_close(filter->thrasher_sock);
     filter->thrasher_sock   = NULL;
     filter->thrasher_downed = time(NULL);
