@@ -535,7 +535,6 @@ filter_rule_t  *
 webfw2_traverse_filter(request_rec * rec,
                        webfw2_config_t * config,
                        webfw2_filter_t * filter,
-                       filter_rule_t * current_rule,
                        apr_array_header_t * addrs, char **sip, char **dip)
 {
     char     *src_ip;
@@ -545,11 +544,14 @@ webfw2_traverse_filter(request_rec * rec,
     int             i,
                     ret;
 
-    if (!rec->pool || !filter || !current_rule || !addrs)
+    if (!rec->pool || !filter || !addrs)
         return NULL;
 
     for (i = 0; i < addrs->nelts; i++) {
+	filter_rule_t *current_rule;
+
         current_rule = filter->filter->head;
+
 	ret = DECLINED;
 
         callback_data = apr_pcalloc(rec->pool, sizeof(void *) * 3);
@@ -561,7 +563,8 @@ webfw2_traverse_filter(request_rec * rec,
         callback_data[1] = (void *) src_ip;
         callback_data[2] = (void *) dst_ip;
 
-        PRINT_DEBUG("Rule %s Traversing with %s\n", current_rule->name, src_ip);
+        PRINT_DEBUG("Rule %s Traversing with %s\n", 
+		current_rule->name, src_ip);
 
         do {
 	    if (!current_rule)
@@ -585,10 +588,13 @@ webfw2_traverse_filter(request_rec * rec,
                  * response was positive. 
                  */
                 ret = webfw2_thrasher(rec, config, filter, src_ip);
+
 		PRINT_DEBUG("Thrasher packet sent for %s. Ret status: %d\n",
 			src_ip, ret);
 
                 if (ret != DECLINED) 
+		    /* return was positive, we want to stop all
+		       further processing */
                     break;
             }
 
@@ -610,8 +616,6 @@ webfw2_traverse_filter(request_rec * rec,
                 if (!curr_passes)
 		    curr_passes = apr_psprintf(rec->pool,
 			    "%s:%s", src_ip, rule->name);
-                    //curr_passes = apr_pstrdup(rec->pool, rule->name);
-
                 else
                     curr_passes = apr_psprintf(rec->pool,
                                                "%s -> %s:%s", 
@@ -646,7 +650,6 @@ webfw2_handler(request_rec * rec)
                    *matched_dst_ip;
     webfw2_filter_t *wf2_filter;
     webfw2_config_t *config;
-    filter_rule_t  *current_rule;
     filter_rule_t  *rule;
     apr_array_header_t *addrs;
 
@@ -669,36 +672,22 @@ webfw2_handler(request_rec * rec)
     webfw2_set_interesting_notes(rec);
 
     /*
-     * set our current rule, which is going to be
-     * the start of all rules. 
-     */
-    current_rule = wf2_filter->filter->head;
-
-    /*
      * grab all the source addresses within the request 
      */
     addrs = webfw2_find_all_sources(rec);
 
     do {
         /*
-         * XXX There is an issue here. Currently if the rule is a 
-         * thrasher action it will only match the first IP within 
-         * the XFF. please fix asap 
-         */
-
-        /*
          * initialize our default return 
          */
         ret = DECLINED;
 
-        if (!current_rule || !addrs ||
-            !wf2_filter->filter || !current_rule)
+        if (!addrs || !wf2_filter->filter)
             break;
 
         rule = webfw2_traverse_filter(rec,
                                       config,
                                       wf2_filter,
-                                      current_rule,
                                       addrs,
                                       &matched_src_ip, &matched_dst_ip);
 
@@ -853,21 +842,6 @@ webfw2_init_config(apr_pool_t * pool, server_rec * svr)
     config->hook_translate = 0;
 
     return config;
-}
-
-static const char *
-cmd_dynamic_srcaddr_rule(cmd_parms * cmd, void *dummy_config,
-                         const char *arg)
-{
-    webfw2_config_t *config;
-
-    config = ap_get_module_config(cmd->server->module_config,
-                                  &webfw2_module);
-
-    ap_assert(config);
-
-    config->dynamic_srcaddr_rule = apr_pstrdup(cmd->pool, arg);
-    return NULL;
 }
 
 static const char *
@@ -1293,13 +1267,6 @@ const command_rec webfw2_directives[] = {
                  "post_read",
                  RSRC_CONF,
                  "Hook inside post_read_request(), very early on in request processing"),
-
-    AP_INIT_TAKE1("webfw2_dynamic_srcaddr_block",
-                  cmd_dynamic_srcaddr_rule,
-                  NULL,
-                  RSRC_CONF,
-                  "Dynamically update the source-addresses within this filter if another "
-                  "rule matches"),
     {NULL}
 };
 

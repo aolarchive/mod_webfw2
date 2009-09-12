@@ -1,6 +1,6 @@
 1.1r1
 
-Updates and new features
+updates and new features
 
 * Many functions were broken up into their own files
   for ease of management.
