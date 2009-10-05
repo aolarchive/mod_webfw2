@@ -29,7 +29,7 @@ callbacks.o:
 	gcc $(DFLAGS) $(APR_INCLUDES) -I. -fPIC -c -o callbacks.o callbacks.c -ggdb
 
 testfilter: testfilter.c filter.c filter.o patricia.o libconfuse archives
-	gcc $(DFLAGS) -I. -L. $(APR_INCLUDES) $(APR_LIBS) -Iconfuse-2.5/src/ testfilter.c -o testfilter -lfilter -lapr-1 -ggdb
+	gcc $(DFLAGS) -I. -L. $(APR_INCLUDES) $(APR_LIBS) -Iconfuse-2.5/src/ testfilter.c -o testfilter -lfilter -lapr-1 -ggdb -static -lpthread
 
 filter: filter.c filter.o patricia.o libconfuse archives
 	gcc  -DDEBUG -DTEST_FILTERCLOUD $(DFLAGS) -I. -L. $(APR_INCLUDES) $(APR_LIBS) -Iconfuse-2.5/src/ filter.c -o filter -lpatricia -lapr-1 -lconfuse -ggdb
