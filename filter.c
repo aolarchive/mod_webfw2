@@ -135,7 +135,6 @@ filter_tokenize_str(char *string, const char *sep, int *nelts)
         if (ncount >= arrsize-1) 
 	    /* leave enough room for the last NULL */
 	    break;
-
 	tok = filter_trim_str(tok);
 
         PRINT_DEBUG("Got token '%s'\n", tok);

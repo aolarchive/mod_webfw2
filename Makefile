@@ -11,10 +11,14 @@ APR_LINK     = `$(APR_CONFIG) --link-ld`
 
 #APR_INCLUDES = -I../chad-libs/apr-1/include
 #APR_LIBS     = -L../chad-libs/apr-1/.libs
-APXS_BIN     = ~/sandbox/bin/apxs
+#APXS_BIN     = ~/sandbox/bin/apxs
+
+#APR_INCLUDES = -I../chad-libs/apr-1/include
+#APR_LIBS     = -L../chad-libs/apr-1/.libs
+APXS_BIN     = ~/sandbox/bin/apxs 
 
 THRASHER     = -DWITH_THRASHER
-DFLAGS       =  -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
+DFLAGS       =  -DDEBUG -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
 
 libconfuse: 
 	@if test -f confuse-2.5/src/libconfuse.la; then echo "[*] libconfuse already configured..."; else echo "[*] Configuring libconfuse..."; cd confuse-2.5 && ./configure CFLAGS=-fPIC --disable-nls 2>&1 >/dev/null; echo "[*] Making libconfuse";  make 2>&1 >/dev/null; fi
@@ -29,7 +33,7 @@ callbacks.o:
 	gcc $(DFLAGS) $(APR_INCLUDES) -I. -fPIC -c -o callbacks.o callbacks.c -ggdb
 
 testfilter: testfilter.c filter.c filter.o patricia.o libconfuse archives
-	gcc $(DFLAGS) -I. -L. $(APR_INCLUDES) $(APR_LIBS) -Iconfuse-2.5/src/ testfilter.c -o testfilter -lfilter -lapr-1 -ggdb -static -lpthread
+	gcc $(DFLAGS) -I. -L. $(APR_INCLUDES) $(APR_LIBS) -Iconfuse-2.5/src/ testfilter.c -o testfilter -lfilter -lapr-1 -ggdb -lpthread
 
 filter: filter.c filter.o patricia.o libconfuse archives
 	gcc  -DDEBUG -DTEST_FILTERCLOUD $(DFLAGS) -I. -L. $(APR_INCLUDES) $(APR_LIBS) -Iconfuse-2.5/src/ filter.c -o filter -lpatricia -lapr-1 -lconfuse -ggdb

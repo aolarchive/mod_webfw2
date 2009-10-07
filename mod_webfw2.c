@@ -426,11 +426,17 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     struct iovec    vec[6];
     apr_size_t      sent;
     apr_size_t      packetlen;
+    apr_size_t torecv;
     int             sockerr = 0;
     int             packet_sent;
     uint8_t         resp;
+    char errbuf[1024];
+    char *errbuf_where = "none";
 
-    ret = DECLINED;
+    sent = 0;
+    ret  = DECLINED;
+
+    PRINT_DEBUG("about to make a thrasher query\n");
 
     if (!config->thrasher_host || !config->thrasher_port)
         return DECLINED;
@@ -491,42 +497,39 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
 
     rv = apr_socket_sendv(filter->thrasher_sock, vec, 6, &sent);
 
-    packet_sent = 0;
-
-    do {
-        if (APR_STATUS_IS_TIMEUP(rv)) {
-            sockerr = 1;
-            break;
-        }
-
-        if (APR_STATUS_IS_EOF(rv) || sent != packetlen) {
-            sockerr = 1;
-            break;
-        }
-
-        if (packet_sent)
-            break;
-
-        packet_sent = 1;
-        packetlen = 1;
-
-        rv = apr_socket_recv(filter->thrasher_sock, (char *) &resp, &sent);
-
-        continue;
-    } while (1);
-
-    if (sockerr) {
-        if (filter->thrasher_sock)
-            apr_socket_close(filter->thrasher_sock);
-
-        filter->thrasher_sock = NULL;
-        filter->thrasher_downed = time(NULL);
-        return DECLINED;
+    if (rv != APR_SUCCESS) 
+    {
+	errbuf_where = "sendv"; 
+	goto error;
     }
 
-    if (resp)
-        return config->default_taction;
+    torecv = 1;
+    rv = apr_socket_recv(filter->thrasher_sock, (char *) &resp, &torecv);
 
+    if (rv != APR_SUCCESS) 
+    {
+	errbuf_where = "recv";
+	goto error;
+    }
+
+    if (resp > 1)          
+    {
+	errbuf_where = "invalid return type";
+	goto error;
+    }
+
+    if (resp == 1)         
+	return config->default_taction;
+
+    return DECLINED;
+
+error:
+    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+	    "thrasher socket error (%s): %s", 
+	    errbuf_where, apr_strerror(rv, errbuf, 1024));
+    apr_socket_close(filter->thrasher_sock);
+    filter->thrasher_sock   = NULL;
+    filter->thrasher_downed = time(NULL);
     return DECLINED;
 }
 
@@ -535,6 +538,7 @@ filter_rule_t  *
 webfw2_traverse_filter(request_rec * rec,
                        webfw2_config_t * config,
                        webfw2_filter_t * filter,
+		       filter_rule_t * current_rule,
                        apr_array_header_t * addrs, char **sip, char **dip)
 {
     char     *src_ip;
@@ -548,8 +552,6 @@ webfw2_traverse_filter(request_rec * rec,
         return NULL;
 
     for (i = 0; i < addrs->nelts; i++) {
-	filter_rule_t *current_rule;
-
         current_rule = filter->filter->head;
 
 	ret = DECLINED;
@@ -650,6 +652,7 @@ webfw2_handler(request_rec * rec)
                    *matched_dst_ip;
     webfw2_filter_t *wf2_filter;
     webfw2_config_t *config;
+    filter_rule_t  *current_rule;
     filter_rule_t  *rule;
     apr_array_header_t *addrs;
 
@@ -671,23 +674,37 @@ webfw2_handler(request_rec * rec)
 
     webfw2_set_interesting_notes(rec);
 
-    /*
+    /*   
+     * set our current rule, which is going to be
+     * the start of all rules. 
+     */
+    current_rule = wf2_filter->filter->head;
+
+    /*   
      * grab all the source addresses within the request 
      */
     addrs = webfw2_find_all_sources(rec);
 
-    do {
+    do { 
+        /*
+         * XXX There is an issue here. Currently if the rule is a 
+         * thrasher action it will only match the first IP within 
+         * the XFF. please fix asap 
+         */
+
         /*
          * initialize our default return 
          */
         ret = DECLINED;
 
-        if (!addrs || !wf2_filter->filter)
+        if (!current_rule || !addrs ||
+            !wf2_filter->filter || !current_rule)
             break;
 
         rule = webfw2_traverse_filter(rec,
                                       config,
                                       wf2_filter,
+                                      current_rule,
                                       addrs,
                                       &matched_src_ip, &matched_dst_ip);
 
@@ -710,15 +727,15 @@ webfw2_handler(request_rec * rec)
         case FILTER_PERMIT:
             ret = DECLINED;
             break;
-	case FILTER_THRASH:
-	    ret = config->default_taction;
-	    break;
-	case FILTER_THRASH_PROFILE:
-	    ret = DECLINED;
-	    break;
+        case FILTER_THRASH:
+            ret = config->default_taction;
+            break;
+        case FILTER_THRASH_PROFILE:
+            ret = DECLINED;
+            break;
         default:
             ret = rule->action;
-	    break;
+            break;
         }
 
         break;
@@ -732,13 +749,13 @@ webfw2_handler(request_rec * rec)
              */
             apr_table_set(rec->notes, "webfw2_rule", rule->name);
             apr_table_set(rec->subprocess_env, "webfw2_rule", rule->name);
-	    apr_table_set(rec->notes, "webfw2_matched_ip", matched_src_ip);
-	    apr_table_set(rec->subprocess_env, "webfw2_matched_ip", matched_src_ip);
+            apr_table_set(rec->notes, "webfw2_matched_ip", matched_src_ip);
+            apr_table_set(rec->subprocess_env, "webfw2_matched_ip", matched_src_ip);
         }
 
         if (rule->update_rule) {
-	    PRINT_DEBUG("Updating Dynamic rule %s with src-ip %s\n",
-		    rule->update_rule->name, matched_src_ip);
+            PRINT_DEBUG("Updating Dynamic rule %s with src-ip %s\n",
+                    rule->update_rule->name, matched_src_ip);
             filter_rule_add_network(rule->update_rule, matched_src_ip,
                                     RULE_MATCH_SRCADDR, NULL);
         }
@@ -799,6 +816,7 @@ webfw2_handler_post_read_hook(request_rec * rec)
     return webfw2_handler(rec);
 }
 
+
 static void    *
 webfw2_init_config(apr_pool_t * pool, server_rec * svr)
 {
@@ -819,10 +837,7 @@ webfw2_init_config(apr_pool_t * pool, server_rec * svr)
         (webfw2_config_t *) apr_pcalloc(svr->process->pool,
                                         sizeof(*config));
 
-    /*
-     * default the retry to 5000 usec 
-     */
-    config->thrasher_timeout = 5000;
+    config->thrasher_timeout = 50000;
 
     /*
      * set the default return action to 542 
@@ -835,9 +850,7 @@ webfw2_init_config(apr_pool_t * pool, server_rec * svr)
      */
     config->thrasher_retry = 60;
 
-    /*
-     * by default we want to hook into the check_access request processing. 
-     */
+    /* by default we want to hook into the check_access request processing. */
     config->hook_access = 1;
     config->hook_translate = 0;
 
@@ -1108,11 +1121,11 @@ cmd_match_variable(cmd_parms * cmd, void *dummy_config, const char *arg)
     return NULL;
 }
 
-void *
+static const char *
 cmd_hook_level(cmd_parms * cmd, void *dummy_config, const char *arg)
 {
     webfw2_config_t *config;
-    char           *type;
+    char *type;
 
     type = cmd->info;
 
@@ -1157,24 +1170,38 @@ webfw2_hooker(apr_pool_t * pool)
     ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
                  "initializing mod_webfw2 v%s", VERSION);
 
-    ap_hook_child_init(webfw2_child_init, NULL, NULL, APR_HOOK_MIDDLE);
+    ap_hook_child_init(
+	    webfw2_child_init, 
+	    NULL, 
+	    NULL, 
+	    APR_HOOK_MIDDLE);
 
-    ap_hook_translate_name(webfw2_handler_translate_hook,
-                           beforeme_list, afterme_list, APR_HOOK_MIDDLE);
+    ap_hook_translate_name(
+	    webfw2_handler_translate_hook, 
+	    beforeme_list,
+	    afterme_list, 
+	    APR_HOOK_MIDDLE);
 
-    ap_hook_access_checker(webfw2_handler_access_hook,
-                           beforeme_list, afterme_list, APR_HOOK_MIDDLE);
+    ap_hook_access_checker(
+	    webfw2_handler_access_hook, 
+	    beforeme_list,
+	    afterme_list, 
+	    APR_HOOK_MIDDLE);
 
-    ap_hook_post_read_request(webfw2_handler_post_read_hook,
-                              beforeme_list,
-                              afterme_list, APR_HOOK_MIDDLE);
+    ap_hook_log_transaction(
+	    webfw2_updater, 
+	    NULL, 
+	    NULL,
+	    APR_HOOK_REALLY_LAST);
 
-    ap_hook_log_transaction(webfw2_updater,
-                            NULL, NULL, APR_HOOK_REALLY_LAST);
+    ap_hook_post_read_request(
+	    webfw2_handler_post_read_hook,
+	    beforeme_list,
+	    afterme_list, APR_HOOK_MIDDLE);
+	    	
 }
 
 const command_rec webfw2_directives[] = {
-
     AP_INIT_TAKE1("webfw2_config",
                   (void *)cmd_config_file,
                   NULL,
