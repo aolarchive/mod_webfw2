@@ -1,0 +1,5 @@
+1.0r17-5 updates - features/bugfixes
+
+- Extra socket error checking with recv() calls for thrasher.
+- Added the ability for '#' comments within whitelists. 
+- Added ability to change the default return codes for blocks
