@@ -113,8 +113,6 @@ webfw2_filter_init(apr_pool_t * pool, webfw2_config_t * config)
               APR_SUCCESS);
 #endif
 
-
-
     if (config->thrasher_host && config->thrasher_port) {
         /*
          * create our thrasher socket 
@@ -667,7 +665,7 @@ webfw2_handler(request_rec * rec)
 
     ap_assert(wf2_filter);
 
-    if (!wf2_filter->filter)
+    if (!wf2_filter->filter || !wf2_filter->filter->rule_count)
         return DECLINED;
 
 #ifdef APR_HAS_THREADS
