@@ -33,5 +33,3 @@ webfw2_hook_translate On
 # dynamic rule updating
 # webfw2_dynamic_srcaddr_block "test_dynamic"
 
-
-

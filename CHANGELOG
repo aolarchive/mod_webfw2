@@ -24,7 +24,7 @@ updates and new features
   1 IP.
 
 * IP Validation added.
-* NOT string matches not work correctly.
+* NOT string matches no2 work correctly.
 * new action types "thrash", "thrash_profile" and "pass"
 * the pass action allows a user to match on a rule, and 
   if matched go to the next rule.
@@ -38,7 +38,6 @@ updates and new features
   webfw2_hook_translate (On|Off)
   webfw2_hook_post_read (On|Off)
 * Fixed some while() logic bugs.
-* IP addresses are now checked for validity.
 * New apache note variable "webfw2_passed" which includes
   every rule the query successfully matched before 
   hitting a block or the end of the ruleset. 
