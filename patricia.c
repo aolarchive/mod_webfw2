@@ -1,10 +1,10 @@
 #include <assert.h>
-#include <ctype.h>
-#include <errno.h>
+#include <ctype.h> 
+#include <errno.h> 
 #include <math.h>
 #include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h> 
+#include <stdlib.h> 
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -51,9 +51,7 @@ my_inet_pton(int af, const char *src, void *dst)
         int             i,
                         c,
                         val;
-        /*
-         * not thread safe 
-         */
+	/* not thread safe */
         u_char          xp[4] = { 0, 0, 0, 0 };
 
         for (i = 0;; i++) {
@@ -100,9 +98,7 @@ prefix_toa2x(prefix_t * prefix, char *buff, int with_len)
             u_int           i;
         }              *buffp;
 
-        /*
-         * not thread safe 
-         */
+	/* not thread safe */
         static struct buffer local_buff;
         buffp = &local_buff;
 
@@ -188,9 +184,10 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
     /*
      * not thread safe 
      */
-    char            save[MAXLINE];
+    char save[MAXLINE];
 
-    if (string == NULL) {
+    if (string == NULL)
+    {
         return (NULL);
     }
 
@@ -209,9 +206,10 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
     }
 
     if (family == AF_INET) {
-        if ((result = my_inet_pton(AF_INET, string, &sin)) <= 0) {
+        if ((result = my_inet_pton(AF_INET, string, &sin)) <= 0)
+	{
             return (NULL);
-        }
+	}
         return (New_Prefix(pool, AF_INET, &sin, bitlen));
     } else
         return (NULL);
@@ -254,10 +252,8 @@ Deref_Prefix(prefix_t * prefix)
 }
 
 
-/*
- * not thread safe, nor is it really used 
- */
-// static int num_active_patricia = 0;
+/* not thread safe, nor is it really used */
+// static int      num_active_patricia = 0;
 
 /*
  * these routines support continuous mask only 
@@ -271,7 +267,7 @@ New_Patricia(apr_pool_t * pool, int maxbits)
     patricia->head = NULL;
     patricia->num_active_node = 0;
     assert(maxbits <= PATRICIA_MAXBITS);        /* XXX */
-    // num_active_patricia++;
+    //num_active_patricia++;
     return (patricia);
 }
 
@@ -287,9 +283,7 @@ Clear_Patricia(patricia_tree_t * patricia, void_fn_t func)
     assert(patricia);
     if (patricia->head) {
 
-        /*
-         * not thread safe 
-         */
+	/* not thread safe */
         patricia_node_t *Xstack[PATRICIA_MAXBITS + 1];
         patricia_node_t **Xsp = Xstack;
         patricia_node_t *Xrn = patricia->head;
@@ -334,7 +328,7 @@ Destroy_Patricia(patricia_tree_t * patricia, void_fn_t func)
 {
     Clear_Patricia(patricia, func);
     // Delete(patricia);
-    // num_active_patricia--;
+    //num_active_patricia--;
 }
 
 
@@ -433,7 +427,7 @@ patricia_search_best2(apr_pool_t * pool,
     int             cnt = 0;
 
     if (!patricia || !prefix)
-        return NULL;
+	return NULL;
 
     assert(patricia);
     assert(prefix);
@@ -505,11 +499,12 @@ patricia_lookup(apr_pool_t * pool, patricia_tree_t * patricia,
                     r;
 
 
-    if (!patricia || !prefix || prefix->bitlen > patricia->maxbits)
-        return NULL;
+    if (!patricia || ! prefix || prefix->bitlen > patricia->maxbits)
+	return NULL;
 #if 0
-    if (!patricia || !prefix || prefix->bitlen >= patricia->maxbits)
-        return NULL;
+    if (!patricia || !prefix || 
+	    prefix->bitlen >= patricia->maxbits)
+	return NULL;
     printf("%p %p\n", patricia, prefix);
 
     assert(patricia);
@@ -779,3 +774,4 @@ try_search_best(apr_pool_t * pool, patricia_tree_t * tree, char *string)
         Deref_Prefix(prefix);
     return (node);
 }
+

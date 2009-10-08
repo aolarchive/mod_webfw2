@@ -41,23 +41,17 @@ static struct n_t_s {
     0, NULL}
 };
 
-int
-filter_validate_ip(char *addrstr)
-{
-    struct sockaddr_in sa;
-
-
-    if(inet_pton(AF_INET, addrstr, &(sa.sin_addr)))
-	return 1;
-
-    PRINT_DEBUG("%s is not a valid IP address!\n", addrstr);
-
-    return 1;
-} 
-
+/** 
+  test 1 2 3
+  @param tokens blah 
+*/
 void
 free_tokens(char **tokens)
 {
+    /**
+       Testing 1 2 3 
+       @param blah this is an integer blah 
+    */
     char           *tok;
     int             i = 0;
 
@@ -82,45 +76,8 @@ rule_token_to_int(char *token)
     return -1;
 }
 
-char *
-filter_trim_str(char *str)
-{
-    size_t len = 0;
-    char *frontp = str - 1;
-    char *endp = NULL;
-
-    if( str == NULL )
-            return NULL;
-
-    if( str[0] == '\0' )
-            return str;
-
-    len = strlen(str);
-    endp = str + len;
-
-    while(isspace(*(++frontp)));
-    while(isspace(*(--endp)) && endp != frontp);
-
-    if( str + len - 1 != endp )
-            *(endp + 1) = '\0';
-
-    else if( frontp != str &&  endp == frontp )
-            *str = '\0';
-
-    endp = str;
-
-    if(frontp != str)
-    {
-	while( *frontp ) 
-	    *endp++ = *frontp++;
-	*endp = '\0';
-    }
-    return str;
-}
-
-
 char          **
-filter_tokenize_str(char *string, const char *sep, int *nelts)
+cloud_tokenize_str(char *string, const char *sep)
 {
     char           *str_copy;
     char           *tok;
@@ -145,29 +102,23 @@ filter_tokenize_str(char *string, const char *sep, int *nelts)
 	    /* leave enough room for the last NULL */
 	    break;
 
-	tok = filter_trim_str(tok);
-
         PRINT_DEBUG("Got token '%s'\n", tok);
         arr[ncount++] = strdup(tok);
     }
 
     free(str_copy);
-
-    if (nelts)
-	*nelts = ncount;
-
     return arr;
 }
 
 rule_flow_t    *
-filter_rule_flow_init(apr_pool_t * pool)
+cloud_rule_flow_init(apr_pool_t * pool)
 {
     return (rule_flow_t *)
         apr_pcalloc(pool, sizeof(rule_flow_t));
 }
 
 static int
-filter_match_srcaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
+cloud_match_srcaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data,
                     void *usrdata)
 {
     if (!rule->src_addrs)
@@ -180,7 +131,7 @@ filter_match_srcaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
 }
 
 static int
-filter_match_not_dstaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
+cloud_match_not_dstaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data,
                         void *usrdata)
 {
     if (!rule->dst_addrs)
@@ -193,7 +144,7 @@ filter_match_not_dstaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
 }
 
 static int
-filter_match_not_srcaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
+cloud_match_not_srcaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data,
                         void *usrdata)
 {
     if (!rule->src_addrs)
@@ -206,7 +157,7 @@ filter_match_not_srcaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
 }
 
 static int
-filter_match_dstaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
+cloud_match_dstaddr(apr_pool_t * pool, cloud_rule_t * rule, void *data,
                     void *usrdata)
 {
     if (!rule->dst_addrs)
@@ -219,8 +170,8 @@ filter_match_dstaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
 }
 
 static int
-filter_match_string(apr_pool_t * pool,
-                   filter_rule_t * rule, void *val, void *key)
+cloud_match_string(apr_pool_t * pool,
+                   cloud_rule_t * rule, void *val, void *key)
 {
     apr_hash_t     *string_hash;
 
@@ -283,7 +234,7 @@ filter_match_string(apr_pool_t * pool,
     } while(0);
 
 static rule_flow_t *
-filter_flow_from_str(apr_pool_t * pool, char *flowstr)
+cloud_flow_from_str(apr_pool_t * pool, char *flowstr)
 {
     char          **tokens;
     char           *tok;
@@ -293,7 +244,7 @@ filter_flow_from_str(apr_pool_t * pool, char *flowstr)
 
     PRINT_DEBUG("Starting the flow parser\n");
 
-    tokens = filter_tokenize_str(flowstr, " ", NULL);
+    tokens = cloud_tokenize_str(flowstr, " ");
 
     PRINT_DEBUG("Token array at %p\n", tokens);
 
@@ -306,8 +257,8 @@ filter_flow_from_str(apr_pool_t * pool, char *flowstr)
         case RULE_MATCH_SRCADDR:
             PRINT_DEBUG("Found a RULE_MATCH_SRCADDR\n");
 
-            new_flow = filter_rule_flow_init(pool);
-            new_flow->callback = filter_match_srcaddr;
+            new_flow = cloud_rule_flow_init(pool);
+            new_flow->callback = cloud_match_srcaddr;
             new_flow->type = RULE_MATCH_SRCADDR;
 
             APPEND_FLOW(flow, tail, new_flow);
@@ -316,8 +267,8 @@ filter_flow_from_str(apr_pool_t * pool, char *flowstr)
         case RULE_MATCH_DSTADDR:
             PRINT_DEBUG("Found a RULE_MATCH_DSTADDR\n");
 
-            new_flow = filter_rule_flow_init(pool);
-            new_flow->callback = filter_match_dstaddr;
+            new_flow = cloud_rule_flow_init(pool);
+            new_flow->callback = cloud_match_dstaddr;
             new_flow->type = RULE_MATCH_DSTADDR;
 
             APPEND_FLOW(flow, tail, new_flow);
@@ -337,8 +288,8 @@ filter_flow_from_str(apr_pool_t * pool, char *flowstr)
             tok[strlen(tok) - 1] = 0;
             tok = &tok[13];
 
-            new_flow = filter_rule_flow_init(pool);
-            new_flow->callback = filter_match_string;
+            new_flow = cloud_rule_flow_init(pool);
+            new_flow->callback = cloud_match_string;
             new_flow->type = RULE_MATCH_STRING;
             new_flow->user_data = (void *) apr_pstrdup(pool, tok);
 
@@ -347,16 +298,16 @@ filter_flow_from_str(apr_pool_t * pool, char *flowstr)
             break;
         case RULE_MATCH_NOT_SRCADDR:
             PRINT_DEBUG("Foudn a RULE_MATCH_NOT_SRCADDR\n");
-            new_flow = filter_rule_flow_init(pool);
-            new_flow->callback = filter_match_not_srcaddr;
+            new_flow = cloud_rule_flow_init(pool);
+            new_flow->callback = cloud_match_not_srcaddr;
             new_flow->type = RULE_MATCH_NOT_SRCADDR;
 
             APPEND_FLOW(flow, tail, new_flow);
             break;
         case RULE_MATCH_NOT_DSTADDR:
             PRINT_DEBUG("Found a RULE_MATCH_NOT_DSTADDR\n");
-            new_flow = filter_rule_flow_init(pool);
-            new_flow->callback = filter_match_not_dstaddr;
+            new_flow = cloud_rule_flow_init(pool);
+            new_flow->callback = cloud_match_not_dstaddr;
             new_flow->type = RULE_MATCH_NOT_DSTADDR;
 
             APPEND_FLOW(flow, tail, new_flow);
@@ -388,30 +339,30 @@ filter_flow_from_str(apr_pool_t * pool, char *flowstr)
 }
 
 static int
-filter_rule_add_flow(filter_rule_t * rule, char *data)
+cloud_rule_add_flow(cloud_rule_t * rule, char *data)
 {
-    rule->flow = filter_flow_from_str(rule->pool, data);
+    rule->flow = cloud_flow_from_str(rule->pool, data);
     return 0;
 }
 
-filter_t *
-filter_init(apr_pool_t * parent)
+cloud_filter_t *
+cloud_filter_init(apr_pool_t * parent)
 {
-    filter_t *ret;
-    ret = apr_pcalloc(parent, sizeof(filter_t));
+    cloud_filter_t *ret;
+    ret = apr_pcalloc(parent, sizeof(cloud_filter_t));
     apr_pool_create(&ret->pool, parent);
 
 
     return ret;
 }
 
-static filter_rule_t *
-filter_rule_init(apr_pool_t * parent)
+static cloud_rule_t *
+cloud_rule_init(apr_pool_t * parent)
 {
-    filter_rule_t   *rule;
+    cloud_rule_t   *rule;
 
-    rule = (filter_rule_t *)
-        apr_pcalloc(parent, sizeof(filter_rule_t));
+    rule = (cloud_rule_t *)
+        apr_pcalloc(parent, sizeof(cloud_rule_t));
 
     PRINT_DEBUG("Initialized new rule at %p\n", rule);
 
@@ -423,10 +374,10 @@ filter_rule_init(apr_pool_t * parent)
     return rule;
 }
 
-filter_rule_t
-    * filter_get_rule(filter_t * filter, const char *rule_name)
+cloud_rule_t
+    * cloud_filter_get_rule(cloud_filter_t * filter, const char *rule_name)
 {
-    filter_rule_t   *ruleptr;
+    cloud_rule_t   *ruleptr;
 
     if (!filter || !rule_name)
         return NULL;
@@ -445,7 +396,7 @@ filter_rule_t
 
 
 static int
-filter_add_rule(filter_t * filter, filter_rule_t * rule)
+cloud_filter_add_rule(cloud_filter_t * filter, cloud_rule_t * rule)
 {
     if (!filter || !rule)
         return -1;
@@ -461,7 +412,7 @@ filter_add_rule(filter_t * filter, filter_rule_t * rule)
 }
 
 int
-filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
+cloud_rule_set_action(cloud_rule_t * rule, const char *actionstr)
 {
     int             action;
 
@@ -482,7 +433,7 @@ filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
 
 
 int
-filter_rule_add_network(filter_rule_t * rule,
+cloud_rule_add_network(cloud_rule_t * rule,
                        const char *network, const int direction,
                        void *data)
 {
@@ -513,7 +464,7 @@ filter_rule_add_network(filter_rule_t * rule,
 }
 
 static int
-filter_rule_add_string(filter_rule_t * rule, char *key, char *val,
+cloud_rule_add_string(cloud_rule_t * rule, char *key, char *val,
                       const int is_regex)
 {
     /*
@@ -612,8 +563,8 @@ filter_rule_add_string(filter_rule_t * rule, char *key, char *val,
 }
 
 static int
-filter_match_rulen(apr_pool_t * pool, filter_t * filter,
-                  filter_rule_t * rule, const void *usrdata)
+cloud_match_rulen(apr_pool_t * pool, cloud_filter_t * filter,
+                  cloud_rule_t * rule, const void *usrdata)
 {
     int             matched_rule = 0;
     rule_flow_t    *flows = rule->flow;
@@ -725,10 +676,10 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
     return matched_rule;
 }
 
-filter_rule_t   *
-filter_traverse_filter(filter_t * filter, const void *usrdata)
+cloud_rule_t   *
+cloud_traverse_filter(cloud_filter_t * filter, const void *usrdata)
 {
-    filter_rule_t   *rule;
+    cloud_rule_t   *rule;
     apr_pool_t     *subpool;
 
     if (!filter)
@@ -739,7 +690,7 @@ filter_traverse_filter(filter_t * filter, const void *usrdata)
     apr_pool_create(&subpool, NULL);
 
     while (rule != NULL) {
-        if (filter_match_rulen(subpool, filter, rule, usrdata) == 1)
+        if (cloud_match_rulen(subpool, filter, rule, usrdata) == 1)
             break;
 
         apr_pool_clear(subpool);
@@ -751,7 +702,7 @@ filter_traverse_filter(filter_t * filter, const void *usrdata)
 }
 
 int
-filter_register_user_cb(filter_t * filter,
+cloud_register_user_cb(cloud_filter_t * filter,
                        void *(*cb) (apr_pool_t * p, void *fc_data,
                                     const void *d), int type, void *data)
 {
@@ -781,13 +732,13 @@ filter_register_user_cb(filter_t * filter,
     return 0;
 }
 
-static filter_rule_t *
-parse_whitelist(filter_t * filter, const char *filename)
+static cloud_rule_t *parse_whitelist(cloud_filter_t *filter, 
+        const char *filename)
 {
-    FILE           *wlf;
-    filter_rule_t   *filter_rule;
-    char           *buf;
-    char           *bptr;
+    FILE *wlf;
+    cloud_rule_t *cloud_rule;
+    char *buf;
+    char *bptr;
 
     if (!filename)
         return NULL;
@@ -797,52 +748,56 @@ parse_whitelist(filter_t * filter, const char *filename)
     if (!wlf)
         return NULL;
 
-    if (!(filter_rule = filter_rule_init(filter->pool)))
+    if (!(cloud_rule = cloud_rule_init(filter->pool)))
         return NULL;
 
-    filter_rule->name = apr_pstrdup(filter->pool, "__whitelist__");
+    cloud_rule->name = apr_pstrdup(filter->pool, 
+            "__whitelist__");
 
-    filter_rule_add_flow(filter_rule, "match_src_addrs");
+    cloud_rule_add_flow(cloud_rule,
+            "match_src_addrs");
 
-    filter_rule_set_action(filter_rule, "permit");
+    cloud_rule_set_action(cloud_rule, "permit");
 
     buf = malloc(1024);
 
-    while ((bptr = fgets(buf, 1023, wlf))) {
-        int             i;
-        /*
-         * trim off whitespaces 
-         */
-        for (i = 0; i < strlen(buf); i++) {
-            if (buf[i] == '\n' || buf[i] == '\r') {
-                buf[i] = '\0';
-                break;
-            }
-        }
+    while((bptr=fgets(buf, 1023, wlf)))
+    {
+	int i;
+	/* trim off whitespaces */
+	for (i = 0; i < strlen(buf); i++)
+	{
+	    if(buf[i] == '\n' || buf[i] == '\r')
+	    {
+		buf[i] = '\0';
+		break;
+	    }
+	}
 
-        if (*buf == '\0')
-            continue;
+	if (*buf == '\0' || *buf == '#')
+	    continue;
 
-        if (filter_rule_add_network(filter_rule, buf,
-                                   RULE_MATCH_SRCADDR, NULL) == -1) {
-            free(buf);
-            fclose(wlf);
-            return NULL;
-        }
+        if(cloud_rule_add_network(cloud_rule, buf,
+                RULE_MATCH_SRCADDR, NULL)==-1)
+	{
+	    free(buf);
+	    fclose(wlf);
+	    return NULL;
+	}
 
     }
 
     free(buf);
     fclose(wlf);
 
-    return filter_rule;
+    return cloud_rule;
 }
 
-filter_t *
-filter_parse_config(apr_pool_t * pool, const char *filename)
+cloud_filter_t *
+cloud_parse_config(apr_pool_t * pool, const char *filename)
 {
     cfg_t          *cfg;
-    filter_t *filter;
+    cloud_filter_t *filter;
     char           *whitelist_file;
     unsigned int    n,
                     i;
@@ -860,7 +815,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
                 CFGF_NONE),
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
         CFG_BOOL("dynamic", cfg_false, CFGF_NONE),
-        CFG_BOOL("log", cfg_true, CFGF_NONE),
+	CFG_BOOL("log", cfg_true, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
         CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
@@ -869,41 +824,44 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
     };
 
     cfg_opt_t       opts[] = {
-        CFG_STR("whitelist-file", NULL, CFGF_NONE),
-        CFG_BOOL("whitelist-log", cfg_true, CFGF_NONE),
+	CFG_STR("whitelist-file", NULL, CFGF_NONE),
+	CFG_BOOL("whitelist-log", cfg_true, CFGF_NONE),
         CFG_SEC("rule", rule_opts, CFGF_MULTI | CFGF_TITLE),
         CFG_END()
     };
 
     cfg = cfg_init(opts, CFGF_NOCASE);
 
-    if (cfg_parse(cfg, filename) == CFG_PARSE_ERROR) {
-        cfg_free(cfg);
+    if (cfg_parse(cfg, filename) == CFG_PARSE_ERROR)
+    {
+	cfg_free(cfg);
         return NULL;
     }
 
-    filter = filter_init(pool);
+    filter = cloud_filter_init(pool);
     whitelist_file = cfg_getstr(cfg, "whitelist-file");
 
-    /*
-     * first setup a rule for our whitelist if needed 
-     */
-    if (whitelist_file) {
-        filter_rule_t   *whitelist_rule;
-        whitelist_rule = parse_whitelist(filter, whitelist_file);
-        if (whitelist_rule) {
-            filter_add_rule(filter, whitelist_rule);
+    /* first setup a rule for our whitelist if needed */
+    if (whitelist_file) 
+    {
+	cloud_rule_t *whitelist_rule;
+	whitelist_rule = parse_whitelist(filter, whitelist_file);
+	if (whitelist_rule)
+	{
+	    cloud_filter_add_rule(filter, whitelist_rule);
 
-            if (cfg_getbool(cfg, "whitelist-log"))
-                whitelist_rule->log = 1;
-            else
-                whitelist_rule->log = 0;
-        } else {
-            cfg_error(cfg, "Unable to parse whitelist: %s",
-                      whitelist_file);
-            cfg_free(cfg);
-            return NULL;
-        }
+	    if (cfg_getbool(cfg, "whitelist-log"))
+		whitelist_rule->log = 1;
+	    else 
+		whitelist_rule->log = 0;
+	}
+	else
+	{
+	    cfg_error(cfg, "Unable to parse whitelist: %s",
+		    whitelist_file);
+	    cfg_free(cfg);
+	    return NULL;
+	}
     }
 
     n = cfg_size(cfg, "rule");
@@ -919,7 +877,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
         char           *flow;
         char           *unflowed;
         int             addr_cnt;
-        filter_rule_t   *filter_rule;
+        cloud_rule_t   *cloud_rule;
         char           *action;
         cfg_t          *rule;
         unflowed = NULL;
@@ -929,11 +887,11 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
         rule = cfg_getnsec(cfg, "rule", i);
         flow = cfg_getstr(rule, "flow");
 
-        filter_rule = filter_rule_init(filter->pool);
-        filter_rule->name = apr_pstrdup(filter_rule->pool, cfg_title(rule));
-        filter_rule->log = cfg_getbool(rule, "log");
+        cloud_rule = cloud_rule_init(filter->pool);
+        cloud_rule->name = apr_pstrdup(cloud_rule->pool, cfg_title(rule));
+	cloud_rule->log = cfg_getbool(rule, "log");
 
-        PRINT_DEBUG("Rule name: %s\n", filter_rule->name);
+        PRINT_DEBUG("Rule name: %s\n", cloud_rule->name);
         PRINT_DEBUG("Found flow '%s'\n", flow);
 
         if (cfg_getbool(rule, "dynamic")) {
@@ -944,14 +902,14 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
              * particular problem and use that instead :) 
              */
             flow = "match_src_addrs";
-            filter_rule->dynamic = 1;
+            cloud_rule->dynamic = 1;
         }
 
-        filter_rule_add_flow(filter_rule,
-                            (char *) apr_pstrdup(filter_rule->pool, flow));
+        cloud_rule_add_flow(cloud_rule, 
+		(char *) apr_pstrdup(cloud_rule->pool, flow));
 
         if ((action = cfg_getstr(rule, "action")))
-            filter_rule_set_action(filter_rule, action);
+            cloud_rule_set_action(cloud_rule, action);
 
         PRINT_DEBUG("%d src_addrs defined\n", cfg_size(rule, "src_addrs"));
 
@@ -961,7 +919,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
                 cfg_getnstr(rule, "src_addrs", addr_cnt);
 
             PRINT_DEBUG("Adding %s to our src_addr radix tree\n", addr);
-            filter_rule_add_network(filter_rule, addr, RULE_MATCH_SRCADDR,
+            cloud_rule_add_network(cloud_rule, addr, RULE_MATCH_SRCADDR,
                                    NULL);
         }
 
@@ -972,7 +930,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
             char           *addr =
                 cfg_getnstr(rule, "dst_addrs", addr_cnt);
             PRINT_DEBUG("Adding %s to our dst_addr radix tree\n", addr);
-            filter_rule_add_network(filter_rule, addr, RULE_MATCH_DSTADDR,
+            cloud_rule_add_network(cloud_rule, addr, RULE_MATCH_DSTADDR,
                                    NULL);
         }
 
@@ -992,7 +950,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
                 char           *str =
                     cfg_getnstr(matcher, "values", value_cnt);
 
-                filter_rule_add_string(filter_rule,
+                cloud_rule_add_string(cloud_rule,
                                       (char *) cfg_title(matcher), str, 0);
             }
 
@@ -1001,13 +959,13 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
                 char           *str =
                     cfg_getnstr(matcher, "regex", value_cnt);
 
-                filter_rule_add_string(filter_rule,
+                cloud_rule_add_string(cloud_rule,
                                       (char *) cfg_title(matcher), str, 1);
             }
 
         }
 
-        filter_add_rule(filter, filter_rule);
+        cloud_filter_add_rule(filter, cloud_rule);
     }
 
     cfg_free(cfg);
@@ -1034,19 +992,19 @@ dst_addr_cb(apr_pool_t * pool, void *fc_data, const void *d)
 }
 
 void           *
-filter_str_cb(apr_pool_t * pool, void *fc_data, const void *d)
+cloud_str_cb(apr_pool_t * pool, void *fc_data, const void *d)
 {
     return "abcdef";
 }
 
 void           *
-filter_str2_cb(apr_pool_t * pool, void *fc_data, const void *d)
+cloud_str2_cb(apr_pool_t * pool, void *fc_data, const void *d)
 {
     return "derr";
 }
 
 void           *
-filter_str3_cb(apr_pool_t * pool, void *fc_data, const void *d)
+cloud_str3_cb(apr_pool_t * pool, void *fc_data, const void *d)
 {
     PRINT_DEBUG("Test callback\n");
     return "iabfjdla";
@@ -1056,24 +1014,28 @@ filter_str3_cb(apr_pool_t * pool, void *fc_data, const void *d)
 int
 main(int argc, char **argv)
 {
-    filter_t        *filter;
-    filter_rule_t   *rule;
+    cloud_filter_t *filter;
+    cloud_rule_t   *rule;
 
     apr_pool_t     *root_pool;
     apr_initialize();
     apr_pool_create(&root_pool, NULL);
-    filter = filter_parse_config(root_pool, "./test.conf");
+    filter = cloud_parse_config(root_pool, "./test.conf");
     assert(filter);
 
 
-    filter_register_user_cb(filter, src_addr_cb, RULE_MATCH_SRCADDR, NULL);
-    filter_register_user_cb(filter, dst_addr_cb, RULE_MATCH_DSTADDR, NULL);
-    filter_register_user_cb(filter, filter_str_cb, RULE_MATCH_STRING, "stuff");
-    filter_register_user_cb(filter, filter_str2_cb, RULE_MATCH_STRING, "lame");
-    filter_register_user_cb(filter, filter_str2_cb, RULE_MATCH_STRING, "guh");
-    filter_register_user_cb(filter, filter_str3_cb, RULE_MATCH_STRING, "chadorder");
+    cloud_register_user_cb(filter, src_addr_cb, RULE_MATCH_SRCADDR, NULL);
+    cloud_register_user_cb(filter, dst_addr_cb, RULE_MATCH_DSTADDR, NULL);
+    cloud_register_user_cb(filter, cloud_str_cb, RULE_MATCH_STRING,
+                           "stuff");
+    cloud_register_user_cb(filter, cloud_str2_cb, RULE_MATCH_STRING,
+                           "lame");
+    cloud_register_user_cb(filter, cloud_str2_cb, RULE_MATCH_STRING,
+                           "guh");
+    cloud_register_user_cb(filter, cloud_str3_cb, RULE_MATCH_STRING,
+                           "chadorder");
 
-    rule = filter_traverse_filter(filter, (void *) argv);
+    rule = cloud_traverse_filter(filter, (void *) argv);
 
     printf("Matched filter? %s\n", rule ? "yes" : "no");
 

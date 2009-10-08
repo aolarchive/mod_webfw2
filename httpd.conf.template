@@ -1,4 +1,4 @@
-webfw2_rw_xff X-Forwarded-For "src-ip 10.10.10.10 last 1 first 1"
+webfw2_rw_xff X-Forwarded-For
 #webfw_rw_xff X-NSCLIENT-IP
 webfw2_update_interval 10
 webfw2_config /opt/sinkhole/conf/webfw2_rules.conf
@@ -13,6 +13,13 @@ webfw2_match_note "CHADHDO-accept-encoding"
 webfw2_match_note "COUNTRY"
 webfw2_match_note "chad"
 webfw2_match_note "chadmethod"
+
+### where to hook
+
+# default request processing hook is check_access,
+# turn this on to hook a bit before that at the 
+# request translation layer.
+webfw2_hook_translate On 
 
 # new "interesting" notes
 # webfw2_match_note "__wf2-uri__"

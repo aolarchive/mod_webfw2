@@ -4,7 +4,7 @@ APR_INCLUDES = -I../chad-libs/apr-1/include
 APR_LIBS     = -L../chad-libs/apr-1/.libs
 APXS_BIN     = ~/sandbox/bin/apxs 
 THRASHER     = -DWITH_THRASHER
-DFLAGS       = -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
+DFLAGS       = -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
 
 libconfuse: 
 	@if test -f confuse-2.5/src/libconfuse.la; then echo "[*] libconfuse already configured..."; else echo "[*] Configuring libconfuse..."; cd confuse-2.5 && ./configure CFLAGS=-fPIC --disable-nls 2>&1 >/dev/null; echo "[*] Making libconfuse";  make 2>&1 >/dev/null; fi
