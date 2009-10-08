@@ -1,6 +1,5 @@
 all: mod_webfw2 testfilter 
 
-# ~/sandbox/bin/apr-1-config --includes --cflags --libs --ldflags  --link-ld
 APR_CONFIG   = /home/mthomas/sandbox/bin/apr-1-config
 APR_INCLUDES = `$(APR_CONFIG) --includes`
 APR_LIBS     = `$(APR_CONFIG) --libs`
