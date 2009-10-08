@@ -526,6 +526,7 @@ filter_add_rule(filter_t * filter, filter_rule_t * rule)
 
     filter->tail->next = rule;
     filter->tail = rule;
+    filter->rule_count++;
     return 0;
 }
 
