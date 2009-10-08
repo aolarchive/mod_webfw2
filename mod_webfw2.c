@@ -548,6 +548,8 @@ webfw2_traverse_filter(request_rec * rec,
     int             i,
                     ret;
 
+    rule = NULL;
+
     if (!rec->pool || !filter || !addrs)
         return NULL;
 
