@@ -2,6 +2,7 @@
 
 updates and new features
 
+* hotfix with recv() errorchecking, merged from the 1.0r17-5 branch.
 * Many functions were broken up into their own files
   for ease of management.
 * XFF ACL options implemented.
