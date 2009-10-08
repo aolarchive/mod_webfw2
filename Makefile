@@ -7,18 +7,10 @@ APR_LIBS     = `$(APR_CONFIG) --libs`
 APR_CFLAGS   = `$(APR_CONFIG) --cflags`
 APR_LDFLAGS  = `$(APR_CONFIG) --ldflags`
 APR_LINK     = `$(APR_CONFIG) --link-ld`
-
-
-#APR_INCLUDES = -I../chad-libs/apr-1/include
-#APR_LIBS     = -L../chad-libs/apr-1/.libs
-#APXS_BIN     = ~/sandbox/bin/apxs
-
-#APR_INCLUDES = -I../chad-libs/apr-1/include
-#APR_LIBS     = -L../chad-libs/apr-1/.libs
 APXS_BIN     = ~/sandbox/bin/apxs 
 
 THRASHER     = -DWITH_THRASHER
-DFLAGS       =  -DDEBUG -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
+DFLAGS       = -DDEBUG -Wall -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $(THRASHER)
 
 libconfuse: 
 	@if test -f confuse-2.5/src/libconfuse.la; then echo "[*] libconfuse already configured..."; else echo "[*] Configuring libconfuse..."; cd confuse-2.5 && ./configure CFLAGS=-fPIC --disable-nls 2>&1 >/dev/null; echo "[*] Making libconfuse";  make 2>&1 >/dev/null; fi

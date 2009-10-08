@@ -921,6 +921,8 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
     unsigned int    n,
                     i;
 
+    filter = NULL;
+
     PRINT_DEBUG("Parsing configuration.\n");
     cfg_opt_t       str_match_opts[] = {
         CFG_STR_LIST("values", 0, CFGF_MULTI),
