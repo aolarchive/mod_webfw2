@@ -10,11 +10,17 @@ typedef struct filter_rule filter_rule_t;
 typedef struct rule_flow rule_flow_t;
 typedef struct filter_callbacks filter_callbacks_t;
 
-#define FILTER_DENY     			1
-#define FILTER_PERMIT   			2
-#define FILTER_PASS     			3
-#define FILTER_THRASH   			1972
-#define FILTER_THRASH_PROFILE 1973
+#define FILTER_DENY     			      1
+#define FILTER_PERMIT   			      2
+#define FILTER_PASS     			      3
+#define FILTER_THRASH            1972
+#define FILTER_THRASH_v1         1972
+#define FILTER_THRASH_PROFILE    1973
+#define FILTER_THRASH_PROFILE_v1 1973
+#define FILTER_THRASH_v2         1974
+#define FILTER_THRASH_PROFILE_v2 1975
+#define FILTER_THRASH_v3         1976
+#define FILTER_THRASH_PROFILE_v3 1977
 
 #ifdef DEBUG
 #define PRINT_DEBUG(format, args...) \

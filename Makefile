@@ -20,6 +20,9 @@ patricia.o: patricia.c
 filter.o: filter.c 
 	gcc $(DFLAGS) $(APR_INCLUDES) -I. -Iconfuse-2.5/src/ -fPIC -c -o filter.o filter.c -ggdb 
 
+thrasher.o: thrasher.c thrasher.h
+	gcc $(DFLAGS) $(APR_INCLUDES) -I. -fPIC -c -o thrasher.o thrasher.c -ggdb
+
 callbacks.o:
 	gcc $(DFLAGS) $(APR_INCLUDES) -I. -fPIC -c -o callbacks.o callbacks.c -ggdb
 
@@ -32,8 +35,8 @@ filter: filter.c filter.o patricia.o libconfuse archives
 archives: filter.c patricia.c filter.o patricia.o libconfuse 
 	ar rcs libfilter.a filter.o patricia.o confuse-2.5/src/lexer.o confuse-2.5/src/confuse.o 
 
-mod_webfw2: filter.c mod_webfw2.c archives callbacks.o 
-	${APXS_BIN} -c -I. $(DFLAGS) -Iconfuse-2.5/src/ -L. mod_webfw2.c callbacks.o -lfilter -ggdb 2>&1 >/dev/null 
+mod_webfw2: filter.c mod_webfw2.c archives callbacks.o thrasher.o 
+	${APXS_BIN} -c -I. $(DFLAGS) -Iconfuse-2.5/src/ -L. mod_webfw2.c callbacks.o thrasher.o -lfilter -ggdb 2>&1 >/dev/null 
 	${APXS_BIN} -i -a -n webfw2 mod_webfw2.la 2>&1 >/dev/null
 
 distclean: clean

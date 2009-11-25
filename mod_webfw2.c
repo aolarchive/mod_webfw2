@@ -11,6 +11,7 @@
 #include <time.h>
 #include <unistd.h>
 #include "mod_webfw2.h"
+#include "thrasher.h"
 
 module AP_MODULE_DECLARE_DATA webfw2_module;
 
@@ -117,16 +118,18 @@ webfw2_filter_init(apr_pool_t * pool, webfw2_config_t * config)
         /*
          * create our thrasher socket 
          */
-        if (!(filter->thrasher_sock = webfw2_thrasher_connect(pool,
-                                                              config->thrasher_host,
-                                                              config->thrasher_port,
-                                                              config->thrasher_timeout)))
-        {
-            ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
-                         "webfw2 could not connect to thrasher host");
-            filter->thrasher_downed = time(NULL);
-        }
+	apr_socket_t *sock;
+	sock = thrasher_connect(pool, config);
 
+	if (sock)
+	    filter->thrasher_sock = sock;
+	else
+	{
+	    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+		    "webfw2 could not connect to thrasher");
+	    filter->thrasher_sock   = NULL;
+	    filter->thrasher_downed = time(NULL);
+	}
     }
 
     return filter;
@@ -413,121 +416,91 @@ webfw2_set_interesting_notes(request_rec * rec)
 
 static int
 webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
-                webfw2_filter_t * filter, const char *srcaddr)
+                webfw2_filter_t * filter, const char *srcaddr,
+		int thrasher_type)
 {
-    int             ret;
-    apr_status_t    rv;
-    uint8_t         type;
-    uint32_t        src_ip;
-    uint16_t        uri_len,
-                    host_len;
-    struct iovec    vec[6];
-    apr_size_t      sent;
-    apr_size_t      packetlen;
-    apr_size_t torecv;
-    int             sockerr = 0;
-    int             packet_sent;
-    uint8_t         resp;
-    char errbuf[1024];
-    char *errbuf_where = "none";
-
-    sent = 0;
-    ret  = DECLINED;
+    thrasher_pkt_type pkt_type;
+    int query_ret;
+    int ident;
 
     PRINT_DEBUG("about to make a thrasher query\n");
 
     if (!config->thrasher_host || !config->thrasher_port)
         return DECLINED;
 
-    if (!filter->thrasher_sock) {
-        time_t          currtime;
+    /* if this is a v3 packet - we want to randomly generate
+       an ident number, else this will stay 0 */
+    ident = 0;
 
-        currtime = time(NULL);
+    if (!thrasher_is_connected(filter->thrasher_sock))
+    {
+	PRINT_DEBUG("Thrasher isn't connected..\n");
 
-        if (currtime - filter->thrasher_downed > config->thrasher_retry) {
-            /*
-             * try reconnecting to the socket 
-             */
-            filter->thrasher_sock =
-                webfw2_thrasher_connect(filter->pool,
-                                        config->thrasher_host,
-                                        config->thrasher_port,
-                                        config->thrasher_timeout);
+	if(!thrasher_should_retry(config, filter))
+	    return DECLINED;
 
-            if (!filter->thrasher_sock) {
-                ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
-                             "webfw2 could not connect to thrasher host");
-                filter->thrasher_downed = time(NULL);
-                return DECLINED;
-            }
-        } else
-            return DECLINED;
+	PRINT_DEBUG("Attempting reconnect....\n");
+
+	if(!(filter->thrasher_sock = thrasher_connect(filter->pool, config)))
+	{
+	    thrasher_err_shutdown(filter);
+	    return DECLINED;
+	}
+
     }
 
-    /*
-     * create our thrasher packet 
-     */
-    type = 0;
+    /* our socket is connected */
 
     if (!srcaddr || !rec->uri || !rec->hostname)
-        return DECLINED;
-
-    src_ip = inet_addr(srcaddr);
-    uri_len = htons(strlen(rec->uri));
-    host_len = htons(strlen(rec->hostname));
-
-    vec[0].iov_base = &type;
-    vec[0].iov_len = 1;
-    vec[1].iov_base = &src_ip;
-    vec[1].iov_len = sizeof(uint32_t);
-    vec[2].iov_base = &uri_len;
-    vec[2].iov_len = sizeof(uint16_t);
-    vec[3].iov_base = &host_len;
-    vec[3].iov_len = sizeof(uint16_t);
-    vec[4].iov_base = rec->uri;
-    vec[4].iov_len = strlen(rec->uri);
-    vec[5].iov_base = (char *) rec->hostname;
-    vec[5].iov_len = strlen(rec->hostname);
-
-    packetlen =
-        sizeof(type) + sizeof(src_ip) + sizeof(uri_len) +
-        sizeof(host_len) + strlen(rec->uri) + strlen(rec->hostname);
-
-    rv = apr_socket_sendv(filter->thrasher_sock, vec, 6, &sent);
-
-    if (rv != APR_SUCCESS) 
     {
-	errbuf_where = "sendv"; 
-	goto error;
+	/* if none of the normal data is available, we
+	   aren't really interested */
+	PRINT_DEBUG("!srcaddr || !rec->uri || !rec->hostname\n");
+	return DECLINED;
     }
 
-    torecv = 1;
-    rv = apr_socket_recv(filter->thrasher_sock, (char *) &resp, &torecv);
-
-    if (rv != APR_SUCCESS) 
+    /* match up our packet types with what came back from
+       the filter rules action */
+    switch(thrasher_type)
     {
-	errbuf_where = "recv";
-	goto error;
+	case FILTER_THRASH_PROFILE_v1:
+	case FILTER_THRASH_v1:
+	    pkt_type = TYPE_THRESHOLD_v1;
+	    break;
+	case FILTER_THRASH_v2:
+	case FILTER_THRASH_PROFILE_v2:
+	    pkt_type = TYPE_THRESHOLD_v2;
+	    break;
+	case FILTER_THRASH_v3:
+	case FILTER_THRASH_PROFILE_v3:
+	    pkt_type = TYPE_THRESHOLD_v3;
+
+	    /* generate a random value for our identification 
+	       portion of this packet. */
+	    if (apr_generate_random_bytes((unsigned char *)&ident, 
+			sizeof(uint32_t)) != APR_SUCCESS)
+		return DECLINED;
+
+	    break;
+	default:
+	    /* unknown thrasher type :( */
+	    return DECLINED;
     }
 
-    if (resp > 1)          
+    query_ret = thrasher_query(rec, config, filter, 
+	    pkt_type, srcaddr, ident); 
+
+    PRINT_DEBUG("Blah %d\n", query_ret);
+
+    if (query_ret < 0)
     {
-	errbuf_where = "invalid return type";
-	goto error;
+	thrasher_err_shutdown(filter);
+	return DECLINED;
     }
 
-    if (resp == 1)         
+    if (query_ret == 1)
 	return config->default_taction;
 
-    return DECLINED;
-
-error:
-    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
-	    "thrasher socket error (%s): %s", 
-	    errbuf_where, apr_strerror(rv, errbuf, 1024));
-    apr_socket_close(filter->thrasher_sock);
-    filter->thrasher_sock   = NULL;
-    filter->thrasher_downed = time(NULL);
     return DECLINED;
 }
 
@@ -581,15 +554,16 @@ webfw2_traverse_filter(request_rec * rec,
 
 	    PRINT_DEBUG("MATCHED RULE %s\n", rule->name);
 
-            if (rule->action == FILTER_THRASH ||
-                rule->action == FILTER_THRASH_PROFILE) {
+	    if (rule->action >= FILTER_THRASH && 
+		    rule->action <= FILTER_THRASH_PROFILE_v3) 
+	    {
                 /*
                  * we don't want to stop rule processing if a
                  * thrasher rule was found but no thresholds were
                  * hit. We only break out of our do loop if the
                  * response was positive. 
                  */
-                ret = webfw2_thrasher(rec, config, filter, src_ip);
+                ret = webfw2_thrasher(rec, config, filter, src_ip, rule->action);
 
 		PRINT_DEBUG("Thrasher packet sent for %s. Ret status: %d\n",
 			src_ip, ret);
@@ -603,9 +577,10 @@ webfw2_traverse_filter(request_rec * rec,
             /*
              * check to see if we should continue rule traversal 
              */
-            if (rule->action == FILTER_PASS ||
-                rule->action == FILTER_THRASH_PROFILE ||
-                rule->action == FILTER_THRASH) {
+	    if (rule->action == FILTER_PASS   || 
+	        rule->action >= FILTER_THRASH && 
+		rule->action <= FILTER_THRASH_PROFILE_v3)
+	    {	
                 char           *curr_passes;
 
                 curr_passes = (char *)
