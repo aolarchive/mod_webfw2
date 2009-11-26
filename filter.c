@@ -541,8 +541,22 @@ filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
         action = FILTER_DENY;
     else if (!strcmp(actionstr, "thrash"))
 	action = FILTER_THRASH;
+    else if (!strcmp(actionstr, "thrash-v1")) 
+	action = FILTER_THRASH;
+    else if (!strcmp(actionstr, "thrash-v1 profile"))
+	action = FILTER_THRASH_PROFILE;
     else if (!strcmp(actionstr, "thrash_profile"))
 	action = FILTER_THRASH_PROFILE;
+    else if (!strcmp(actionstr, "thrash-profile"))
+	action = FILTER_THRASH_PROFILE;
+    else if (!strcmp(actionstr, "thrash-v2"))
+	action = FILTER_THRASH_v2;
+    else if (!strcmp(actionstr, "thrash-v2 profile"))
+	action = FILTER_THRASH_PROFILE_v2;
+    else if (!strcmp(actionstr, "thrash-v3"))
+	action = FILTER_THRASH_v3;
+    else if (!strcmp(actionstr, "thrash-v3 profile"))
+	action = FILTER_THRASH_PROFILE_v3;
     else if (!strcmp(actionstr, "pass"))
 	action = FILTER_PASS;
     else 
