@@ -469,6 +469,7 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
 	    break;
 	case FILTER_THRASH_v2:
 	case FILTER_THRASH_PROFILE_v2:
+	    PRINT_DEBUG("Profile v2\n");
 	    pkt_type = TYPE_THRESHOLD_v2;
 	    break;
 	case FILTER_THRASH_v3:
@@ -565,8 +566,8 @@ webfw2_traverse_filter(request_rec * rec,
                  */
                 ret = webfw2_thrasher(rec, config, filter, src_ip, rule->action);
 
-		PRINT_DEBUG("Thrasher packet sent for %s. Ret status: %d\n",
-			src_ip, ret);
+		PRINT_DEBUG("Thrasher (%d) packet sent for %s. Ret status: %d\n",
+			rule->action, src_ip, ret);
 
                 if (ret != DECLINED) 
 		    /* return was positive, we want to stop all

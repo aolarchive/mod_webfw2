@@ -167,7 +167,7 @@ thrasher_create_v2_pkt(apr_pool_t *pool, uint32_t addr)
     if (!(pkt->packet = apr_pcalloc(pool, pktlen)))
 	return NULL;
 
-    *pkt->packet = 1; /* type 1, v2 */
+    *pkt->packet = 3; /* type 1, v2 */
     memcpy(&pkt->packet[1], &addr, sizeof(uint32_t));
 
     pkt->len = pktlen;
@@ -236,7 +236,10 @@ thrasher_create_v3_pkt(apr_pool_t *pool, uint32_t ident,
 	sizeof(uint16_t) +  /* host len */
 	hlen + urilen;      /* payloads */
 
-    *pkt->packet = 2;
+    if (!(pkt->packet = apr_pcalloc(pool, pktlen)))
+	return NULL;
+
+    *pkt->packet = TYPE_THRESHOLD_v3;
 
     memcpy(&pkt->packet[1], &ident_nbo, sizeof(uint32_t));
     memcpy(&pkt->packet[5], &urilen_nbo, sizeof(uint16_t));

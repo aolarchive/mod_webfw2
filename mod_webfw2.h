@@ -15,8 +15,6 @@
 #include "version.h"
 
 #define FILTER_CONFIG_KEY "webfw2_filter_config"
-#define FILTER_THRASHER 1972
-#define FILTER_THRASHER_PROFILE 1973
 
 typedef struct webfw2_xff_opts {
     char *xff_header;
