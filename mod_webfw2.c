@@ -15,9 +15,6 @@
 
 module AP_MODULE_DECLARE_DATA webfw2_module;
 
-apr_socket_t   *webfw2_thrasher_connect(apr_pool_t *, const char *,
-                                        const int, const int);
-
 static void
 webfw2_filter_parse(apr_pool_t * pool, webfw2_config_t * config,
                     webfw2_filter_t * filter)
@@ -40,57 +37,6 @@ webfw2_filter_parse(apr_pool_t * pool, webfw2_config_t * config,
     }
 
     webfw2_register_callbacks(filter->pool, config, filter);
-}
-
-apr_socket_t
-    * webfw2_thrasher_connect(apr_pool_t * pool,
-                              const char *host, const int port,
-                              const int timeout)
-{
-    apr_status_t    rv;
-    apr_sockaddr_t *sockaddr;
-    apr_socket_t   *sock;
-
-    sock = NULL;
-
-    do {
-
-        rv = apr_sockaddr_info_get(&sockaddr,
-                                   host, APR_INET, port, 0, pool);
-
-        if (rv != APR_SUCCESS)
-            break;
-
-        rv = apr_socket_create(&sock, sockaddr->family,
-                               SOCK_STREAM, APR_PROTO_TCP, pool);
-
-        if (rv != APR_SUCCESS)
-            break;
-
-        rv = apr_socket_timeout_set(sock, timeout);
-
-        if (rv != APR_SUCCESS)
-            break;
-
-        rv = apr_socket_opt_set(sock, APR_SO_KEEPALIVE, 1);
-
-        if (rv != APR_SUCCESS)
-            break;
-
-        rv = apr_socket_connect(sock, sockaddr);
-
-        if (rv != APR_SUCCESS)
-            break;
-
-    } while (0);
-
-    if (rv != APR_SUCCESS) {
-        if (sock)
-            apr_socket_close(sock);
-        return NULL;
-    }
-
-    return sock;
 }
 
 static webfw2_filter_t *
@@ -118,18 +64,17 @@ webfw2_filter_init(apr_pool_t * pool, webfw2_config_t * config)
         /*
          * create our thrasher socket 
          */
-	apr_socket_t *sock;
-	sock = thrasher_connect(pool, config);
+        apr_socket_t   *sock;
+        sock = thrasher_connect(pool, config);
 
-	if (sock)
-	    filter->thrasher_sock = sock;
-	else
-	{
-	    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
-		    "webfw2 could not connect to thrasher");
-	    filter->thrasher_sock   = NULL;
-	    filter->thrasher_downed = time(NULL);
-	}
+        if (sock)
+            filter->thrasher_sock = sock;
+        else {
+            ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
+                         "webfw2 could not connect to thrasher");
+            filter->thrasher_sock = NULL;
+            filter->thrasher_downed = time(NULL);
+        }
     }
 
     return filter;
@@ -417,90 +362,99 @@ webfw2_set_interesting_notes(request_rec * rec)
 static int
 webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
                 webfw2_filter_t * filter, const char *srcaddr,
-		int thrasher_type)
+                int thrasher_type)
 {
     thrasher_pkt_type pkt_type;
-    int query_ret;
-    int ident;
+    int             query_ret;
+    int             ident;
 
     PRINT_DEBUG("about to make a thrasher query\n");
 
     if (!config->thrasher_host || !config->thrasher_port)
         return DECLINED;
 
-    /* if this is a v3 packet - we want to randomly generate
-       an ident number, else this will stay 0 */
+    /*
+     * if this is a v3 packet - we want to randomly generate
+     * an ident number, else this will stay 0 
+     */
     ident = 0;
 
-    if (!thrasher_is_connected(filter->thrasher_sock))
-    {
-	PRINT_DEBUG("Thrasher isn't connected..\n");
+    if (!thrasher_is_connected(filter->thrasher_sock)) {
+        PRINT_DEBUG("Thrasher isn't connected..\n");
 
-	if(!thrasher_should_retry(config, filter))
-	    return DECLINED;
+        if (!thrasher_should_retry(config, filter))
+            return DECLINED;
 
-	PRINT_DEBUG("Attempting reconnect....\n");
+        PRINT_DEBUG("Attempting reconnect....\n");
 
-	if(!(filter->thrasher_sock = thrasher_connect(filter->pool, config)))
-	{
-	    thrasher_err_shutdown(filter);
-	    return DECLINED;
-	}
+        if (!
+            (filter->thrasher_sock =
+             thrasher_connect(filter->pool, config))) {
+            thrasher_err_shutdown(filter);
+            return DECLINED;
+        }
 
     }
 
-    /* our socket is connected */
+    /*
+     * our socket is connected 
+     */
 
-    if (!srcaddr || !rec->uri || !rec->hostname)
-    {
-	/* if none of the normal data is available, we
-	   aren't really interested */
-	PRINT_DEBUG("!srcaddr || !rec->uri || !rec->hostname\n");
-	return DECLINED;
+    if (!srcaddr || !rec->uri || !rec->hostname) {
+        /*
+         * if none of the normal data is available, we
+         * aren't really interested 
+         */
+        PRINT_DEBUG("!srcaddr || !rec->uri || !rec->hostname\n");
+        return DECLINED;
     }
 
-    /* match up our packet types with what came back from
-       the filter rules action */
-    switch(thrasher_type)
-    {
-	case FILTER_THRASH_PROFILE_v1:
-	case FILTER_THRASH_v1:
-	    pkt_type = TYPE_THRESHOLD_v1;
-	    break;
-	case FILTER_THRASH_v2:
-	case FILTER_THRASH_PROFILE_v2:
-	    PRINT_DEBUG("Profile v2\n");
-	    pkt_type = TYPE_THRESHOLD_v2;
-	    break;
-	case FILTER_THRASH_v3:
-	case FILTER_THRASH_PROFILE_v3:
-	    pkt_type = TYPE_THRESHOLD_v3;
+    /*
+     * match up our packet types with what came back from
+     * the filter rules action 
+     */
+    switch (thrasher_type) {
+    case FILTER_THRASH_PROFILE_v1:
+    case FILTER_THRASH_v1:
+        pkt_type = TYPE_THRESHOLD_v1;
+        break;
+    case FILTER_THRASH_v2:
+    case FILTER_THRASH_PROFILE_v2:
+        PRINT_DEBUG("Profile v2\n");
+        pkt_type = TYPE_THRESHOLD_v2;
+        break;
+    case FILTER_THRASH_v3:
+    case FILTER_THRASH_PROFILE_v3:
+        pkt_type = TYPE_THRESHOLD_v3;
 
-	    /* generate a random value for our identification 
-	       portion of this packet. */
-	    if (apr_generate_random_bytes((unsigned char *)&ident, 
-			sizeof(uint32_t)) != APR_SUCCESS)
-		return DECLINED;
+        /*
+         * generate a random value for our identification 
+         * portion of this packet. 
+         */
+        if (apr_generate_random_bytes((unsigned char *) &ident,
+                                      sizeof(uint32_t)) != APR_SUCCESS)
+            return DECLINED;
 
-	    break;
-	default:
-	    /* unknown thrasher type :( */
-	    return DECLINED;
+        break;
+    default:
+        /*
+         * unknown thrasher type :( 
+         */
+        return DECLINED;
     }
 
-    query_ret = thrasher_query(rec, config, filter, 
-	    pkt_type, srcaddr, ident); 
+    query_ret = thrasher_query(rec, config, filter,
+                               pkt_type, srcaddr, ident);
 
     PRINT_DEBUG("Blah %d\n", query_ret);
 
-    if (query_ret < 0)
-    {
-	thrasher_err_shutdown(filter);
-	return DECLINED;
+    if (query_ret < 0) {
+        thrasher_err_shutdown(filter);
+        return DECLINED;
     }
 
     if (query_ret == 1)
-	return config->default_taction;
+        return config->default_taction;
 
     return DECLINED;
 }
@@ -510,11 +464,11 @@ filter_rule_t  *
 webfw2_traverse_filter(request_rec * rec,
                        webfw2_config_t * config,
                        webfw2_filter_t * filter,
-		       filter_rule_t * current_rule,
+                       filter_rule_t * current_rule,
                        apr_array_header_t * addrs, char **sip, char **dip)
 {
-    char     *src_ip;
-    char     *dst_ip;
+    char           *src_ip;
+    char           *dst_ip;
     void          **callback_data;
     filter_rule_t  *rule;
     int             i,
@@ -528,7 +482,7 @@ webfw2_traverse_filter(request_rec * rec,
     for (i = 0; i < addrs->nelts; i++) {
         current_rule = filter->filter->head;
 
-	ret = DECLINED;
+        ret = DECLINED;
 
         callback_data = apr_pcalloc(rec->pool, sizeof(void *) * 3);
 
@@ -539,49 +493,52 @@ webfw2_traverse_filter(request_rec * rec,
         callback_data[1] = (void *) src_ip;
         callback_data[2] = (void *) dst_ip;
 
-        PRINT_DEBUG("Rule %s Traversing with %s\n", 
-		current_rule->name, src_ip);
+        PRINT_DEBUG("Rule %s Traversing with %s\n",
+                    current_rule->name, src_ip);
 
         do {
-	    if (!current_rule)
-		break;
+            if (!current_rule)
+                break;
 
             rule = filter_traverse_filter(filter->filter,
                                           current_rule,
                                           (void *) callback_data);
 
             if (!rule)
-		break;
+                break;
 
-	    PRINT_DEBUG("MATCHED RULE %s\n", rule->name);
+            PRINT_DEBUG("MATCHED RULE %s\n", rule->name);
 
-	    if (rule->action >= FILTER_THRASH && 
-		    rule->action <= FILTER_THRASH_PROFILE_v3) 
-	    {
+            if (rule->action >= FILTER_THRASH &&
+                rule->action <= FILTER_THRASH_PROFILE_v3) {
                 /*
                  * we don't want to stop rule processing if a
                  * thrasher rule was found but no thresholds were
                  * hit. We only break out of our do loop if the
                  * response was positive. 
                  */
-                ret = webfw2_thrasher(rec, config, filter, src_ip, rule->action);
+                ret =
+                    webfw2_thrasher(rec, config, filter, src_ip,
+                                    rule->action);
 
-		PRINT_DEBUG("Thrasher (%d) packet sent for %s. Ret status: %d\n",
-			rule->action, src_ip, ret);
+                PRINT_DEBUG
+                    ("Thrasher (%d) packet sent for %s. Ret status: %d\n",
+                     rule->action, src_ip, ret);
 
-                if (ret != DECLINED) 
-		    /* return was positive, we want to stop all
-		       further processing */
+                if (ret != DECLINED)
+                    /*
+                     * return was positive, we want to stop all
+                     * further processing 
+                     */
                     break;
             }
 
             /*
              * check to see if we should continue rule traversal 
              */
-	    if (rule->action == FILTER_PASS   || 
-	        rule->action >= FILTER_THRASH && 
-		rule->action <= FILTER_THRASH_PROFILE_v3)
-	    {	
+            if (rule->action == FILTER_PASS ||
+                rule->action >= FILTER_THRASH &&
+                rule->action <= FILTER_THRASH_PROFILE_v3) {
                 char           *curr_passes;
 
                 curr_passes = (char *)
@@ -592,26 +549,30 @@ webfw2_traverse_filter(request_rec * rec,
                  * has passed without blocking 
                  */
                 if (!curr_passes)
-		    curr_passes = apr_psprintf(rec->pool,
-			    "%s:%s", src_ip, rule->name);
+                    curr_passes = apr_psprintf(rec->pool,
+                                               "%s:%s", src_ip,
+                                               rule->name);
                 else
                     curr_passes = apr_psprintf(rec->pool,
-                                               "%s -> %s:%s", 
-					       curr_passes, src_ip, rule->name);
+                                               "%s -> %s:%s",
+                                               curr_passes, src_ip,
+                                               rule->name);
 
                 apr_table_set(rec->notes, "webfw2_passed", curr_passes);
                 current_rule = rule->next;
                 rule = NULL;
                 continue;
-            } 
+            }
 
-	    /* we have matched a rule with no special conditions */
-	    ret = rule->action;
-	    break;
+            /*
+             * we have matched a rule with no special conditions 
+             */
+            ret = rule->action;
+            break;
         } while (1);
 
-	if (ret != DECLINED)
-	    break;
+        if (ret != DECLINED)
+            break;
     }
 
     *sip = src_ip;
@@ -644,25 +605,25 @@ webfw2_handler(request_rec * rec)
 
     if (!wf2_filter->filter || !wf2_filter->filter->rule_count)
         return DECLINED;
-    
+
 #ifdef APR_HAS_THREADS
     apr_thread_rwlock_wrlock(wf2_filter->rwlock);
 #endif
 
     webfw2_set_interesting_notes(rec);
 
-    /*   
+    /*
      * set our current rule, which is going to be
      * the start of all rules. 
      */
     current_rule = wf2_filter->filter->head;
 
-    /*   
+    /*
      * grab all the source addresses within the request 
      */
     addrs = webfw2_find_all_sources(rec);
 
-    do { 
+    do {
         /*
          * XXX There is an issue here. Currently if the rule is a 
          * thrasher action it will only match the first IP within 
@@ -727,12 +688,13 @@ webfw2_handler(request_rec * rec)
             apr_table_set(rec->notes, "webfw2_rule", rule->name);
             apr_table_set(rec->subprocess_env, "webfw2_rule", rule->name);
             apr_table_set(rec->notes, "webfw2_matched_ip", matched_src_ip);
-            apr_table_set(rec->subprocess_env, "webfw2_matched_ip", matched_src_ip);
+            apr_table_set(rec->subprocess_env, "webfw2_matched_ip",
+                          matched_src_ip);
         }
 
         if (rule->update_rule) {
             PRINT_DEBUG("Updating Dynamic rule %s with src-ip %s\n",
-                    rule->update_rule->name, matched_src_ip);
+                        rule->update_rule->name, matched_src_ip);
             filter_rule_add_network(rule->update_rule, matched_src_ip,
                                     RULE_MATCH_SRCADDR, NULL);
         }
@@ -827,7 +789,9 @@ webfw2_init_config(apr_pool_t * pool, server_rec * svr)
      */
     config->thrasher_retry = 60;
 
-    /* by default we want to hook into the check_access request processing. */
+    /*
+     * by default we want to hook into the check_access request processing. 
+     */
     config->hook_access = 1;
     config->hook_translate = 0;
 
@@ -1102,7 +1066,7 @@ static const char *
 cmd_hook_level(cmd_parms * cmd, void *dummy_config, const char *arg)
 {
     webfw2_config_t *config;
-    char *type;
+    char           *type;
 
     type = cmd->info;
 
@@ -1147,40 +1111,26 @@ webfw2_hooker(apr_pool_t * pool)
     ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
                  "initializing mod_webfw2 v%s", VERSION);
 
-    ap_hook_child_init(
-	    webfw2_child_init, 
-	    NULL, 
-	    NULL, 
-	    APR_HOOK_MIDDLE);
+    ap_hook_child_init(webfw2_child_init, NULL, NULL, APR_HOOK_MIDDLE);
 
-    ap_hook_translate_name(
-	    webfw2_handler_translate_hook, 
-	    beforeme_list,
-	    afterme_list, 
-	    APR_HOOK_MIDDLE);
+    ap_hook_translate_name(webfw2_handler_translate_hook,
+                           beforeme_list, afterme_list, APR_HOOK_MIDDLE);
 
-    ap_hook_access_checker(
-	    webfw2_handler_access_hook, 
-	    beforeme_list,
-	    afterme_list, 
-	    APR_HOOK_MIDDLE);
+    ap_hook_access_checker(webfw2_handler_access_hook,
+                           beforeme_list, afterme_list, APR_HOOK_MIDDLE);
 
-    ap_hook_log_transaction(
-	    webfw2_updater, 
-	    NULL, 
-	    NULL,
-	    APR_HOOK_REALLY_LAST);
+    ap_hook_log_transaction(webfw2_updater,
+                            NULL, NULL, APR_HOOK_REALLY_LAST);
 
-    ap_hook_post_read_request(
-	    webfw2_handler_post_read_hook,
-	    beforeme_list,
-	    afterme_list, APR_HOOK_MIDDLE);
-	    	
+    ap_hook_post_read_request(webfw2_handler_post_read_hook,
+                              beforeme_list,
+                              afterme_list, APR_HOOK_MIDDLE);
+
 }
 
 const command_rec webfw2_directives[] = {
     AP_INIT_TAKE1("webfw2_config",
-                  (void *)cmd_config_file,
+                  (void *) cmd_config_file,
                   NULL,
                   RSRC_CONF,
                   "The full path to where the webfw2 configuration lives"),
@@ -1254,20 +1204,20 @@ const command_rec webfw2_directives[] = {
                   "attempts a reconnect"),
 
     AP_INIT_FLAG("webfw2_hook_translate",
-                 (void *)cmd_hook_level,
+                 (void *) cmd_hook_level,
                  "translate",
                  RSRC_CONF,
                  "Hook inside the ap_hook_translate_name() portion of the request "
                  "processing. This is good to process pre mod_rewrite/proxy"),
 
     AP_INIT_FLAG("webfw2_hook_access",
-                 (void *)cmd_hook_level,
+                 (void *) cmd_hook_level,
                  "access",
                  RSRC_CONF,
                  "Hook inside the ap_hook_access_checker() request processing"),
 
     AP_INIT_FLAG("webfw2_hook_post_read",
-                 (void *)cmd_hook_level,
+                 (void *) cmd_hook_level,
                  "post_read",
                  RSRC_CONF,
                  "Hook inside post_read_request(), very early on in request processing"),

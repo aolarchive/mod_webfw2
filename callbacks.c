@@ -2,7 +2,7 @@
 #include "mod_webfw2.h"
 #include "callbacks.h"
 
-void    *    
+void           *
 webfw2_srcaddr_cb(apr_pool_t * pool, void *fc_data, const void **usrdata)
 {
     if (!usrdata)
@@ -11,7 +11,7 @@ webfw2_srcaddr_cb(apr_pool_t * pool, void *fc_data, const void **usrdata)
     return (void *) usrdata[1];
 }
 
-void    *    
+void           *
 webfw2_dstaddr_cb(apr_pool_t * pool, void *fc_data, const void **userdata)
 {
     if (!userdata)
@@ -20,7 +20,7 @@ webfw2_dstaddr_cb(apr_pool_t * pool, void *fc_data, const void **userdata)
     return (void *) userdata[2];
 }
 
-void    *    
+void           *
 webfw2_env_cb(apr_pool_t * pool, void *fc_data, const void **userdata)
 {
     request_rec    *rec;
@@ -35,7 +35,7 @@ webfw2_env_cb(apr_pool_t * pool, void *fc_data, const void **userdata)
     return data ? data : "__wf2-NULL__";
 }
 
-void    *    
+void           *
 webfw2_note_cb(apr_pool_t * pool, void *fc_data, const void **userdata)
 {
     request_rec    *rec;
@@ -50,7 +50,7 @@ webfw2_note_cb(apr_pool_t * pool, void *fc_data, const void **userdata)
     return data ? data : "__wf2-NULL__";
 }
 
-void    *    
+void           *
 webfw2_header_cb(apr_pool_t * pool, void *fc_data, const void **userdata)
 {
     request_rec    *rec;
@@ -73,27 +73,28 @@ webfw2_register_callbacks(apr_pool_t * pool, webfw2_config_t * config,
     char          **list;
 
     filter_register_user_cb(filter->filter,
-                           (void *) webfw2_srcaddr_cb, RULE_MATCH_SRCADDR,
-                           NULL);
+                            (void *) webfw2_srcaddr_cb, RULE_MATCH_SRCADDR,
+                            NULL);
 
     filter_register_user_cb(filter->filter, (void *) webfw2_dstaddr_cb,
-                           RULE_MATCH_DSTADDR, NULL);
+                            RULE_MATCH_DSTADDR, NULL);
 
     if (config->match_header) {
         list = (char **) config->match_header->elts;
 
         for (i = 0; i < config->match_header->nelts; i++)
             filter_register_user_cb(filter->filter,
-                                   (void *) webfw2_header_cb,
-                                   RULE_MATCH_STRING, list[i]);
+                                    (void *) webfw2_header_cb,
+                                    RULE_MATCH_STRING, list[i]);
     }
 
     if (config->match_note) {
         list = (char **) config->match_note->elts;
 
         for (i = 0; i < config->match_note->nelts; i++)
-            filter_register_user_cb(filter->filter, (void *) webfw2_note_cb,
-                                   RULE_MATCH_STRING, list[i]);
+            filter_register_user_cb(filter->filter,
+                                    (void *) webfw2_note_cb,
+                                    RULE_MATCH_STRING, list[i]);
     }
 
     if (config->match_env) {
@@ -101,6 +102,6 @@ webfw2_register_callbacks(apr_pool_t * pool, webfw2_config_t * config,
 
         for (i = 0; i < config->match_env->nelts; i++)
             filter_register_user_cb(filter->filter, (void *) webfw2_env_cb,
-                                   RULE_MATCH_STRING, list[i]);
+                                    RULE_MATCH_STRING, list[i]);
     }
 }

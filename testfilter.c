@@ -9,7 +9,7 @@
 int
 main(int argc, char **argv)
 {
-    filter_t *filter;
+    filter_t       *filter;
     apr_pool_t     *root_pool;
 
     if (argc <= 1) {

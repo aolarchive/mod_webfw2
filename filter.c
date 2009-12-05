@@ -36,15 +36,15 @@ static struct n_t_s {
 int
 filter_validate_ip(char *addrstr)
 {
-    struct in_addr sa;
+    struct in_addr  sa;
 
-    if(inet_pton(AF_INET, addrstr, &sa))
-	return 1;
+    if (inet_pton(AF_INET, addrstr, &sa))
+        return 1;
 
     PRINT_DEBUG("%s is not a valid IP address!\n", addrstr);
 
     return 0;
-} 
+}
 
 void
 free_tokens(char **tokens)
@@ -73,38 +73,37 @@ rule_token_to_int(char *token)
     return -1;
 }
 
-char *
+char           *
 filter_trim_str(char *str)
 {
-    size_t len = 0;
-    char *frontp = str - 1;
-    char *endp = NULL;
+    size_t          len = 0;
+    char           *frontp = str - 1;
+    char           *endp = NULL;
 
-    if( str == NULL )
-            return NULL;
+    if (str == NULL)
+        return NULL;
 
-    if( str[0] == '\0' )
-            return str;
+    if (str[0] == '\0')
+        return str;
 
     len = strlen(str);
     endp = str + len;
 
-    while(isspace(*(++frontp)));
-    while(isspace(*(--endp)) && endp != frontp);
+    while (isspace(*(++frontp)));
+    while (isspace(*(--endp)) && endp != frontp);
 
-    if( str + len - 1 != endp )
-            *(endp + 1) = '\0';
+    if (str + len - 1 != endp)
+        *(endp + 1) = '\0';
 
-    else if( frontp != str &&  endp == frontp )
-            *str = '\0';
+    else if (frontp != str && endp == frontp)
+        *str = '\0';
 
     endp = str;
 
-    if(frontp != str)
-    {
-	while( *frontp ) 
-	    *endp++ = *frontp++;
-	*endp = '\0';
+    if (frontp != str) {
+        while (*frontp)
+            *endp++ = *frontp++;
+        *endp = '\0';
     }
     return str;
 }
@@ -132,10 +131,12 @@ filter_tokenize_str(char *string, const char *sep, int *nelts)
     for (tok = strtok_r(str_copy, sep, &endptr);
          tok != NULL; tok = strtok_r(NULL, sep, &endptr)) {
 
-        if (ncount >= arrsize-1) 
-	    /* leave enough room for the last NULL */
-	    break;
-	tok = filter_trim_str(tok);
+        if (ncount >= arrsize - 1)
+            /*
+             * leave enough room for the last NULL 
+             */
+            break;
+        tok = filter_trim_str(tok);
 
         PRINT_DEBUG("Got token '%s'\n", tok);
         arr[ncount++] = strdup(tok);
@@ -144,7 +145,7 @@ filter_tokenize_str(char *string, const char *sep, int *nelts)
     free(str_copy);
 
     if (nelts)
-	*nelts = ncount;
+        *nelts = ncount;
 
     return arr;
 }
@@ -158,7 +159,7 @@ filter_rule_flow_init(apr_pool_t * pool)
 
 static int
 filter_match_srcaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
-                    void *usrdata)
+                     void *usrdata)
 {
     if (!rule->src_addrs)
         return 1;
@@ -170,8 +171,8 @@ filter_match_srcaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
 }
 
 static int
-filter_match_not_dstaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
-                        void *usrdata)
+filter_match_not_dstaddr(apr_pool_t * pool, filter_rule_t * rule,
+                         void *data, void *usrdata)
 {
     if (!rule->dst_addrs)
         return 1;
@@ -183,8 +184,8 @@ filter_match_not_dstaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
 }
 
 static int
-filter_match_not_srcaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
-                        void *usrdata)
+filter_match_not_srcaddr(apr_pool_t * pool, filter_rule_t * rule,
+                         void *data, void *usrdata)
 {
     if (!rule->src_addrs)
         return 1;
@@ -197,7 +198,7 @@ filter_match_not_srcaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
 
 static int
 filter_match_dstaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
-                    void *usrdata)
+                     void *usrdata)
 {
     if (!rule->dst_addrs)
         return 1;
@@ -210,7 +211,7 @@ filter_match_dstaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
 
 static int
 filter_match_string(apr_pool_t * pool,
-                   filter_rule_t * rule, void *val, void *key)
+                    filter_rule_t * rule, void *val, void *key)
 {
     apr_hash_t     *string_hash;
 
@@ -262,68 +263,74 @@ filter_match_string(apr_pool_t * pool,
     return 0;
 }
 
-static int 
-filter_match_not_string(apr_pool_t *pool,
-        filter_rule_t *rule, void *val, void *key)
+static int
+filter_match_not_string(apr_pool_t * pool,
+                        filter_rule_t * rule, void *val, void *key)
 {
-    apr_hash_t *string_hash;
+    apr_hash_t     *string_hash;
 
     if (!rule->strings)
-        /* there are no strings defined, this is a match */
+        /*
+         * there are no strings defined, this is a match 
+         */
     {
-	PRINT_DEBUG("No strings loaded in rule\n");
+        PRINT_DEBUG("No strings loaded in rule\n");
         return 1;
     }
 
-    if (!key || !val)
-    {
-	PRINT_DEBUG("No key/val %p %p\n", key, val);
+    if (!key || !val) {
+        PRINT_DEBUG("No key/val %p %p\n", key, val);
         return 0;
     }
 
-    string_hash = apr_hash_get(rule->strings, (char *)key, 
-            APR_HASH_KEY_STRING);
+    string_hash = apr_hash_get(rule->strings, (char *) key,
+                               APR_HASH_KEY_STRING);
 
     if (!string_hash)
-	/* the hash for the key was not found, this means
-	   the thing doesn't even exist in our rule, so return a 
-	   non-match */
+        /*
+         * the hash for the key was not found, this means
+         * the thing doesn't even exist in our rule, so return a 
+         * non-match 
+         */
     {
-	PRINT_DEBUG("%s was not found as a likely candidate in the hash\n",
-		(char *)key); 
+        PRINT_DEBUG("%s was not found as a likely candidate in the hash\n",
+                    (char *) key);
 
         return 0;
     }
 
-    if (apr_hash_get(string_hash, (char *)val, APR_HASH_KEY_STRING))
-	/* this value was found within our hash, so in this case
-	   we want to return a non match */
+    if (apr_hash_get(string_hash, (char *) val, APR_HASH_KEY_STRING))
+        /*
+         * this value was found within our hash, so in this case
+         * we want to return a non match 
+         */
     {
-	PRINT_DEBUG("%s was found\n", (char *)val);
-	return 0;
+        PRINT_DEBUG("%s was found\n", (char *) val);
+        return 0;
     }
 
-    if (rule->strings_have_regex)
-    {
-	apr_array_header_t *regex_array;
-	int i;
+    if (rule->strings_have_regex) {
+        apr_array_header_t *regex_array;
+        int             i;
 
-	regex_array = (apr_array_header_t *)
-	    apr_hash_get(string_hash, REGEX_KEY, APR_HASH_KEY_STRING);
+        regex_array = (apr_array_header_t *)
+            apr_hash_get(string_hash, REGEX_KEY, APR_HASH_KEY_STRING);
 
-	if (!regex_array)
-	    return 0;
+        if (!regex_array)
+            return 0;
 
-	for (i = 0; i < regex_array->nelts; i++)
-	{
-	    /* if any of these matched, return a non found. */
-	    regex_t *tomatch = ((regex_t **)regex_array->elts)[i];
+        for (i = 0; i < regex_array->nelts; i++) {
+            /*
+             * if any of these matched, return a non found. 
+             */
+            regex_t        *tomatch = ((regex_t **) regex_array->elts)[i];
 
-	    PRINT_DEBUG("Comparing value %s to %p\n", (char *)val, tomatch);
+            PRINT_DEBUG("Comparing value %s to %p\n", (char *) val,
+                        tomatch);
 
-	    if (regexec(tomatch, val, 0, NULL, 0) == 0)
-		return 0;
-	}
+            if (regexec(tomatch, val, 0, NULL, 0) == 0)
+                return 0;
+        }
     }
 
     return 1;
@@ -402,18 +409,18 @@ filter_flow_from_str(apr_pool_t * pool, char *flowstr)
             APPEND_FLOW(flow, tail, new_flow);
 
             break;
-	case RULE_MATCH_NOT_STRING:
-	    PRINT_DEBUG("Found a RULE_MATCH_NOT_STRING\n");
-	    tok[strlen(tok) - 1] = 0;
-	    tok = &tok[14];
+        case RULE_MATCH_NOT_STRING:
+            PRINT_DEBUG("Found a RULE_MATCH_NOT_STRING\n");
+            tok[strlen(tok) - 1] = 0;
+            tok = &tok[14];
 
-	    PRINT_DEBUG("Token is %s\n", tok);
-	    new_flow = filter_rule_flow_init(pool);
-	    new_flow->callback = filter_match_not_string;
-	    new_flow->type = RULE_MATCH_NOT_STRING;
-	    new_flow->user_data = (void *) apr_pstrdup(pool, tok);
-	    APPEND_FLOW(flow, tail, new_flow);
-	    break;
+            PRINT_DEBUG("Token is %s\n", tok);
+            new_flow = filter_rule_flow_init(pool);
+            new_flow->callback = filter_match_not_string;
+            new_flow->type = RULE_MATCH_NOT_STRING;
+            new_flow->user_data = (void *) apr_pstrdup(pool, tok);
+            APPEND_FLOW(flow, tail, new_flow);
+            break;
         case RULE_MATCH_NOT_SRCADDR:
             PRINT_DEBUG("Foudn a RULE_MATCH_NOT_SRCADDR\n");
             new_flow = filter_rule_flow_init(pool);
@@ -463,10 +470,10 @@ filter_rule_add_flow(filter_rule_t * rule, char *data)
     return 0;
 }
 
-filter_t *
+filter_t       *
 filter_init(apr_pool_t * parent)
 {
-    filter_t *ret;
+    filter_t       *ret;
     ret = apr_pcalloc(parent, sizeof(filter_t));
     apr_pool_create(&ret->pool, parent);
 
@@ -477,7 +484,7 @@ filter_init(apr_pool_t * parent)
 static filter_rule_t *
 filter_rule_init(apr_pool_t * parent)
 {
-    filter_rule_t   *rule;
+    filter_rule_t  *rule;
 
     rule = (filter_rule_t *)
         apr_pcalloc(parent, sizeof(filter_rule_t));
@@ -492,10 +499,9 @@ filter_rule_init(apr_pool_t * parent)
     return rule;
 }
 
-filter_rule_t
-    * filter_get_rule(filter_t * filter, const char *rule_name)
+filter_rule_t * filter_get_rule(filter_t * filter, const char *rule_name)
 {
-    filter_rule_t   *ruleptr;
+    filter_rule_t  *ruleptr;
 
     if (!filter || !rule_name)
         return NULL;
@@ -540,26 +546,26 @@ filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
     else if (!strcmp(actionstr, "deny"))
         action = FILTER_DENY;
     else if (!strcmp(actionstr, "thrash"))
-	action = FILTER_THRASH;
-    else if (!strcmp(actionstr, "thrash-v1")) 
-	action = FILTER_THRASH;
+        action = FILTER_THRASH;
+    else if (!strcmp(actionstr, "thrash-v1"))
+        action = FILTER_THRASH;
     else if (!strcmp(actionstr, "thrash-v1 profile"))
-	action = FILTER_THRASH_PROFILE;
+        action = FILTER_THRASH_PROFILE;
     else if (!strcmp(actionstr, "thrash_profile"))
-	action = FILTER_THRASH_PROFILE;
+        action = FILTER_THRASH_PROFILE;
     else if (!strcmp(actionstr, "thrash-profile"))
-	action = FILTER_THRASH_PROFILE;
+        action = FILTER_THRASH_PROFILE;
     else if (!strcmp(actionstr, "thrash-v2"))
-	action = FILTER_THRASH_v2;
+        action = FILTER_THRASH_v2;
     else if (!strcmp(actionstr, "thrash-v2 profile"))
-	action = FILTER_THRASH_PROFILE_v2;
+        action = FILTER_THRASH_PROFILE_v2;
     else if (!strcmp(actionstr, "thrash-v3"))
-	action = FILTER_THRASH_v3;
+        action = FILTER_THRASH_v3;
     else if (!strcmp(actionstr, "thrash-v3 profile"))
-	action = FILTER_THRASH_PROFILE_v3;
+        action = FILTER_THRASH_PROFILE_v3;
     else if (!strcmp(actionstr, "pass"))
-	action = FILTER_PASS;
-    else 
+        action = FILTER_PASS;
+    else
         /*
          * application controlled action 
          */
@@ -573,8 +579,8 @@ filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
 
 int
 filter_rule_add_network(filter_rule_t * rule,
-                       const char *network, const int direction,
-                       void *data)
+                        const char *network, const int direction,
+                        void *data)
 {
     patricia_tree_t **tree;
     patricia_tree_t *rtree;
@@ -604,7 +610,7 @@ filter_rule_add_network(filter_rule_t * rule,
 
 static int
 filter_rule_add_string(filter_rule_t * rule, char *key, char *val,
-                      const int is_regex)
+                       const int is_regex)
 {
     /*
      * a string match set is a hash of hashes. The "key" in this case is
@@ -703,7 +709,7 @@ filter_rule_add_string(filter_rule_t * rule, char *key, char *val,
 
 static int
 filter_match_rulen(apr_pool_t * pool, filter_t * filter,
-                  filter_rule_t * rule, const void *usrdata)
+                   filter_rule_t * rule, const void *usrdata)
 {
     int             matched_rule = 0;
     rule_flow_t    *flows = rule->flow;
@@ -736,7 +742,7 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
             }
             data = filter->callbacks.dst_addr_cb(pool, NULL, usrdata);
             break;
-	case RULE_MATCH_NOT_STRING:
+        case RULE_MATCH_NOT_STRING:
         case RULE_MATCH_STRING:
             /*
              * first we must find the callback associated with this
@@ -818,20 +824,20 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
     return matched_rule;
 }
 
-filter_rule_t   *
-filter_traverse_filter(filter_t * filter, filter_rule_t *start_rule, 
-	const void *usrdata)
+filter_rule_t  *
+filter_traverse_filter(filter_t * filter, filter_rule_t * start_rule,
+                       const void *usrdata)
 {
-    filter_rule_t   *rule;
+    filter_rule_t  *rule;
     apr_pool_t     *subpool;
 
     if (!filter)
         return NULL;
 
     if (start_rule)
-	rule = start_rule;
+        rule = start_rule;
     else
-	rule = filter->head;
+        rule = filter->head;
 
     apr_pool_create(&subpool, NULL);
 
@@ -849,8 +855,8 @@ filter_traverse_filter(filter_t * filter, filter_rule_t *start_rule,
 
 int
 filter_register_user_cb(filter_t * filter,
-                       void *(*cb) (apr_pool_t * p, void *fc_data,
-                                    const void *d), int type, void *data)
+                        void *(*cb) (apr_pool_t * p, void *fc_data,
+                                     const void *d), int type, void *data)
 {
     /*
      * If a callback isn't registered for a specific
@@ -882,7 +888,7 @@ static filter_rule_t *
 parse_whitelist(filter_t * filter, const char *filename)
 {
     FILE           *wlf;
-    filter_rule_t   *filter_rule;
+    filter_rule_t  *filter_rule;
     char           *buf;
     char           *bptr;
 
@@ -906,14 +912,14 @@ parse_whitelist(filter_t * filter, const char *filename)
     buf = malloc(1024);
 
     while ((bptr = fgets(buf, 1023, wlf))) {
-	
-	buf = filter_trim_str(buf);
+
+        buf = filter_trim_str(buf);
 
         if (!buf || *buf == '\0' || *buf == '#')
             continue;
 
         if (filter_rule_add_network(filter_rule, buf,
-                                   RULE_MATCH_SRCADDR, NULL) == -1) {
+                                    RULE_MATCH_SRCADDR, NULL) == -1) {
             free(buf);
             fclose(wlf);
             return NULL;
@@ -927,11 +933,11 @@ parse_whitelist(filter_t * filter, const char *filename)
     return filter_rule;
 }
 
-filter_t *
+filter_t       *
 filter_parse_config(apr_pool_t * pool, const char *filename)
 {
     cfg_t          *cfg;
-    filter_t *filter;
+    filter_t       *filter;
     char           *whitelist_file;
     unsigned int    n,
                     i;
@@ -951,12 +957,12 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
                 CFGF_NONE),
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
         CFG_BOOL("log", cfg_true, CFGF_NONE),
-	CFG_BOOL("pass", cfg_false, CFGF_NONE),
+        CFG_BOOL("pass", cfg_false, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
         CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
         CFG_STR("action", "deny", CFGF_NONE),
-	CFG_STR("update-rule", NULL, CFGF_NONE),
+        CFG_STR("update-rule", NULL, CFGF_NONE),
         CFG_END()
     };
 
@@ -981,7 +987,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
      * first setup a rule for our whitelist if needed 
      */
     if (whitelist_file) {
-        filter_rule_t   *whitelist_rule;
+        filter_rule_t  *whitelist_rule;
         whitelist_rule = parse_whitelist(filter, whitelist_file);
         if (whitelist_rule) {
             filter_add_rule(filter, whitelist_rule);
@@ -1009,27 +1015,29 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
          * re: ugly [ HERE!! ] 
          */
         char           *flow;
-	char           *update_rule;
+        char           *update_rule;
         int             addr_cnt;
-        filter_rule_t   *filter_rule;
+        filter_rule_t  *filter_rule;
         char           *action;
         cfg_t          *rule;
 
         PRINT_DEBUG("Parsing rule %d\n", i);
 
-        rule        = cfg_getnsec(cfg, "rule", i);
-        flow        = cfg_getstr(rule, "flow");
-	update_rule = cfg_getstr(rule, "update-rule");
+        rule = cfg_getnsec(cfg, "rule", i);
+        flow = cfg_getstr(rule, "flow");
+        update_rule = cfg_getstr(rule, "update-rule");
 
         filter_rule = filter_rule_init(filter->pool);
-        filter_rule->name = apr_pstrdup(filter_rule->pool, cfg_title(rule));
+        filter_rule->name =
+            apr_pstrdup(filter_rule->pool, cfg_title(rule));
         filter_rule->log = cfg_getbool(rule, "log");
 
         PRINT_DEBUG("Rule name: %s\n", filter_rule->name);
         PRINT_DEBUG("Found flow '%s'\n", flow);
 
         filter_rule_add_flow(filter_rule,
-                            (char *) apr_pstrdup(filter_rule->pool, flow));
+                             (char *) apr_pstrdup(filter_rule->pool,
+                                                  flow));
 
         if ((action = cfg_getstr(rule, "action")))
             filter_rule_set_action(filter_rule, action);
@@ -1043,7 +1051,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
 
             PRINT_DEBUG("Adding %s to our src_addr radix tree\n", addr);
             filter_rule_add_network(filter_rule, addr, RULE_MATCH_SRCADDR,
-                                   NULL);
+                                    NULL);
         }
 
         PRINT_DEBUG("%d dst_addrs defined\n", cfg_size(rule, "dst_addrs"));
@@ -1054,7 +1062,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
                 cfg_getnstr(rule, "dst_addrs", addr_cnt);
             PRINT_DEBUG("Adding %s to our dst_addr radix tree\n", addr);
             filter_rule_add_network(filter_rule, addr, RULE_MATCH_DSTADDR,
-                                   NULL);
+                                    NULL);
         }
 
         int             str_match_size = cfg_size(rule, "match_string");
@@ -1074,7 +1082,8 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
                     cfg_getnstr(matcher, "values", value_cnt);
 
                 filter_rule_add_string(filter_rule,
-                                      (char *) cfg_title(matcher), str, 0);
+                                       (char *) cfg_title(matcher), str,
+                                       0);
             }
 
             for (value_cnt = 0; value_cnt < cfg_size(matcher, "regex");
@@ -1083,20 +1092,20 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
                     cfg_getnstr(matcher, "regex", value_cnt);
 
                 filter_rule_add_string(filter_rule,
-                                      (char *) cfg_title(matcher), str, 1);
+                                       (char *) cfg_title(matcher), str,
+                                       1);
             }
 
         }
 
-	if (update_rule)
-	{
-	    filter_rule_t *ud_rule;
+        if (update_rule) {
+            filter_rule_t  *ud_rule;
 
-	    ud_rule = filter_get_rule(filter, update_rule);
+            ud_rule = filter_get_rule(filter, update_rule);
 
-	    if (ud_rule)
-		filter_rule->update_rule = ud_rule;
-	}
+            if (ud_rule)
+                filter_rule->update_rule = ud_rule;
+        }
 
         filter_add_rule(filter, filter_rule);
     }
@@ -1147,8 +1156,8 @@ filter_str3_cb(apr_pool_t * pool, void *fc_data, const void *d)
 int
 main(int argc, char **argv)
 {
-    filter_t        *filter;
-    filter_rule_t   *rule;
+    filter_t       *filter;
+    filter_rule_t  *rule;
 
     apr_pool_t     *root_pool;
     apr_initialize();
@@ -1159,10 +1168,14 @@ main(int argc, char **argv)
 
     filter_register_user_cb(filter, src_addr_cb, RULE_MATCH_SRCADDR, NULL);
     filter_register_user_cb(filter, dst_addr_cb, RULE_MATCH_DSTADDR, NULL);
-    filter_register_user_cb(filter, filter_str_cb, RULE_MATCH_STRING, "stuff");
-    filter_register_user_cb(filter, filter_str2_cb, RULE_MATCH_STRING, "lame");
-    filter_register_user_cb(filter, filter_str2_cb, RULE_MATCH_STRING, "guh");
-    filter_register_user_cb(filter, filter_str3_cb, RULE_MATCH_STRING, "chadorder");
+    filter_register_user_cb(filter, filter_str_cb, RULE_MATCH_STRING,
+                            "stuff");
+    filter_register_user_cb(filter, filter_str2_cb, RULE_MATCH_STRING,
+                            "lame");
+    filter_register_user_cb(filter, filter_str2_cb, RULE_MATCH_STRING,
+                            "guh");
+    filter_register_user_cb(filter, filter_str3_cb, RULE_MATCH_STRING,
+                            "chadorder");
 
     rule = filter_traverse_filter(filter, (void *) argv);
 
