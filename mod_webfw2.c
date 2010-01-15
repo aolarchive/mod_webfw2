@@ -602,6 +602,7 @@ webfw2_handler(request_rec * rec)
 
     ap_assert(wf2_filter);
 
+    printf("%p %d\n", wf2_filter->filter, wf2_filter->filter->rule_count);
 
     if (!wf2_filter->filter || !wf2_filter->filter->rule_count)
         return DECLINED;

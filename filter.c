@@ -522,17 +522,21 @@ filter_rule_t * filter_get_rule(filter_t * filter, const char *rule_name)
 static int
 filter_add_rule(filter_t * filter, filter_rule_t * rule)
 {
+    PRINT_DEBUG("inserting %p into filter %p\n", rule, filter);
+
     if (!filter || !rule)
         return -1;
 
     if (!filter->tail) {
         filter->head = filter->tail = rule;
+	filter->rule_count++;
         return 0;
     }
 
     filter->tail->next = rule;
     filter->tail = rule;
     filter->rule_count++;
+    PRINT_DEBUG("rule count is now %d\n", filter->rule_count);
     return 0;
 }
 
@@ -958,6 +962,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
         CFG_BOOL("log", cfg_true, CFGF_NONE),
         CFG_BOOL("pass", cfg_false, CFGF_NONE),
+	CFG_STR("set-cookie", NULL, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
         CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
