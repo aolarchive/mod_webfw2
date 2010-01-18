@@ -1,35 +1,21 @@
-webfw2_rw_xff X-Forwarded-For "src-ip 10.10.10.10 last 1 first 1"
-#webfw_rw_xff X-NSCLIENT-IP
-webfw2_update_interval 10
-webfw2_config /opt/sinkhole/conf/webfw2_rules.conf
-### Useful mod_chad notes
-webfw2_match_note "chadorder"
-webfw2_match_note "chadccount"
-webfw2_match_note "CHADHDO-accept"
-webfw2_match_note "CHADHDO-accept-encoding"
-#webfw2_match_note "CHADHDO-accept-language"
-#webfw2_match_note "CHADHDO-accept-charset"
-### Useful mod_ipintell notes
-webfw2_match_note "COUNTRY"
-webfw2_match_note "chad"
-webfw2_match_note "chadmethod"
-
-### where to hook
-
-# default request processing hook is check_access,
-# turn this on to hook a bit before that at the 
-# request translation layer.
-webfw2_hook_translate On 
-
-# new "interesting" notes
-# webfw2_match_note "__wf2-uri__"
-# webfw2_match_note "__wf2-canonical-filename__"
-# webfw2_match_note "__wf2-unparsed-uri__"
-# webfw2_match_note "__wf2-hostname__"
-# in the case that those notes return NULL
-# the following string will be returned:
-# __wf2-NULL__
-
-# dynamic rule updating
-# webfw2_dynamic_srcaddr_block "test_dynamic"
-
+webfw2_rw_xff X-Forwarded-For "src-ip 127.0.0.5 src-ip 127.0.0.6 last 1 first 1"
+webfw2_config                 /home/mthomas/mod_webfw2/test.conf
+webfw2_update_interval        10
+webfw2_match_note             "application-set-note"
+webfw2_match_note             "__wf2-uri__"
+webfw2_match_note             "__wf2-canonical-filename__"
+webfw2_match_note             "__wf2-unparsed-uri__"
+webfw2_match_note             "__wf2-hostname__"
+webfw2_match_env              "application-set-environment"
+webfw2_match_header           "user-agent"
+webfw2_match_header           "content-type"
+webfw2_match_header           "cookie"
+webfw2_default_action         403
+webfw2_default_thrash_action  402
+webfw2_thrasher_host          "localhost"
+webfw2_thrasher_port          1979
+webfw2_thrasher_timeout       50000
+webfw2_thrasher_retry         5 
+# webfw2_hook_translate On
+# webfw2_hook_access On
+# webfw2_hook_post_read On

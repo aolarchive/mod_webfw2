@@ -50,9 +50,9 @@ def apr_setup():
     apr_config = apxs_query(env["apxs"], 'APR_CONFIG')
     apu_config = apxs_query(env["apxs"], 'APU_CONFIG')
 
-    env.ParseConfig(apr_config + ' --includes --ldflags')
-    #env.ParseConfig(apr_config + ' --cflags --cppflags --includes --ldflags')
-    env.ParseConfig(apu_config + ' --includes  --ldflags')
+    #env.ParseConfig(apr_config + ' --includes --ldflags')
+    env.ParseConfig(apr_config + ' --cflags --cppflags --includes --ldflags')
+    #env.ParseConfig(apu_config + ' --includes  --ldflags')
 
     #env.ParseConfig(env['apxs'] + ' -q EXTRA_CFLAGS')
     env.ParseConfig(env['apxs'] + ' -q EXTRA_CPPFLAGS')

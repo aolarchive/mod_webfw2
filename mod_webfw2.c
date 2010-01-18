@@ -374,7 +374,10 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     PRINT_DEBUG("about to make a thrasher query\n");
 
     if (!config->thrasher_host || !config->thrasher_port)
+    {
+	PRINT_DEBUG("%p %p\n", config->thrasher_host, config->thrasher_port);
         return DECLINED;
+    }
 
     /*
      * if this is a v3 packet - we want to randomly generate
@@ -597,6 +600,7 @@ webfw2_handler(request_rec * rec)
     filter_rule_t  *rule;
     apr_array_header_t *addrs;
 
+#if 0
 #ifdef ENABLE_APREQ
     const apr_table_t* args;
     apreq_handle_t *h = apreq_handle_apache2(rec);
@@ -605,6 +609,7 @@ webfw2_handler(request_rec * rec)
         apreq_params_as_string(rec->pool, args, NULL,
             APREQ_JOIN_QUOTE);
     printf("%s\n", params);
+#endif
 #endif
 
     config = ap_get_module_config(rec->server->module_config,
@@ -1030,15 +1035,18 @@ cmd_set_action(cmd_parms * cmd, void *dummy_config, const char *arg)
 {
     webfw2_config_t *config;
     char           *val;
+    char *type;
 
     config = ap_get_module_config(cmd->server->module_config,
                                   &webfw2_module);
 
     ap_assert(config);
 
-    if (!strcmp(arg, "denied"))
+    type = cmd->info;
+
+    if (!strcmp(type, "denied"))
         config->default_action = atoi(arg);
-    else if (!strcmp(arg, "thrasher"))
+    else if (!strcmp(type, "thrasher"))
         config->default_taction = atoi(arg);
 
     return NULL;
