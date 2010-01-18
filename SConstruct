@@ -97,23 +97,27 @@ def setup_colors():
     env['LINKCOMSTR']   = link_program_message
 
 def build():
-    sources = ['mod_webfw2.c', 'filter.c', 
-               'patricia.c', 'callbacks.c', 'thrasher.c']
+    sources = ['filter.c', 'patricia.c', 'callbacks.c', 'thrasher.c']
+    test_sources = ['testfilter.c', 'filter.c', 'patricia.c']
+
+    testfilter = env.Program('testfilter', 
+        source = test_sources, LIBS=['apr-1', 'confuse'])
 
     module = env.LoadableModule(
         target = 'mod_webfw2.so', 
-        source = sources, 
+        source = sources + ['mod_webfw2.c'], 
         SHLIBPREFIX='', LIBS=['confuse'])
 
     install_path = apxs_query(env["apxs"], 'exp_libexecdir') 
     imod = env.Install(install_path, source = [module])
     env.Alias('install', imod)
 
-    targets = [module]
+    targets = [module, testfilter]
     env.Default(targets)
+
+    
         
 env = Environment(ENV = os.environ)
 configure()
-#apr_setup()
-#setup_colors()
+setup_colors()
 build()
