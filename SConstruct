@@ -27,10 +27,16 @@ def configure():
                "apr_tables.h", "http_protocol.h", "http_request.h",
                "apr_hash.h",      "apr_strings.h", 
                "http_request.h", "apr_reslist.h", "apr_thread_rwlock.h",
-               "apr_network_io.h"]
+               "apr_network_io.h", "confuse.h"]
+
+    libs = ['apr-1', 'confuse']
 
     for header in headers:
         if not conf.CheckCHeader(header):
+            sys.exit(1)
+
+    for lib in libs:
+        if not conf.CheckLib(lib):
             sys.exit(1)
 
 def apxs_query(path, key):
