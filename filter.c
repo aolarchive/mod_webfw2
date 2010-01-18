@@ -491,7 +491,7 @@ filter_rule_init(apr_pool_t * parent)
 
     PRINT_DEBUG("Initialized new rule at %p\n", rule);
 
-    apr_pool_create(&rule->pool, parent);;
+    apr_pool_create(&rule->pool, parent);
 
     PRINT_DEBUG("Created new pool %p\n", rule->pool);
 
@@ -956,9 +956,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
     };
 
     cfg_opt_t       rule_opts[] = {
-        CFG_STR("flow",
-                "match_src_addr && match_dst_addr || match_http_header",
-                CFGF_NONE),
+        CFG_STR("flow", NULL, CFGF_NONE),
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
         CFG_BOOL("log", cfg_true, CFGF_NONE),
         CFG_BOOL("pass", cfg_false, CFGF_NONE),
@@ -1038,11 +1036,13 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
         filter_rule->log = cfg_getbool(rule, "log");
 
         PRINT_DEBUG("Rule name: %s\n", filter_rule->name);
-        PRINT_DEBUG("Found flow '%s'\n", flow);
-
-        filter_rule_add_flow(filter_rule,
-                             (char *) apr_pstrdup(filter_rule->pool,
-                                                  flow));
+	
+	if (flow)
+	{
+	    PRINT_DEBUG("Found flow '%s'\n", flow);
+	    filter_rule_add_flow(filter_rule,
+                             (char *) apr_pstrdup(filter_rule->pool, flow));
+	}
 
         if ((action = cfg_getstr(rule, "action")))
             filter_rule_set_action(filter_rule, action);
@@ -1111,6 +1111,55 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
             if (ud_rule)
                 filter_rule->update_rule = ud_rule;
         }
+
+	if (!flow)
+	{
+	    /* no flow defined, create a flow from all of the entries
+	       defined logically ANDed. */
+	    char *flowstr;
+	    apr_pool_t *tpool;
+
+	    apr_pool_create(&tpool, pool);
+	    flowstr = NULL;
+
+	    if (cfg_size(rule, "src_addrs"))
+		flowstr = apr_psprintf(tpool, "%smatch_src_addr ", 
+			flowstr?flowstr:"");
+
+	    if (cfg_size(rule, "dst_addrs"))
+		flowstr = apr_psprintf(tpool, "%s%smatch_dst_addr ",
+			flowstr ? flowstr: "",
+			flowstr ? " && " : "");
+
+	    /* add any string handlers to our flow.. */
+	    if (str_match_size)
+	    {
+		int in;
+
+		for (in = 0; in < str_match_size; in++)
+		{
+		   char  *title;
+
+		   title = (char *)cfg_title(cfg_getnsec(rule, "match_string", in));
+
+		   if (!title) 
+		       continue;
+
+		   flowstr = apr_psprintf(tpool, "%s%smatch_string(%s) ",
+			   flowstr ? flowstr : "",
+			   flowstr ? " && "  : "", title); 
+		}
+	    }
+
+	    PRINT_DEBUG("GENERATED FLOW %s\n", flowstr);
+
+	    filter_rule_add_flow(filter_rule, 
+		    (char *)apr_pstrdup(filter_rule->pool, flowstr));
+
+
+	    apr_pool_destroy(tpool);
+	}
+
 
         filter_add_rule(filter, filter_rule);
     }

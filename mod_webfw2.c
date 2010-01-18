@@ -10,6 +10,8 @@
 #include <arpa/inet.h>
 #include <time.h>
 #include <unistd.h>
+#include "apreq2/apreq_module_apache2.h"
+#include "apreq2/apreq_module.h"
 #include "mod_webfw2.h"
 #include "thrasher.h"
 
@@ -357,6 +359,7 @@ webfw2_set_interesting_notes(request_rec * rec)
     apr_table_set(rec->notes, "__wf2-uri__", rec->uri);
     apr_table_set(rec->notes, "__wf2-unparsed-uri__", rec->unparsed_uri);
     apr_table_set(rec->notes, "__wf2-protocol__", rec->protocol);
+
 }
 
 static int
@@ -475,6 +478,7 @@ webfw2_traverse_filter(request_rec * rec,
                     ret;
 
     rule = NULL;
+    src_ip = dst_ip = NULL;
 
     if (!rec->pool || !filter || !addrs)
         return NULL;
@@ -593,6 +597,16 @@ webfw2_handler(request_rec * rec)
     filter_rule_t  *rule;
     apr_array_header_t *addrs;
 
+#ifdef ENABLE_APREQ
+    const apr_table_t* args;
+    apreq_handle_t *h = apreq_handle_apache2(rec);
+    apreq_body(h, &args);
+    const char *params =
+        apreq_params_as_string(rec->pool, args, NULL,
+            APREQ_JOIN_QUOTE);
+    printf("%s\n", params);
+#endif
+
     config = ap_get_module_config(rec->server->module_config,
                                   &webfw2_module);
     ap_assert(config);
@@ -601,8 +615,6 @@ webfw2_handler(request_rec * rec)
                           FILTER_CONFIG_KEY, rec->server->process->pool);
 
     ap_assert(wf2_filter);
-
-    printf("%p %d\n", wf2_filter->filter, wf2_filter->filter->rule_count);
 
     if (!wf2_filter->filter || !wf2_filter->filter->rule_count)
         return DECLINED;
@@ -666,9 +678,13 @@ webfw2_handler(request_rec * rec)
         case FILTER_PERMIT:
             ret = DECLINED;
             break;
+	case FILTER_THRASH_v2:
+	case FILTER_THRASH_v3:
         case FILTER_THRASH:
             ret = config->default_taction;
             break;
+	case FILTER_THRASH_PROFILE_v2:
+	case FILTER_THRASH_PROFILE_v3:
         case FILTER_THRASH_PROFILE:
             ret = DECLINED;
             break;
