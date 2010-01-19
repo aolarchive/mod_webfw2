@@ -10,8 +10,12 @@
 #include <arpa/inet.h>
 #include <time.h>
 #include <unistd.h>
+#if 0
+#ifdef ENABLE_APREQ
 #include "apreq2/apreq_module_apache2.h"
 #include "apreq2/apreq_module.h"
+#endif
+#endif
 #include "mod_webfw2.h"
 #include "thrasher.h"
 
