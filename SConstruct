@@ -107,7 +107,7 @@ def build():
     test_sources = ['testfilter.c', 'filter.c', 'patricia.c']
 
     testfilter = env.Program('testfilter', 
-        source = test_sources, LIBS=['apr-1', 'confuse'])
+        source = test_sources, LIBS=['apr-1', 'confuse'], CFLAGS='-DDEBUG')
 
     module = env.LoadableModule(
         target = 'mod_webfw2.so', 
@@ -125,5 +125,5 @@ def build():
         
 env = Environment(ENV = os.environ)
 configure()
-setup_colors()
+#setup_colors()
 build()

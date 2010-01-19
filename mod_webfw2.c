@@ -373,9 +373,9 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
 
     PRINT_DEBUG("about to make a thrasher query\n");
 
-    if (!config->thrasher_host || !config->thrasher_port)
-    {
-	PRINT_DEBUG("%p %p\n", config->thrasher_host, config->thrasher_port);
+    if (!config->thrasher_host || !config->thrasher_port) {
+        PRINT_DEBUG("%p %p\n", config->thrasher_host,
+                    config->thrasher_port);
         return DECLINED;
     }
 
@@ -543,7 +543,7 @@ webfw2_traverse_filter(request_rec * rec,
             /*
              * check to see if we should continue rule traversal 
              */
-            if (rule->action == FILTER_PASS ||
+            if ((rule->action == FILTER_PASS) ||
                 rule->action >= FILTER_THRASH &&
                 rule->action <= FILTER_THRASH_PROFILE_v3) {
                 char           *curr_passes;
@@ -602,12 +602,11 @@ webfw2_handler(request_rec * rec)
 
 #if 0
 #ifdef ENABLE_APREQ
-    const apr_table_t* args;
+    const apr_table_t *args;
     apreq_handle_t *h = apreq_handle_apache2(rec);
     apreq_body(h, &args);
-    const char *params =
-        apreq_params_as_string(rec->pool, args, NULL,
-            APREQ_JOIN_QUOTE);
+    const char     *params = apreq_params_as_string(rec->pool, args, NULL,
+                                                    APREQ_JOIN_QUOTE);
     printf("%s\n", params);
 #endif
 #endif
@@ -683,13 +682,13 @@ webfw2_handler(request_rec * rec)
         case FILTER_PERMIT:
             ret = DECLINED;
             break;
-	case FILTER_THRASH_v2:
-	case FILTER_THRASH_v3:
+        case FILTER_THRASH_v2:
+        case FILTER_THRASH_v3:
         case FILTER_THRASH:
             ret = config->default_taction;
             break;
-	case FILTER_THRASH_PROFILE_v2:
-	case FILTER_THRASH_PROFILE_v3:
+        case FILTER_THRASH_PROFILE_v2:
+        case FILTER_THRASH_PROFILE_v3:
         case FILTER_THRASH_PROFILE:
             ret = DECLINED;
             break;
@@ -1035,7 +1034,7 @@ cmd_set_action(cmd_parms * cmd, void *dummy_config, const char *arg)
 {
     webfw2_config_t *config;
     char           *val;
-    char *type;
+    char           *type;
 
     config = ap_get_module_config(cmd->server->module_config,
                                   &webfw2_module);

@@ -73,7 +73,7 @@ rule_token_to_int(char *token)
     return -1;
 }
 
-char           *
+static char           *
 filter_trim_str(char *str)
 {
     size_t          len = 0;
@@ -499,7 +499,8 @@ filter_rule_init(apr_pool_t * parent)
     return rule;
 }
 
-filter_rule_t * filter_get_rule(filter_t * filter, const char *rule_name)
+filter_rule_t  *
+filter_get_rule(filter_t * filter, const char *rule_name)
 {
     filter_rule_t  *ruleptr;
 
@@ -529,7 +530,7 @@ filter_add_rule(filter_t * filter, filter_rule_t * rule)
 
     if (!filter->tail) {
         filter->head = filter->tail = rule;
-	filter->rule_count++;
+        filter->rule_count++;
         return 0;
     }
 
@@ -540,7 +541,7 @@ filter_add_rule(filter_t * filter, filter_rule_t * rule)
     return 0;
 }
 
-int
+static int
 filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
 {
     int             action;
@@ -734,6 +735,7 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
                 flows = flows->next;
                 continue;
             }
+	    /* fetch the source address from the calling application */
             data = filter->callbacks.src_addr_cb(pool, NULL, usrdata);
             break;
         case RULE_MATCH_NOT_DSTADDR:
@@ -744,6 +746,7 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
                 flows = flows->next;
                 continue;
             }
+	    /* fetch the destination address from the calling application */
             data = filter->callbacks.dst_addr_cb(pool, NULL, usrdata);
             break;
         case RULE_MATCH_NOT_STRING:
@@ -940,6 +943,10 @@ parse_whitelist(filter_t * filter, const char *filename)
 filter_t       *
 filter_parse_config(apr_pool_t * pool, const char *filename)
 {
+    /*
+     * this is by far the ugliest pile of junk I've ever written,
+     * I apologize, I really do.  
+     */
     cfg_t          *cfg;
     filter_t       *filter;
     char           *whitelist_file;
@@ -960,7 +967,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
         CFG_BOOL("log", cfg_true, CFGF_NONE),
         CFG_BOOL("pass", cfg_false, CFGF_NONE),
-	CFG_STR("set-cookie", NULL, CFGF_NONE),
+        CFG_STR("set-cookie", NULL, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
         CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
@@ -1036,13 +1043,13 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
         filter_rule->log = cfg_getbool(rule, "log");
 
         PRINT_DEBUG("Rule name: %s\n", filter_rule->name);
-	
-	if (flow)
-	{
-	    PRINT_DEBUG("Found flow '%s'\n", flow);
-	    filter_rule_add_flow(filter_rule,
-                             (char *) apr_pstrdup(filter_rule->pool, flow));
-	}
+
+        if (flow) {
+            PRINT_DEBUG("Found flow '%s'\n", flow);
+            filter_rule_add_flow(filter_rule,
+                                 (char *) apr_pstrdup(filter_rule->pool,
+                                                      flow));
+        }
 
         if ((action = cfg_getstr(rule, "action")))
             filter_rule_set_action(filter_rule, action);
@@ -1112,53 +1119,60 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
                 filter_rule->update_rule = ud_rule;
         }
 
-	if (!flow)
-	{
-	    /* no flow defined, create a flow from all of the entries
-	       defined logically ANDed. */
-	    char *flowstr;
-	    apr_pool_t *tpool;
+        if (!flow) {
+            /*
+             * no flow defined, create a flow from all of the entries
+             * defined logically ANDed. 
+             * 
+             * yes, just when you thought it couldn't get any uglier, here we
+             * are. 
+             */
+            char           *flowstr;
+            apr_pool_t     *tpool;
 
-	    apr_pool_create(&tpool, pool);
-	    flowstr = NULL;
+            apr_pool_create(&tpool, pool);
+            flowstr = NULL;
 
-	    if (cfg_size(rule, "src_addrs"))
-		flowstr = apr_psprintf(tpool, "%smatch_src_addr ", 
-			flowstr?flowstr:"");
+            if (cfg_size(rule, "src_addrs"))
+                flowstr = apr_psprintf(tpool, "%smatch_src_addr ",
+                                       flowstr ? flowstr : "");
 
-	    if (cfg_size(rule, "dst_addrs"))
-		flowstr = apr_psprintf(tpool, "%s%smatch_dst_addr ",
-			flowstr ? flowstr: "",
-			flowstr ? " && " : "");
+            if (cfg_size(rule, "dst_addrs"))
+                flowstr = apr_psprintf(tpool, "%s%smatch_dst_addr ",
+                                       flowstr ? flowstr : "",
+                                       flowstr ? " && " : "");
 
-	    /* add any string handlers to our flow.. */
-	    if (str_match_size)
-	    {
-		int in;
+            /*
+             * add any string handlers to our flow.. 
+             */
+            if (str_match_size) {
+                int             in;
 
-		for (in = 0; in < str_match_size; in++)
-		{
-		   char  *title;
+                for (in = 0; in < str_match_size; in++) {
+                    char           *title;
 
-		   title = (char *)cfg_title(cfg_getnsec(rule, "match_string", in));
+                    title =
+                        (char *)
+                        cfg_title(cfg_getnsec(rule, "match_string", in));
 
-		   if (!title) 
-		       continue;
+                    if (!title)
+                        continue;
 
-		   flowstr = apr_psprintf(tpool, "%s%smatch_string(%s) ",
-			   flowstr ? flowstr : "",
-			   flowstr ? " && "  : "", title); 
-		}
-	    }
+                    flowstr = apr_psprintf(tpool, "%s%smatch_string(%s) ",
+                                           flowstr ? flowstr : "",
+                                           flowstr ? " && " : "", title);
+                }
+            }
 
-	    PRINT_DEBUG("GENERATED FLOW %s\n", flowstr);
+            PRINT_DEBUG("GENERATED FLOW %s\n", flowstr);
 
-	    filter_rule_add_flow(filter_rule, 
-		    (char *)apr_pstrdup(filter_rule->pool, flowstr));
+            filter_rule_add_flow(filter_rule,
+                                 (char *) apr_pstrdup(filter_rule->pool,
+                                                      flowstr));
 
 
-	    apr_pool_destroy(tpool);
-	}
+            apr_pool_destroy(tpool);
+        }
 
 
         filter_add_rule(filter, filter_rule);
