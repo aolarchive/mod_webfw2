@@ -1,1 +1,2 @@
-#define VERSION "1.0r17-5"
+#define VERSION "1.1r1"
+#define VERSION_NAME "Philidor Defense"

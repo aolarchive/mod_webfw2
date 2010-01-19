@@ -3,3 +3,96 @@
 - Extra socket error checking with recv() calls for thrasher.
 - Added the ability for '#' comments within whitelists. 
 - Added ability to change the default return codes for blocks
+
+
+1.1r1
+* hotfix with recv() errorchecking, merged from the 1.0r17-5 branch.
+
+* Many functions were broken up into their own files
+  for ease of management.
+
+* XFF ACL options implemented.
+  ==== EBNF =====
+  start      := directives
+  directives := ((src_ip)+ | last | first), ws?
+  src_ip     := ws?, "src_ip", ws, IP_ADDR
+  last       := ws?, "last", ws, INT
+  first      := ws?, "first", ws, INT
+  ==== /EBNF ====
+
+  Example:
+  webfw2_rw_xff X-Test "src-ip 127.0.0.1 first 2 last 1"
+
+  This tells mod_webfw2 that the header X-Test should 
+  only be processed if the real source address is 
+  127.0.0.1. Furthermore this will only pick out the
+  first 2 IP's within this header, along with the last
+  1 IP.
+
+* IP Validation added.
+
+* NOT string matches no work correctly.
+
+* "pass" action type defined (to allow for a rule to match and continue
+  processing)
+
+* the pass action allows a user to match on a rule, and 
+  if matched go to the next rule.
+
+* new filter argument "update-rule". This allows an
+  administrator to, if matched, update another rule
+  with the source IP in the request. (Replaces the 
+  static config within httpd.conf)
+
+* Administrator can now set where he wants webfw2 to sit
+  within the apache processing lifecycle. 
+  webfw2_hook_access (On|Off)
+  webfw2_hook_translate (On|Off)
+  webfw2_hook_post_read (On|Off)
+
+* Fixed some while() logic bugs.
+
+* New apache note variable "webfw2_passed" which includes
+  every rule the query successfully matched before 
+  hitting a block or the end of the ruleset. 
+
+* New apache env/note "webfw2_matched_ip" which will display
+  the actual IP address that was matched.
+    * created thrasher.c and thrasher.h which are a set of functions
+      that simplify thrasher commands.
+    * webfw2 can now send thrasher v1 v2 and v3 type packets.
+    * cleaned up all the thrasher related functionality, much cleaner now.
+    * new public functions
+      - thrasher_query()
+      - thrasher_connect()
+      - thrasher_is_connected()
+      - thrasher_should_retry()
+    * new private functions
+      - thrasher_recv_boolean()
+      - thrasher_recv_v3_pkt()
+      - thrasher_create_v1_pkt()
+      - thrasher_create_v2_pkt()
+      - thrasher_create_v3_pkt()
+
+* New filter actions for thrasher:
+ Thrasher v1 packets are the normal packet types
+  action = thrash-v1
+  action = thrash-v1 profile
+
+ Thrasher v2 packets only send the 4 byte source address (no meta-data)
+  action = thrash-v2
+  action = thrash-v2 profile
+
+ Thrasher v3 packets prepend a 32bit identifier post protocol ID, pre 4 byte addr.
+  action = thrash-v3
+  action = thrash-v3 profile
+
+* Extra thrasher socket error checking.
+
+* Converted Makefile to SCONS SConstruct 
+
+* Previously an administrator had to configure a flow for a rule
+  even if all of the entries in the rule were logically AND joined.
+    
+  You can now define a rule without a flow where you expect all sets
+  within the rule to be joined via an AND.

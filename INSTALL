@@ -1,0 +1,12 @@
+You can set the following environment variables:
+
+To supply the path to the correct apxs utility application (from apache)
+export apxs=/path/to/bin/apxs
+
+To turn on compile time debugging
+export DEBUG=1
+
+export LDFLAGS='extra ldflags'
+export CFLAGS='extra cflags'
+
+
