@@ -226,8 +226,7 @@ webfw2_find_all_sources(request_rec * rec)
         char           *addr;
         char          **addrs;
         char          **addrs_ptr;
-        int             nelts,
-                        i;
+        int             nelts;
         char           *header_in_value;
 
         if (!hdrs[i].key)
@@ -645,12 +644,6 @@ webfw2_handler(request_rec * rec)
     addrs = webfw2_find_all_sources(rec);
 
     do {
-        /*
-         * XXX There is an issue here. Currently if the rule is a 
-         * thrasher action it will only match the first IP within 
-         * the XFF. please fix asap 
-         */
-
         /*
          * initialize our default return 
          */
