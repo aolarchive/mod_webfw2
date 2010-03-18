@@ -34,7 +34,7 @@ webfw2_filter_parse(apr_pool_t * pool, webfw2_config_t * config,
     }
 
     filter->filter =
-        filter_parse_config(filter->pool, config->config_file);
+        filter_parse_config(filter->pool, config->config_file, 1);
 
     if (!filter->filter) {
         ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL,
@@ -547,8 +547,8 @@ webfw2_traverse_filter(request_rec * rec,
              * check to see if we should continue rule traversal 
              */
             if ((rule->action == FILTER_PASS) ||
-                rule->action >= FILTER_THRASH &&
-                rule->action <= FILTER_THRASH_PROFILE_v3) {
+                (rule->action >= FILTER_THRASH &&
+                rule->action <= FILTER_THRASH_PROFILE_v3)) {
                 char           *curr_passes;
 
                 curr_passes = (char *)
@@ -603,6 +603,7 @@ webfw2_handler(request_rec * rec)
     filter_rule_t  *rule;
     apr_array_header_t *addrs;
 
+    rule = NULL;
 #if 0
 #ifdef ENABLE_APREQ
     const apr_table_t *args;
@@ -629,7 +630,6 @@ webfw2_handler(request_rec * rec)
 #ifdef APR_HAS_THREADS
     apr_thread_rwlock_wrlock(wf2_filter->rwlock);
 #endif
-
     webfw2_set_interesting_notes(rec);
 
     /*
@@ -642,7 +642,7 @@ webfw2_handler(request_rec * rec)
      * grab all the source addresses within the request 
      */
     addrs = webfw2_find_all_sources(rec);
-
+    
     do {
         /*
          * initialize our default return 
@@ -1030,7 +1030,6 @@ static const char *
 cmd_set_action(cmd_parms * cmd, void *dummy_config, const char *arg)
 {
     webfw2_config_t *config;
-    char           *val;
     char           *type;
 
     config = ap_get_module_config(cmd->server->module_config,

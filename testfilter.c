@@ -20,7 +20,7 @@ main(int argc, char **argv)
     apr_initialize();
     apr_pool_create(&root_pool, NULL);
 
-    filter = filter_parse_config(root_pool, argv[1]);
+    filter = filter_parse_config(root_pool, argv[1], 0);
 
     printf("Filter passed? %s\n", filter ? "yes" : "no");
 

@@ -598,6 +598,8 @@ filter_rule_add_network(filter_rule_t * rule,
     case RULE_MATCH_DSTADDR:
         tree = &rule->dst_addrs;
         break;
+    default:
+	return -1;
     }
 
     if (*tree == NULL)
@@ -941,7 +943,7 @@ parse_whitelist(filter_t * filter, const char *filename)
 }
 
 filter_t       *
-filter_parse_config(apr_pool_t * pool, const char *filename)
+filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
 {
     /*
      * this is by far the ugliest pile of junk I've ever written,
@@ -996,7 +998,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename)
     /*
      * first setup a rule for our whitelist if needed 
      */
-    if (whitelist_file) {
+    if (whitelist_file && do_whitelist) {
         filter_rule_t  *whitelist_rule;
         whitelist_rule = parse_whitelist(filter, whitelist_file);
         if (whitelist_rule) {
