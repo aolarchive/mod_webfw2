@@ -96,3 +96,9 @@
     
   You can now define a rule without a flow where you expect all sets
   within the rule to be joined via an AND.
+
+
+1.1r3
+    * test_filter will not parse whitelist for validity.
+    - two definitions of "i" were found in an inner and outer loop, resulting
+      in odd stack references when used. This was fixed.
