@@ -10,20 +10,6 @@
 #include "addr.h"
 #include "network_tbl.h"
 
-#if 0
-typedef struct network_node {
-    uint32_t key;
-    addr_t  *addr;
-
-    struct network_node *next;
-} network_node_t;
-
-typedef struct network_tbl {
-    uint32_t    hash_size;
-    network_node_t **net_table[33];
-} network_tbl_t;
-#endif
-
 static uint32_t netmask_tbl[] = {
     0x00000000, 0x80000000, 0xC0000000, 0xE0000000, 0xF0000000,
     0xF8000000, 0xFC000000, 0xFE000000, 0xFF000000, 0xFF800000,
@@ -141,32 +127,24 @@ network_search_node(apr_pool_t *pool,
 	network_node_t *node)
 {
     int bit_iter;
-    addr_t *addr;
-
-
-    if (!(addr = apr_pcalloc(pool, sizeof(addr_t))))
-	return NULL;
 
     for(bit_iter = 0; bit_iter <= 32; bit_iter++)
     {
 	uint32_t key;
+	uint32_t addr_masked;
 	network_node_t *match;
 
 	if (tbl->net_table[bit_iter] == NULL)
 	    continue;
 
-	addr->bitlen    = bit_iter; 
-	addr->mask      = netmask_tbl[bit_iter]; 
-	addr->addr      = node->addr->addr & addr->mask;
-	addr->broadcast = addr->addr;
+	addr_masked = node->addr->addr & netmask_tbl[bit_iter];
 
-	key = hash_addr(addr->addr) % tbl->hash_size;
-
+	key = hash_addr(addr_masked) % tbl->hash_size;
 	match = tbl->net_table[bit_iter][key];
 
 	while(match)
 	{
-	    if (addr_compare(pool, match->addr, addr))
+	    if (addr_compare(pool, match->addr, node->addr))
 		return match;
 
 	    match = match->next;

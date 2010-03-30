@@ -10,7 +10,6 @@
 #include "addr.h"
 #include "network_tbl.h"
 
-
 static void 
 add_networks(apr_pool_t *pool, network_tbl_t *table)
 {
@@ -48,7 +47,7 @@ add_networks(apr_pool_t *pool, network_tbl_t *table)
 	       "broadcast = %u\n"
                "bitlen    = %d\n\n",
 	       networks[count], node, node->key,
-	       node->addr->addr, node->addr->mask,
+	       node->addr->addr, (unsigned long int)node->addr->mask,
 	       node->addr->broadcast, node->addr->bitlen);
 
 	count++;
@@ -102,16 +101,18 @@ print_node(network_node_t *node)
 
     addr = htonl(node->addr->addr);
 
-    printf("  ptr:     %p\n", node);
-    printf("  network: %s/%d\n", 
+    printf("  ptr:       %p\n", node);
+    printf("  network:   %s/%d\n", 
 	    inet_ntoa(*(struct in_addr *)&addr),
 	    node->addr->bitlen);
 
     a = htonl(node->addr->addr);
     b = htonl(node->addr->broadcast);
 
-    printf("  %s-", inet_ntoa(*(struct in_addr *)&a));
+    printf("  Range:     %s-", inet_ntoa(*(struct in_addr *)&a));
     printf("%s\n",  inet_ntoa(*(struct in_addr *)&b));
+    printf("  addr:      %u\n", node->addr->addr);
+    printf("  broadcast: %u\n", node->addr->broadcast);
 }
 
 static void
@@ -141,6 +142,8 @@ test(apr_pool_t *pool, network_tbl_t *table)
 	"192.168.3.32/27", NULL};
 
     char *shouldnt_match[] = {
+	/* checks against 192.168.0.1/24 */
+	"192.168.0.0/23",
 	/* check against 192.168.1.0/25 */
 	"192.168.1.128/32",
 	/* check against 192.168.3.32/27 */
@@ -156,7 +159,7 @@ test(apr_pool_t *pool, network_tbl_t *table)
 
     while(1)
     {
-	network_node_t *matched;
+	network_node_t *matched = NULL;
 
 	if (should_match[count] == NULL)
 	    break;
@@ -170,7 +173,7 @@ test(apr_pool_t *pool, network_tbl_t *table)
 	    printf("  !!! %s should have matched something!!\n",
 		    should_match[count]);
 	} else {
-	    printf("  node matched!\n");
+	    printf(" node matched, GOOD!\n");
 	    print_node(matched);
 	}
 	count++;
@@ -183,7 +186,7 @@ test(apr_pool_t *pool, network_tbl_t *table)
 
     while(1)
     {
-	network_node_t *matched;
+	network_node_t *matched = NULL;
 
 	if (shouldnt_match[count] == NULL)
 	    break;

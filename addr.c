@@ -113,12 +113,19 @@ addr_compare(apr_pool_t *pool, addr_t *haystack, addr_t *needle)
 
    printf("    %s - ", inet_ntoa(*(struct in_addr *)&a));
    printf("%s\n",  inet_ntoa(*(struct in_addr *)&b));
+
+
+   printf("NEEDLE_ADDR >= HAYSTACK_ADDR? %d\n", needle->addr >= haystack->addr);
+   printf("NEEDLE_BROADCAST <= HAYSTACK_BROADCAST? %d\n", needle->broadcast <=
+	   haystack->broadcast);
+   printf("DERR: %u %u\n", needle->broadcast, haystack->broadcast);
 #endif
 
-
-   if ((needle->addr >= haystack->addr) && 
+   if (needle->addr >= haystack->addr && 
 	   needle->broadcast <= haystack->broadcast)
+   {
        return 1;
+   }
 
    return 0;
 }
