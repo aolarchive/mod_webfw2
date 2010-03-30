@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "filter.h"
 #include "mod_webfw2.h"
 #include "callbacks.h"
 

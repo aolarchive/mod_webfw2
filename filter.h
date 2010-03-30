@@ -10,9 +10,9 @@ typedef struct filter_rule filter_rule_t;
 typedef struct rule_flow rule_flow_t;
 typedef struct filter_callbacks filter_callbacks_t;
 
-#define FILTER_DENY     			      1
-#define FILTER_PERMIT   			      2
-#define FILTER_PASS     			      3
+#define FILTER_DENY              1
+#define FILTER_PERMIT            2
+#define FILTER_PASS              3
 #define FILTER_THRASH            1972
 #define FILTER_THRASH_v1         1972
 #define FILTER_THRASH_PROFILE    1973
@@ -31,12 +31,13 @@ typedef struct filter_callbacks filter_callbacks_t;
 #endif
 
 struct rule_flow {
-    int             type;
-    int             (*callback) (apr_pool_t * pool,
-                                 filter_rule_t * rule, 
-																 void *data, void *usrdata);
-		void            *user_data;
+    int type;
+    int (*callback) (apr_pool_t *, 
+	    filter_rule_t *, 
+	    void *data, 
+	    void *usrdata);
 
+    void            *user_data;
     int             this_operator;
     int             next_operator;
     struct rule_flow *next;
@@ -52,17 +53,17 @@ struct filter_callbacks {
 };
 
 struct filter_rule {
-		char            *name;
-		int              action;
-    uint8_t          log;
-    patricia_tree_t *src_addrs;
-    patricia_tree_t *dst_addrs;
-		apr_hash_t      *strings;
-    uint8_t          strings_have_regex;
-    rule_flow_t    *flow;
-    apr_pool_t     *pool;
+    char               *name;
+    int                 action;
+    uint8_t             log;
+    patricia_tree_t    *src_addrs;
+    patricia_tree_t    *dst_addrs;
+    apr_hash_t         *strings;
+    uint8_t             strings_have_regex;
+    rule_flow_t        *flow;
+    apr_pool_t         *pool;
     struct filter_rule *next;
-		struct filter_rule *update_rule;
+    struct filter_rule *update_rule;
 };
 
 typedef struct filter {
@@ -77,12 +78,12 @@ enum {
     RULE_MATCH_SRCADDR = 1,
     RULE_MATCH_DSTADDR,
     RULE_MATCH_CHAD_ORD,
-		RULE_MATCH_STRING,
+    RULE_MATCH_STRING,
     RULE_MATCH_OPERATOR_OR,
     RULE_MATCH_OPERATOR_AND,
-		RULE_MATCH_NOT_SRCADDR,
-		RULE_MATCH_NOT_DSTADDR,
-		RULE_MATCH_NOT_STRING
+    RULE_MATCH_NOT_SRCADDR,
+    RULE_MATCH_NOT_DSTADDR,
+    RULE_MATCH_NOT_STRING
 };
 
 rule_flow_t *filter_rule_flow_init(apr_pool_t *);

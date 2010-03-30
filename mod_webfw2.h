@@ -11,7 +11,7 @@
 #include "apr_reslist.h"
 #include "apr_thread_rwlock.h"
 #include "apr_network_io.h"
-#include "filter.h"
+//#include "filter.h"
 #include "version.h"
 
 #define FILTER_CONFIG_KEY "webfw2_filter_config"
@@ -27,7 +27,7 @@ typedef struct webfw2_xff_opts {
 typedef struct webfw2_config {
     uint8_t         hook_translate;
     uint8_t         hook_access;
-		uint8_t         hook_post_read;
+    uint8_t         hook_post_read;
     char           *config_file;
     uint32_t        update_interval;
     char           *thrasher_host;
@@ -44,15 +44,21 @@ typedef struct webfw2_config {
 } webfw2_config_t;
 
 typedef struct webfw2_filter {
-    apr_time_t      last_update;
-    apr_time_t      last_modification;
-    filter_t *filter;
-    apr_pool_t     *pool;
+    apr_time_t           last_update;
+    apr_time_t           last_modification;
+    filter_t            *filter;
+    apr_pool_t          *pool;
     apr_thread_rwlock_t *rwlock;
-    apr_socket_t   *thrasher_sock;
-    /*
-     * what time did webfw2 deem thrasher was down? 
-     */
+    apr_socket_t        *thrasher_sock;
+    /* what time did webfw2 deem thrasher was down? */
     uint32_t        thrasher_downed;
+
+    /* a hash of filter_rule_t which are marked as
+       rules which are a destination of an "update" caller 
+
+       The key of the hash is the rule name, and the value
+
+
+     */ 
 } webfw2_filter_t;
 

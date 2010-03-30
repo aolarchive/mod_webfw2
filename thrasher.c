@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <time.h>
 #include <unistd.h>
+#include "filter.h"
 #include "mod_webfw2.h"
 #include "thrasher.h"
 

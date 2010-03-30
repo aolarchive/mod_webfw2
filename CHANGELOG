@@ -102,3 +102,34 @@
     * test_filter will not parse whitelist for validity.
     - two definitions of "i" were found in an inner and outer loop, resulting
       in odd stack references when used. This was fixed.
+
+
+1.1r4
+    * new default note set for matching __wf2-method__ which is a string
+      representation of the request method.
+    * removed some useless debugging output.
+    * simplified some of the functionality within webfw2_traverse_filter 
+      in order to make it much easier to read.
+    * Removed useless functionality from patricia.c
+    * Cleaned up so we have no more compiler warnings.
+    * in order to rid myself of the complexity of maintaining 
+      patricia trie code I have decided to replace it with a 
+      table based approach. 
+   
+      When an address is inserted into a table it looks at the
+      bitlen (/32, /24) and inserts the address into the proper
+      bucket 
+      Something like 
+      addr = "192.168.0.0/24"
+      hashed-addr = make_hash(addr)
+      >>> hash[24][hashed-addr] = addr
+
+      To search this table we iterate through each bitlen, 
+      AND our source-address with the netmask of the bitlen,
+      then look in that specific bucket for an entry.
+
+
+
+       
+
+

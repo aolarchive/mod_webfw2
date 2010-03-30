@@ -100,14 +100,27 @@ def setup_colors():
     env['ARCOMSTR']     = link_library_message
     env['RANLIBCOMSTR'] = ranlib_library_message
     env['SHLINKCOMSTR'] = link_shared_library_message
+    env['LDMODULECOMSTR']     = link_shared_library_message
     env['LINKCOMSTR']   = link_program_message
 
 def build():
-    sources = ['filter.c', 'patricia.c', 'callbacks.c', 'thrasher.c']
-    test_sources = ['testfilter.c', 'filter.c', 'patricia.c']
+    sources = ['addr.c', 'network_tbl.c', 'filter.c', 'patricia.c', 'callbacks.c', 'thrasher.c']
+    test_sources = ['testfilter.c', 'filter.c', 'addr.c', 'network_tbl.c', 'patricia.c']
+    test_addr = '' 
+    test_nettbl = '' 
 
     testfilter = env.Program('testfilter', 
         source = test_sources, LIBS=['apr-1', 'confuse'], CFLAGS='-DDEBUG')
+    
+    if 'test_addr' in os.environ:
+        test_addr = env.Program('testaddr',
+            source = 'addr.c', LIBS=['apr-1'], CFLAGS='-DTEST_ADDR') 
+
+    if 'test_network_tbl' in os.environ:
+        test_nettbl = env.Program('test_net_tbl',
+            source = ['network_tbl.c', 'addr.c'], LIBS=['apr-1'], 
+                CFLAGS='-DTEST_NETWORK_TBL')
+        
 
     module = env.LoadableModule(
         target = 'mod_webfw2.so', 
@@ -118,12 +131,12 @@ def build():
     imod = env.Install(install_path, source = [module])
     env.Alias('install', imod)
 
-    targets = [module, testfilter]
+    targets = [module, testfilter, test_addr, test_nettbl]
     env.Default(targets)
 
     
         
 env = Environment(ENV = os.environ)
 configure()
-#setup_colors()
+setup_colors()
 build()

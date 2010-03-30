@@ -17,7 +17,7 @@
 /*
  * prefix_tochar convert prefix information to bytes 
  */
-u_char         *
+static u_char *
 prefix_tochar(prefix_t * prefix)
 {
     if (prefix == NULL)
@@ -26,7 +26,7 @@ prefix_tochar(prefix_t * prefix)
     return ((u_char *) & prefix->add.sin);
 }
 
-int
+static int
 comp_with_mask(void *addr, void *dest, u_int mask)
 {
 
@@ -44,7 +44,7 @@ comp_with_mask(void *addr, void *dest, u_int mask)
 /*
  * this allows imcomplete prefix 
  */
-int
+static int
 my_inet_pton(int af, const char *src, void *dst)
 {
     if (af == AF_INET) {
@@ -81,64 +81,7 @@ my_inet_pton(int af, const char *src, void *dst)
     }
 }
 
-/*
- * convert prefix information to ascii string with length
- * thread safe and (almost) re-entrant implementation
- */
-char           *
-prefix_toa2x(prefix_t * prefix, char *buff, int with_len)
-{
-    if (prefix == NULL)
-        return ("(Null)");
-    assert(prefix->ref_count >= 0);
-    if (buff == NULL) {
-
-        struct buffer {
-            char            buffs[16][48 + 5];
-            u_int           i;
-        }              *buffp;
-
-	/* not thread safe */
-        static struct buffer local_buff;
-        buffp = &local_buff;
-
-        if (buffp == NULL) {
-            return (NULL);
-        }
-
-        buff = buffp->buffs[buffp->i++ % 16];
-    }
-    if (prefix->family == AF_INET) {
-        u_char         *a;
-        assert(prefix->bitlen <= 32);
-        a = prefix_touchar(prefix);
-        if (with_len) {
-            sprintf(buff, "%d.%d.%d.%d/%d", a[0], a[1], a[2], a[3],
-                    prefix->bitlen);
-        } else {
-            sprintf(buff, "%d.%d.%d.%d", a[0], a[1], a[2], a[3]);
-        }
-        return (buff);
-    } else
-        return (NULL);
-}
-
-/*
- * prefix_toa2 convert prefix information to ascii string 
- */
-char           *
-prefix_toa2(prefix_t * prefix, char *buff)
-{
-    return (prefix_toa2x(prefix, buff, 0));
-}
-
-char           *
-prefix_toa(prefix_t * prefix)
-{
-    return (prefix_toa2(prefix, (char *) NULL));
-}
-
-prefix_t       *
+static prefix_t *
 New_Prefix2(apr_pool_t * pool, int family, void *dest, int bitlen,
             prefix_t * prefix)
 {
@@ -164,7 +107,7 @@ New_Prefix2(apr_pool_t * pool, int family, void *dest, int bitlen,
     return (prefix);
 }
 
-prefix_t       *
+static prefix_t *
 New_Prefix(apr_pool_t * pool, int family, void *dest, int bitlen)
 {
     return (New_Prefix2(pool, family, dest, bitlen, NULL));
@@ -173,7 +116,7 @@ New_Prefix(apr_pool_t * pool, int family, void *dest, int bitlen)
 /*
  * ascii2prefix 
  */
-prefix_t       *
+static prefix_t *
 ascii2prefix(apr_pool_t * pool, int family, char *string)
 {
     u_long          bitlen,
@@ -215,7 +158,7 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
         return (NULL);
 }
 
-prefix_t       *
+static prefix_t *
 Ref_Prefix(apr_pool_t * pool, prefix_t * prefix)
 {
     if (prefix == NULL)
@@ -232,7 +175,7 @@ Ref_Prefix(apr_pool_t * pool, prefix_t * prefix)
     return (prefix);
 }
 
-void
+static void
 Deref_Prefix(prefix_t * prefix)
 {
     if (prefix == NULL)
@@ -270,105 +213,6 @@ New_Patricia(apr_pool_t * pool, int maxbits)
     //num_active_patricia++;
     return (patricia);
 }
-
-
-/*
- * if func is supplied, it will be called as func(node->data)
- * before deleting the node
- */
-
-void
-Clear_Patricia(patricia_tree_t * patricia, void_fn_t func)
-{
-    assert(patricia);
-    if (patricia->head) {
-
-	/* not thread safe */
-        patricia_node_t *Xstack[PATRICIA_MAXBITS + 1];
-        patricia_node_t **Xsp = Xstack;
-        patricia_node_t *Xrn = patricia->head;
-
-        while (Xrn) {
-            patricia_node_t *l = Xrn->l;
-            patricia_node_t *r = Xrn->r;
-
-            if (Xrn->prefix) {
-                Deref_Prefix(Xrn->prefix);
-                if (Xrn->data && func)
-                    func(Xrn->data);
-            } else {
-                assert(Xrn->data == NULL);
-            }
-            // Delete(Xrn);
-            patricia->num_active_node--;
-
-            if (l) {
-                if (r) {
-                    *Xsp++ = r;
-                }
-                Xrn = l;
-            } else if (r) {
-                Xrn = r;
-            } else if (Xsp != Xstack) {
-                Xrn = *(--Xsp);
-            } else {
-                Xrn = (patricia_node_t *) 0;
-            }
-        }
-    }
-    assert(patricia->num_active_node == 0);
-    /*
-     * Delete (patricia); 
-     */
-}
-
-
-void
-Destroy_Patricia(patricia_tree_t * patricia, void_fn_t func)
-{
-    Clear_Patricia(patricia, func);
-    // Delete(patricia);
-    //num_active_patricia--;
-}
-
-
-/*
- * if func is supplied, it will be called as func(node->prefix, node->data)
- */
-
-void
-patricia_process(patricia_tree_t * patricia, void_fn_t func)
-{
-    patricia_node_t *node;
-    assert(func);
-
-    PATRICIA_WALK(patricia->head, node) {
-        func(node->prefix, node->data);
-    } PATRICIA_WALK_END;
-}
-
-size_t
-patricia_walk_inorder(patricia_node_t * node, void_fn_t func)
-{
-    size_t          n = 0;
-    assert(func);
-
-    if (node->l) {
-        n += patricia_walk_inorder(node->l, func);
-    }
-
-    if (node->prefix) {
-        func(node->prefix, node->data);
-        n++;
-    }
-
-    if (node->r) {
-        n += patricia_walk_inorder(node->r, func);
-    }
-
-    return n;
-}
-
 
 patricia_node_t *
 patricia_search_exact(patricia_tree_t * patricia, prefix_t * prefix)

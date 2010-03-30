@@ -428,6 +428,7 @@ filter_flow_from_str(apr_pool_t * pool, char *flowstr)
             new_flow->type = RULE_MATCH_NOT_SRCADDR;
 
             APPEND_FLOW(flow, tail, new_flow);
+
             break;
         case RULE_MATCH_NOT_DSTADDR:
             PRINT_DEBUG("Found a RULE_MATCH_NOT_DSTADDR\n");
@@ -476,7 +477,6 @@ filter_init(apr_pool_t * parent)
     filter_t       *ret;
     ret = apr_pcalloc(parent, sizeof(filter_t));
     apr_pool_create(&ret->pool, parent);
-
 
     return ret;
 }
@@ -913,9 +913,7 @@ parse_whitelist(filter_t * filter, const char *filename)
         return NULL;
 
     filter_rule->name = apr_pstrdup(filter->pool, "__whitelist__");
-
     filter_rule_add_flow(filter_rule, "match_src_addrs");
-
     filter_rule_set_action(filter_rule, "permit");
 
     buf = malloc(1024);
@@ -958,6 +956,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
     filter = NULL;
 
     PRINT_DEBUG("Parsing configuration.\n");
+
     cfg_opt_t       str_match_opts[] = {
         CFG_STR_LIST("values", 0, CFGF_MULTI),
         CFG_STR_LIST("regex", 0, CFGF_MULTI),
@@ -969,12 +968,12 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
         CFG_BOOL("log", cfg_true, CFGF_NONE),
         CFG_BOOL("pass", cfg_false, CFGF_NONE),
-        CFG_STR("set-cookie", NULL, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
         CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
         CFG_STR("action", "deny", CFGF_NONE),
         CFG_STR("update-rule", NULL, CFGF_NONE),
+	CFG_STR("http-redirect", NULL, CFGF_NONE),
         CFG_END()
     };
 
@@ -1000,7 +999,9 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
      */
     if (whitelist_file && do_whitelist) {
         filter_rule_t  *whitelist_rule;
+
         whitelist_rule = parse_whitelist(filter, whitelist_file);
+
         if (whitelist_rule) {
             filter_add_rule(filter, whitelist_rule);
 
@@ -1019,29 +1020,27 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
     n = cfg_size(cfg, "rule");
     PRINT_DEBUG("Found %d rules in configuration\n", n);
 
-    /*
-     * it gets ugly right around...(to be continued) 
-     */
     for (i = 0; i < n; i++) {
-        /*
-         * re: ugly [ HERE!! ] 
-         */
         char           *flow;
         char           *update_rule;
         int             addr_cnt;
         filter_rule_t  *filter_rule;
         char           *action;
         cfg_t          *rule;
+	char           *redirect_url;
 
         PRINT_DEBUG("Parsing rule %d\n", i);
 
-        rule = cfg_getnsec(cfg, "rule", i);
-        flow = cfg_getstr(rule, "flow");
-        update_rule = cfg_getstr(rule, "update-rule");
+        rule         = cfg_getnsec(cfg, "rule", i);
+        flow         = cfg_getstr(rule, "flow");
+	redirect_url = cfg_getstr(rule, "http-redirect");
+        update_rule  = cfg_getstr(rule, "update-rule");
 
-        filter_rule = filter_rule_init(filter->pool);
+        filter_rule  = filter_rule_init(filter->pool);
+
         filter_rule->name =
             apr_pstrdup(filter_rule->pool, cfg_title(rule));
+
         filter_rule->log = cfg_getbool(rule, "log");
 
         PRINT_DEBUG("Rule name: %s\n", filter_rule->name);
@@ -1153,9 +1152,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
                 for (in = 0; in < str_match_size; in++) {
                     char           *title;
 
-                    title =
-                        (char *)
-                        cfg_title(cfg_getnsec(rule, "match_string", in));
+                    title = (char *) cfg_title(cfg_getnsec(rule, "match_string", in));
 
                     if (!title)
                         continue;
@@ -1169,8 +1166,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
             PRINT_DEBUG("GENERATED FLOW %s\n", flowstr);
 
             filter_rule_add_flow(filter_rule,
-                                 (char *) apr_pstrdup(filter_rule->pool,
-                                                      flowstr));
+                apr_pstrdup(filter_rule->pool, flowstr));
 
 
             apr_pool_destroy(tpool);

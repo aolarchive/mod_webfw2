@@ -43,4 +43,4 @@ int thrasher_query(request_rec *,
 apr_socket_t *thrasher_connect(apr_pool_t *pool, webfw2_config_t *config);
 int thrasher_is_connected(apr_socket_t *sock);
 int thrasher_should_retry(webfw2_config_t *, webfw2_filter_t *);
-
+void thrasher_err_shutdown(webfw2_filter_t * filter);

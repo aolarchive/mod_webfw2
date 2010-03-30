@@ -10,14 +10,10 @@
 #include <arpa/inet.h>
 #include <time.h>
 #include <unistd.h>
-#if 0
-#ifdef ENABLE_APREQ
-#include "apreq2/apreq_module_apache2.h"
-#include "apreq2/apreq_module.h"
-#endif
-#endif
+#include "filter.h"
 #include "mod_webfw2.h"
 #include "thrasher.h"
+#include "callbacks.h"
 
 module AP_MODULE_DECLARE_DATA webfw2_module;
 
@@ -273,8 +269,9 @@ webfw2_find_all_sources(request_rec * rec)
         /*
          * do we need to include every address within this array? 
          */
-        if (!xff_opts || xff_opts->first + xff_opts->last >= nelts ||
-            (xff_opts->first == 0 && xff_opts->last == 0)) {
+
+	if ( ((!xff_opts)) || (xff_opts->first == 0 && xff_opts->last == 0) ||
+		xff_opts->first + xff_opts->last >= nelts) {
             /*
              * we need to add every single address to the returned 
              * array 
@@ -357,11 +354,11 @@ webfw2_set_interesting_notes(request_rec * rec)
      */
 
     apr_table_set(rec->notes, "__wf2-hostname__", rec->hostname);
-    apr_table_set(rec->notes,
-                  "__wf2-canonical-filename__", rec->canonical_filename);
+    apr_table_set(rec->notes, "__wf2-canonical-filename__", rec->canonical_filename);
     apr_table_set(rec->notes, "__wf2-uri__", rec->uri);
     apr_table_set(rec->notes, "__wf2-unparsed-uri__", rec->unparsed_uri);
     apr_table_set(rec->notes, "__wf2-protocol__", rec->protocol);
+    apr_table_set(rec->notes, "__wf2-method__", rec->method);
 
 }
 
@@ -377,7 +374,7 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     PRINT_DEBUG("about to make a thrasher query\n");
 
     if (!config->thrasher_host || !config->thrasher_port) {
-        PRINT_DEBUG("%p %p\n", config->thrasher_host,
+        PRINT_DEBUG("%s %d\n", config->thrasher_host,
                     config->thrasher_port);
         return DECLINED;
     }
@@ -396,8 +393,7 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
 
         PRINT_DEBUG("Attempting reconnect....\n");
 
-        if (!
-            (filter->thrasher_sock =
+        if (!(filter->thrasher_sock =
              thrasher_connect(filter->pool, config))) {
             thrasher_err_shutdown(filter);
             return DECLINED;
@@ -429,7 +425,6 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
         break;
     case FILTER_THRASH_v2:
     case FILTER_THRASH_PROFILE_v2:
-        PRINT_DEBUG("Profile v2\n");
         pkt_type = TYPE_THRESHOLD_v2;
         break;
     case FILTER_THRASH_v3:
@@ -469,22 +464,20 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
 }
 
 
-filter_rule_t  *
+static filter_rule_t  *
 webfw2_traverse_filter(request_rec * rec,
                        webfw2_config_t * config,
                        webfw2_filter_t * filter,
                        filter_rule_t * current_rule,
-                       apr_array_header_t * addrs, char **sip, char **dip)
+                       apr_array_header_t * addrs, 
+		       char **sip, char **dip)
 {
-    char           *src_ip;
-    char           *dst_ip;
+    char           *src_ip = NULL;
+    char           *dst_ip = NULL;
+    filter_rule_t  *rule   = NULL;;
+    int             ret = DECLINED;
     void          **callback_data;
-    filter_rule_t  *rule;
-    int             i,
-                    ret;
-
-    rule = NULL;
-    src_ip = dst_ip = NULL;
+    int             i;
 
     if (!rec->pool || !filter || !addrs)
         return NULL;
@@ -507,6 +500,9 @@ webfw2_traverse_filter(request_rec * rec,
                     current_rule->name, src_ip);
 
         do {
+	    int rule_could_pass = 0;
+	    int rule_is_thrash  = 0;
+
             if (!current_rule)
                 break;
 
@@ -519,8 +515,25 @@ webfw2_traverse_filter(request_rec * rec,
 
             PRINT_DEBUG("MATCHED RULE %s\n", rule->name);
 
-            if (rule->action >= FILTER_THRASH &&
-                rule->action <= FILTER_THRASH_PROFILE_v3) {
+	    switch(rule->action)
+	    {
+		case FILTER_THRASH_v1:
+		case FILTER_THRASH_PROFILE_v1:
+		case FILTER_THRASH_v2:
+		case FILTER_THRASH_PROFILE_v2:
+		case FILTER_THRASH_v3:
+		case FILTER_THRASH_PROFILE_v3:
+		    rule_could_pass = 1;
+		    rule_is_thrash  = 1;
+		    break;
+		case FILTER_PASS:
+		    rule_could_pass = 1;
+		    break;
+		default:
+		    break;
+	    }
+
+	    if (rule_is_thrash) {
                 /*
                  * we don't want to stop rule processing if a
                  * thrasher rule was found but no thresholds were
@@ -546,9 +559,7 @@ webfw2_traverse_filter(request_rec * rec,
             /*
              * check to see if we should continue rule traversal 
              */
-            if ((rule->action == FILTER_PASS) ||
-                (rule->action >= FILTER_THRASH &&
-                rule->action <= FILTER_THRASH_PROFILE_v3)) {
+	    if (rule_could_pass) {
                 char           *curr_passes;
 
                 curr_passes = (char *)
@@ -604,16 +615,6 @@ webfw2_handler(request_rec * rec)
     apr_array_header_t *addrs;
 
     rule = NULL;
-#if 0
-#ifdef ENABLE_APREQ
-    const apr_table_t *args;
-    apreq_handle_t *h = apreq_handle_apache2(rec);
-    apreq_body(h, &args);
-    const char     *params = apreq_params_as_string(rec->pool, args, NULL,
-                                                    APREQ_JOIN_QUOTE);
-    printf("%s\n", params);
-#endif
-#endif
 
     config = ap_get_module_config(rec->server->module_config,
                                   &webfw2_module);
@@ -630,6 +631,7 @@ webfw2_handler(request_rec * rec)
 #ifdef APR_HAS_THREADS
     apr_thread_rwlock_wrlock(wf2_filter->rwlock);
 #endif
+
     webfw2_set_interesting_notes(rec);
 
     /*
@@ -658,7 +660,8 @@ webfw2_handler(request_rec * rec)
                                       wf2_filter,
                                       current_rule,
                                       addrs,
-                                      &matched_src_ip, &matched_dst_ip);
+                                      &matched_src_ip, 
+				      &matched_dst_ip);
 
         if (!rule)
             /*
@@ -672,7 +675,6 @@ webfw2_handler(request_rec * rec)
          */
 
         switch (rule->action) {
-
         case FILTER_DENY:
             ret = config->default_action;
             break;
@@ -713,6 +715,7 @@ webfw2_handler(request_rec * rec)
         if (rule->update_rule) {
             PRINT_DEBUG("Updating Dynamic rule %s with src-ip %s\n",
                         rule->update_rule->name, matched_src_ip);
+
             filter_rule_add_network(rule->update_rule, matched_src_ip,
                                     RULE_MATCH_SRCADDR, NULL);
         }

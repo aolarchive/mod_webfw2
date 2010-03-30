@@ -16,10 +16,6 @@
 #define _PATRICIA_H
 
 /*
- * typedef unsigned int u_int; 
- */
-typedef void  (*void_fn_t)();
-/*
  * { from defs.h 
  */
 #define prefix_touchar(prefix) ((u_char *)&(prefix)->add.sin)
@@ -102,21 +98,15 @@ patricia_node_t *patricia_lookup(apr_pool_t * pool,
 void            patricia_remove(patricia_tree_t * patricia,
                                 patricia_node_t * node);
 patricia_tree_t *New_Patricia(apr_pool_t *, int);
-void            Clear_Patricia(patricia_tree_t * patricia, void_fn_t func);
-void            Destroy_Patricia(patricia_tree_t * patricia,
-                                 void_fn_t func);
-void            patricia_process(patricia_tree_t * patricia,
-                                 void_fn_t func);
 
 /*
  * { from demo.c 
  */
 
-prefix_t       *ascii2prefix(apr_pool_t *, int, char *);
-
 patricia_node_t *make_and_lookup(apr_pool_t *, patricia_tree_t *, char *);
-
 patricia_node_t *try_search_best(apr_pool_t *, patricia_tree_t *, char *);
+
+
 /*
  * } 
  */
@@ -169,3 +159,6 @@ do { \
     } while (0)
 
 #endif                          /* _PATRICIA_H */
+
+
+
