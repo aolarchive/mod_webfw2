@@ -69,6 +69,8 @@ addr_from_string(apr_pool_t *pool, const char *addrstr)
 	addr->mask   = 0xFFFFFFFF;
     }
 
+    addr->addr = addr->addr & addr->mask;
+
     addr->broadcast = addr->addr | (0xFFFFFFFF & ~addr->mask);
 
     return addr;
@@ -82,10 +84,10 @@ addr_from_addr(apr_pool_t *pool, const uint32_t inaddr, const int bitlen)
     if (!(addr = apr_pcalloc(pool, sizeof(addr_t))))
 	return NULL;
 
-    addr->addr      = inaddr;
     addr->broadcast = inaddr;
     addr->bitlen    = bitlen;
     addr->mask      = netmask_tbl[bitlen];
+    addr->addr      = inaddr & addr->mask;
 
     return addr;
 }
@@ -95,6 +97,24 @@ addr_compare(apr_pool_t *pool, addr_t *haystack, addr_t *needle)
 {
    if (!haystack || !needle)
       return 0; 
+
+#if 0
+   uint32_t a, b;
+
+   a = htonl(haystack->addr);
+   b = htonl(haystack->broadcast);
+
+   printf("    %s - ", inet_ntoa(*(struct in_addr *)&a));
+   printf("%s\n",  inet_ntoa(*(struct in_addr *)&b));
+   printf(" COMPARED TO\n");
+
+   a = htonl(needle->addr);
+   b = htonl(needle->broadcast);
+
+   printf("    %s - ", inet_ntoa(*(struct in_addr *)&a));
+   printf("%s\n",  inet_ntoa(*(struct in_addr *)&b));
+#endif
+
 
    if ((needle->addr >= haystack->addr) && 
 	   needle->broadcast <= haystack->broadcast)

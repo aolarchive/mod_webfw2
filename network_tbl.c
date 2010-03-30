@@ -195,7 +195,7 @@ network_search_tbl_from_str(apr_pool_t *pool,
     return matched;
 }
 
-#ifdef TEST_NETWORK_TBL
+#if 0
 static void
 print_hash(network_tbl_t *tbl)
 {
@@ -229,7 +229,6 @@ print_hash(network_tbl_t *tbl)
 	}
     }
 }
-
 int main(int argc, char **argv)
 {
     apr_pool_t *pool;

@@ -104,24 +104,20 @@ def setup_colors():
     env['LINKCOMSTR']   = link_program_message
 
 def build():
+    addr = env.Object("addr.c")
+    tbl  = env.Object("network_tbl.c")
+
     sources = ['addr.c', 'network_tbl.c', 'filter.c', 'patricia.c', 'callbacks.c', 'thrasher.c']
-    test_sources = ['testfilter.c', 'filter.c', 'addr.c', 'network_tbl.c', 'patricia.c']
-    test_addr = '' 
-    test_nettbl = '' 
+    test_sources = ['testfilter.c', 'filter.c', addr, tbl, 'patricia.c']
+
 
     testfilter = env.Program('testfilter', 
         source = test_sources, LIBS=['apr-1', 'confuse'], CFLAGS='-DDEBUG')
+
+    testaddr   = env.Program('test_network_tbl', 
+        source = ['test_network_tbl.c', addr, tbl], 
+        LIBS=['apr-1'])
     
-    if 'test_addr' in os.environ:
-        test_addr = env.Program('testaddr',
-            source = 'addr.c', LIBS=['apr-1'], CFLAGS='-DTEST_ADDR') 
-
-    if 'test_network_tbl' in os.environ:
-        test_nettbl = env.Program('test_net_tbl',
-            source = ['network_tbl.c', 'addr.c'], LIBS=['apr-1'], 
-                CFLAGS='-DTEST_NETWORK_TBL')
-        
-
     module = env.LoadableModule(
         target = 'mod_webfw2.so', 
         source = sources + ['mod_webfw2.c'], 
@@ -131,7 +127,7 @@ def build():
     imod = env.Install(install_path, source = [module])
     env.Alias('install', imod)
 
-    targets = [module, testfilter, test_addr, test_nettbl]
+    targets = [module, testfilter, testaddr]
     env.Default(targets)
 
     
