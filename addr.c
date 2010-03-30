@@ -98,29 +98,6 @@ addr_compare(apr_pool_t *pool, addr_t *haystack, addr_t *needle)
    if (!haystack || !needle)
       return 0; 
 
-#if 0
-   uint32_t a, b;
-
-   a = htonl(haystack->addr);
-   b = htonl(haystack->broadcast);
-
-   printf("    %s - ", inet_ntoa(*(struct in_addr *)&a));
-   printf("%s\n",  inet_ntoa(*(struct in_addr *)&b));
-   printf(" COMPARED TO\n");
-
-   a = htonl(needle->addr);
-   b = htonl(needle->broadcast);
-
-   printf("    %s - ", inet_ntoa(*(struct in_addr *)&a));
-   printf("%s\n",  inet_ntoa(*(struct in_addr *)&b));
-
-
-   printf("NEEDLE_ADDR >= HAYSTACK_ADDR? %d\n", needle->addr >= haystack->addr);
-   printf("NEEDLE_BROADCAST <= HAYSTACK_BROADCAST? %d\n", needle->broadcast <=
-	   haystack->broadcast);
-   printf("DERR: %u %u\n", needle->broadcast, haystack->broadcast);
-#endif
-
    if (needle->addr >= haystack->addr && 
 	   needle->broadcast <= haystack->broadcast)
    {
@@ -152,20 +129,3 @@ addr_compare_from_str(apr_pool_t *pool,
 
     return addr_compare(pool, addr1, addr2);
 }
-
-#ifdef TEST_ADDR
-int main(int argc, char **argv)
-{
-    apr_pool_t *pool;
-
-    apr_initialize();
-    apr_pool_create(&pool, NULL);
-
-    printf("%d\n",
-	    addr_compare_from_str(pool, argv[1], argv[2]));
-
-    apr_pool_destroy(pool);
-    apr_terminate();
-    return 0;
-}
-#endif

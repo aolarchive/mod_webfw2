@@ -202,9 +202,8 @@ test(apr_pool_t *pool, network_tbl_t *table)
 
 	    derr = network_node_str_init(pool, shouldnt_match[count]);
 	    
-	    printf("  !!! %s should NOT have matched anything!!\n",
+	    printf("  !!! %s should NOT have matched anything!!\n\n",
 		    shouldnt_match[count]);
-	    printf("\n");
 	    printf("  THIS NODE\n");
 	    print_node(derr);
 	    printf("\n");
@@ -241,6 +240,9 @@ main(int argc, char **argv)
     print_hash(table);
 
     test(pool, table);
+
+    apr_pool_destroy(pool);
+    apr_terminate();
 
     return 0;
 }
