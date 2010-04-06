@@ -19,6 +19,7 @@ static uint32_t netmask_tbl[] = {
     0xFFFFFF80, 0xFFFFFFC0, 0xFFFFFFE0, 0xFFFFFFF0, 0xFFFFFFF8,
     0xFFFFFFFC, 0xFFFFFFFE, 0xFFFFFFFF };
 
+#if 0
 static uint32_t hash_addr(uint32_t a)
 {
    a = (a+0x7ed55d16) + (a<<12);
@@ -29,6 +30,8 @@ static uint32_t hash_addr(uint32_t a)
    a = (a^0xb55a4f09) ^ (a>>16);
    return a;
 }
+#endif
+#define hash_addr(a) a
 
 network_tbl_t *
 network_tbl_init(apr_pool_t *pool, uint32_t size)
@@ -90,7 +93,7 @@ network_add_node(apr_pool_t *pool,
 	tbl->net_table[node->addr->bitlen] = hash_entry; 
     }
 
-    key_short = node->key % tbl->hash_size;
+    key_short = node->key & (tbl->hash_size - 1);
 
     node_slot = tbl->net_table[node->addr->bitlen][key_short];
 
@@ -128,7 +131,7 @@ network_search_node(apr_pool_t *pool,
 {
     int bit_iter;
 
-    for(bit_iter = 0; bit_iter <= 32; bit_iter++)
+    for(bit_iter = 32; bit_iter >= 0; bit_iter--)
     {
 	uint32_t key;
 	uint32_t addr_masked;
@@ -137,9 +140,10 @@ network_search_node(apr_pool_t *pool,
 	if (tbl->net_table[bit_iter] == NULL)
 	    continue;
 
+	//printf("%d\n", bit_iter);
 	addr_masked = node->addr->addr & netmask_tbl[bit_iter];
 
-	key = hash_addr(addr_masked) % tbl->hash_size;
+	key = hash_addr(addr_masked) & (tbl->hash_size - 1);
 	match = tbl->net_table[bit_iter][key];
 
 	while(match)
@@ -150,6 +154,7 @@ network_search_node(apr_pool_t *pool,
 	    match = match->next;
 	}
     }
+    //printf("\n");
 
     return NULL;
 }

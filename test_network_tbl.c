@@ -37,6 +37,7 @@ add_networks(apr_pool_t *pool, network_tbl_t *table)
 	node = network_add_node_from_str(pool, 
 		table, networks[count]);
 
+	printf("%p\n", node);
 
 	printf("add_network():\n"
 	       "addr      = %s\n" 

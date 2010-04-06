@@ -11,7 +11,6 @@
 typedef struct network_node {
     uint32_t key;
     addr_t  *addr;
-
     struct network_node *next;
 } network_node_t;
 

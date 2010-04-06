@@ -1,4 +1,5 @@
 #include <stdio.h>                                                                                                      
+#include <ctype.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/uio.h>
@@ -35,42 +36,73 @@ static uint32_t netmask_tbl[] = {
     0xFFFFFF80, 0xFFFFFFC0, 0xFFFFFFE0, 0xFFFFFFF0, 0xFFFFFFF8,
     0xFFFFFFFC, 0xFFFFFFFE, 0xFFFFFFFF };
 
+int
+my_inet_pton(int af, const char *src, void *dst)
+{
+    if (af == AF_INET) {
+        int             i,
+                        c,
+                        val;
+        /* not thread safe */
+        u_char          xp[4] = { 0, 0, 0, 0 };
+
+        for (i = 0;; i++) {
+            c = *src++;
+            if (!isdigit(c))
+                return (-1);
+            val = 0;
+            do {
+                val = val * 10 + c - '0';
+                if (val > 255)
+                    return (0);
+                c = *src++;
+            } while (c && isdigit(c));
+            xp[i] = val;
+            if (c == '\0')
+                break;
+            if (c != '.')
+                return (0);
+            if (i >= 3)
+                return (0);
+        }
+        memcpy(dst, xp, 4);
+        return (1);
+    } else {
+        errno = EAFNOSUPPORT;
+        return -1;
+    }
+}
+
+#define MAXLINE 1024
+
 addr_t *
 addr_from_string(apr_pool_t *pool, const char *addrstr)
 {
-    char   *addrstr_copy;
-    char   *tok;
     int     bitlen = 32;
     addr_t *addr   = NULL;
-    char   *endptr = NULL;
+    char *cp;
+    char save[MAXLINE];
 
     if (addrstr == NULL)
 	return NULL;
 
-    addrstr_copy = apr_pstrdup(pool, addrstr);
-
-    if (!(addr = apr_pcalloc(pool, sizeof(addr_t))))
+    if (!(addr = apr_pcalloc(pool, sizeof(addr_t)))) 
 	return NULL;
 
-    if (!(tok = strtok_r(addrstr_copy, "/", &endptr)))
-	return NULL;
+    if ((cp = strchr(addrstr, '/')) != NULL) {
+        bitlen = atol(cp + 1);
+        assert(cp - addrstr < MAXLINE);
+        memcpy(save, addrstr, cp - addrstr);
+        save[cp - addrstr] = '\0';
+        if (bitlen < 0 || bitlen > 32)
+            bitlen = 32;
+    } 
 
-    addr->addr = ntohl(inet_addr(tok));
-
-    if ((tok = strtok_r(NULL, "/", &endptr)))
-    {
-	bitlen = atoi(tok);
-	addr->mask   = netmask_tbl[bitlen];
-	addr->bitlen = bitlen;
-    }
-    else
-    {
-	addr->bitlen = 32;
-	addr->mask   = 0xFFFFFFFF;
-    }
-
-    addr->addr = addr->addr & addr->mask;
-
+    my_inet_pton(AF_INET, save, &addr->addr);
+    addr->addr      = ntohl(addr->addr);
+    addr->mask      = netmask_tbl[bitlen];
+    addr->bitlen    = bitlen;
+    addr->addr      = addr->addr & addr->mask;
     addr->broadcast = addr->addr | (0xFFFFFFFF & ~addr->mask);
 
     return addr;

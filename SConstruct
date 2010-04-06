@@ -11,6 +11,10 @@ def configure():
     if 'CFLAGS' in os.environ:
         env.Append(CFLAGS = os.environ['CFLAGS'])
 
+    if 'PROFILE' in os.environ:
+        env.Append(CFLAGS = '-pg')
+        env.Append(LINKFLAGS = '-pg')
+
     if 'DEBUG' in os.environ:
         env.Append(CFLAGS = "-DDEBUG")
         env.Append(CFLAGS = "-ggdb")
@@ -51,7 +55,8 @@ def apr_setup():
     apu_config = apxs_query(env["apxs"], 'APU_CONFIG')
 
     #env.ParseConfig(apr_config + ' --includes --ldflags')
-    env.ParseConfig(apr_config + ' --cflags --cppflags --includes --ldflags')
+    env.ParseConfig(apr_config + ' --cppflags --includes --ldflags')
+    #env.ParseConfig(apr_config + ' --cflags --cppflags --includes --ldflags')
     #env.ParseConfig(apu_config + ' --includes  --ldflags')
 
     #env.ParseConfig(env['apxs'] + ' -q EXTRA_CFLAGS')
@@ -106,9 +111,10 @@ def setup_colors():
 def build():
     addr = env.Object("addr.c")
     tbl  = env.Object("network_tbl.c")
+    pat  = env.Object("patricia.c")
 
     sources = ['addr.c', 'network_tbl.c', 'filter.c', 'patricia.c', 'callbacks.c', 'thrasher.c']
-    test_sources = ['testfilter.c', 'filter.c', addr, tbl, 'patricia.c']
+    test_sources = ['testfilter.c', 'filter.c', addr, tbl, pat ]
 
 
     testfilter = env.Program('testfilter', 
@@ -117,6 +123,8 @@ def build():
     testaddr   = env.Program('test_network_tbl', 
         source = ['test_network_tbl.c', addr, tbl], 
         LIBS=['apr-1'])
+    testperf   = env.Program('test_tbl_perf', 
+        source = ['test_tbl_perf.c', addr, tbl, pat], LIBS=['apr-1'])
     
     module = env.LoadableModule(
         target = 'mod_webfw2.so', 
@@ -127,12 +135,12 @@ def build():
     imod = env.Install(install_path, source = [module])
     env.Alias('install', imod)
 
-    targets = [module, testfilter, testaddr]
+    targets = [module, testfilter, testaddr, testperf]
     env.Default(targets)
 
     
         
-env = Environment(ENV = os.environ)
+env = Environment(ENV = os.environ, CCFLAGS = '-O3')
 configure()
-setup_colors()
+#setup_colors()
 build()
