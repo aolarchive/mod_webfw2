@@ -9,14 +9,15 @@
 #include "apr_pools.h"
 
 typedef struct network_node {
-    uint32_t key;
     addr_t  *addr;
     struct network_node *next;
 } network_node_t;
 
 typedef struct network_tbl {
     uint32_t    hash_size;
-    network_node_t **net_table[33];
+    uint8_t in[32]; 
+    network_node_t *any;
+    network_node_t **net_table[32];
 } network_tbl_t;
 
 network_tbl_t *network_tbl_init(apr_pool_t *pool, uint32_t size);
@@ -25,3 +26,5 @@ int network_add_node(apr_pool_t *pool, network_tbl_t *tbl, network_node_t *node)
 network_node_t *network_add_node_from_str(apr_pool_t *pool, network_tbl_t *tbl, const char *addrstr);
 network_node_t *network_search_node(apr_pool_t *pool, network_tbl_t *tbl, network_node_t *node);
 network_node_t *network_search_tbl_from_str(apr_pool_t *pool, network_tbl_t *tbl, const char *addrstr);
+network_node_t *network_search_tbl_from_addr(apr_pool_t *pool, network_tbl_t
+	*tbl, uint32_t addr, uint8_t prefix);

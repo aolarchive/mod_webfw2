@@ -42,12 +42,11 @@ add_networks(apr_pool_t *pool, network_tbl_t *table)
 	printf("add_network():\n"
 	       "addr      = %s\n" 
 	       "nodeptr   = %p\n"  
-	       "key       = %u\n"
                "iaddr     = %u\n"
 	       "mask      = %lX\n"  
 	       "broadcast = %u\n"
                "bitlen    = %d\n\n",
-	       networks[count], node, node->key,
+	       networks[count], node, 
 	       node->addr->addr, (unsigned long int)node->addr->mask,
 	       node->addr->broadcast, node->addr->bitlen);
 
@@ -62,7 +61,7 @@ print_hash(network_tbl_t *tbl)
     int i;
 
     printf("hash table:\n");
-    for (i = 0; i <= 32; i++)
+    for (i = 0; i <= 31; i++)
     {
         int x;
         network_node_t **head = NULL;
@@ -116,6 +115,27 @@ print_node(network_node_t *node)
     printf("  broadcast: %u\n", node->addr->broadcast);
 }
 
+void
+str2p(char *string, int *outaddr, int *outbitlen)
+{
+    char save[16];
+    int bitlen = 32;
+    char *cp;
+
+    if ((cp = strchr(string, '/')) != NULL)
+    {
+	bitlen = atoi(cp + 1);
+
+	memcpy(save, string, cp - string);
+	save[cp - string] = '\0';
+    }
+
+
+    *outaddr = ntohl(inet_addr(save));
+    *outbitlen = bitlen;
+}
+
+
 static void
 test(apr_pool_t *pool, network_tbl_t *table)
 {
@@ -161,14 +181,20 @@ test(apr_pool_t *pool, network_tbl_t *table)
     while(1)
     {
 	network_node_t *matched = NULL;
+	uint32_t addr, bitlen;
 
 	if (should_match[count] == NULL)
 	    break;
 
 	printf("Checking addr %s\n", should_match[count]);
 
+#if 0
 	matched = network_search_tbl_from_str(pool, 
 		table, should_match[count]);
+#endif
+	str2p(should_match[count], &addr, &bitlen);
+	matched = network_search_tbl_from_addr(pool,
+		table, addr, bitlen);
 
 	if (matched == NULL) {
 	    printf("  !!! %s should have matched something!!\n",
@@ -194,8 +220,15 @@ test(apr_pool_t *pool, network_tbl_t *table)
 
 	printf("Checking addr %s\n", shouldnt_match[count]);
 
+#if 0
 	matched = network_search_tbl_from_str(pool,
 		table, shouldnt_match[count]);
+#endif
+	uint32_t addr, bitlen;
+
+	str2p(shouldnt_match[count], &addr, &bitlen);
+	matched = network_search_tbl_from_addr(pool,
+		table, addr, bitlen);
 
 	if (matched != NULL)
 	{

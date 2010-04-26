@@ -16,7 +16,6 @@
 #include "patricia.h"
 
 char *networks[] = {
-        //"0.0.0.0/0",                                                                                                  
         /* 192.168.0.0 - 192.168.0.255 */
         "192.168.0.1/24",
         /* 192.168.1.0 - 192.168.1.127 */
@@ -31,7 +30,7 @@ char *networks[] = {
 
 	NULL };
 
-char *should_match[] = {
+    char *should_match[] = {
         /* should match 192.168.0.0/24 */
         "192.168.0.5/32",
         "192.168.0.75/32",
@@ -54,7 +53,7 @@ char *should_match[] = {
         "192.168.3.34/30",
         "192.168.3.32/27", NULL};
 
-char *shouldnt_match[] = {
+    char *shouldnt_match[] = {
         /* checks against 192.168.0.1/24 */
         "192.168.0.0/23",
         /* check against 192.168.1.0/25 */
@@ -64,11 +63,44 @@ char *shouldnt_match[] = {
         /* random checks */
         "0.0.0.0/0",
         "5.5.5.0/24",
-        "192.168.0.0/16",
-        "192.168.1.0/24",
-        "192.168.3.31/26",
         "9.9.9.0/23", NULL};
 
+int                                                                                          
+my_inet_pton2(int af, const char *src, void *dst)
+{
+    if (af == AF_INET) {
+        int             i,
+                        c,
+                        val;
+        /* not thread safe */
+        u_char          xp[4] = { 0, 0, 0, 0 };
+
+        for (i = 0;; i++) {
+            c = *src++;
+            if (!isdigit(c))
+                return (-1);
+            val = 0;
+            do {
+                val = val * 10 + c - '0';
+                if (val > 255)
+                    return (0);
+                c = *src++;
+            } while (c && isdigit(c));
+            xp[i] = val;
+            if (c == '\0')
+                break;
+            if (c != '.')
+                return (0);
+            if (i >= 3)
+                return (0);
+        }
+        memcpy(dst, xp, 4);
+        return (1);
+    } else {
+        errno = EAFNOSUPPORT;
+        return -1;
+    }
+}
 static void 
 add_patricia_networks(apr_pool_t *pool, patricia_tree_t **rtree)
 {
@@ -108,13 +140,22 @@ test_tbl_good(apr_pool_t *pool, network_tbl_t *table)
 
     while(1)
     {
-	network_node_t *m = NULL;
+	uint32_t addr;
+	struct in_addr sin;
+
+	network_node_t *m;
 
 	if (should_match[count] == NULL)
 	    break;
+	
+	my_inet_pton2(AF_INET, should_match[count], &sin);
+	addr = ntohl(sin.s_addr);
 
+	m = network_search_tbl_from_addr(pool, table, addr, 32);
+#if 0
 	m = network_search_tbl_from_str(pool, 
 		table, should_match[count]);
+#endif
 
 	count++;
     }
@@ -128,19 +169,25 @@ test_tbl_bad(apr_pool_t *pool, network_tbl_t *table)
 
     while(1)
     {
-	network_node_t *m = NULL;
+	network_node_t *m;
+	uint32_t addr; 
+	struct in_addr sin;
+
 
 	if (shouldnt_match[count] == NULL)
 	    break;
 
+	my_inet_pton2(AF_INET, shouldnt_match[count], &sin);
+	addr = ntohl(sin.s_addr);
+
+	m = network_search_tbl_from_addr(pool, table, addr, 32);
+#if 0
 	m = network_search_tbl_from_str(pool,
 		table, shouldnt_match[count]);
 
-	//printf("%d: %p\n", count, m);
+#endif
 	count++;
     }
-
-    //printf("\n");
 }
 
 

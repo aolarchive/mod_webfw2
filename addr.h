@@ -1,8 +1,8 @@
 typedef struct _addr {
+    uint8_t  bitlen;
     uint32_t addr;
     uint32_t mask;
     uint32_t broadcast;
-    uint8_t  bitlen;
 } addr_t;
 
 addr_t *addr_from_string(apr_pool_t *pool, const char *addrstr);

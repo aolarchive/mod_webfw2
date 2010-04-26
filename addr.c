@@ -36,7 +36,7 @@ static uint32_t netmask_tbl[] = {
     0xFFFFFF80, 0xFFFFFFC0, 0xFFFFFFE0, 0xFFFFFFF0, 0xFFFFFFF8,
     0xFFFFFFFC, 0xFFFFFFFE, 0xFFFFFFFF };
 
-int
+static int
 my_inet_pton(int af, const char *src, void *dst)
 {
     if (af == AF_INET) {
@@ -73,29 +73,28 @@ my_inet_pton(int af, const char *src, void *dst)
     }
 }
 
-#define MAXLINE 1024
+#define MAXLINE 16 
 
 addr_t *
 addr_from_string(apr_pool_t *pool, const char *addrstr)
 {
-    int     bitlen = 32;
-    addr_t *addr   = NULL;
+    int     bitlen;
+    addr_t *addr;
     char *cp;
     char save[MAXLINE];
 
     if (addrstr == NULL)
 	return NULL;
 
-    if (!(addr = apr_pcalloc(pool, sizeof(addr_t)))) 
+    if (!(addr = apr_palloc(pool, sizeof(addr_t)))) 
 	return NULL;
 
+    bitlen = 32;
+
     if ((cp = strchr(addrstr, '/')) != NULL) {
-        bitlen = atol(cp + 1);
-        assert(cp - addrstr < MAXLINE);
+        bitlen = atoi(cp + 1);
         memcpy(save, addrstr, cp - addrstr);
         save[cp - addrstr] = '\0';
-        if (bitlen < 0 || bitlen > 32)
-            bitlen = 32;
     } 
 
     my_inet_pton(AF_INET, save, &addr->addr);
@@ -113,7 +112,7 @@ addr_from_addr(apr_pool_t *pool, const uint32_t inaddr, const int bitlen)
 {
     addr_t *addr;
 
-    if (!(addr = apr_pcalloc(pool, sizeof(addr_t))))
+    if (!(addr = apr_palloc(pool, sizeof(addr_t))))
 	return NULL;
 
     addr->broadcast = inaddr;
@@ -143,8 +142,8 @@ int
 addr_compare_from_str(apr_pool_t *pool, 
 	const char *haystack, const char *needle)
 {
-    addr_t *addr1 = NULL;
-    addr_t *addr2 = NULL;
+    addr_t *addr1;
+    addr_t *addr2;
 
     if (!haystack || !needle)
 	return 0;
