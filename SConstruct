@@ -123,8 +123,9 @@ def build():
     testaddr   = env.Program('test_network_tbl', 
         source = ['test_network_tbl.c', addr, tbl], 
         LIBS=['apr-1'])
-    testperf   = env.Program('test_tbl_perf', 
-        source = ['test_tbl_perf.c', addr, tbl, pat], LIBS=['apr-1'])
+
+    #testperf   = env.Program('test_tbl_perf', 
+    #    source = ['test_tbl_perf.c', addr, tbl, pat], LIBS=['apr-1'])
     
     module = env.LoadableModule(
         target = 'mod_webfw2.so', 
@@ -135,7 +136,8 @@ def build():
     imod = env.Install(install_path, source = [module])
     env.Alias('install', imod)
 
-    targets = [module, testfilter, testaddr, testperf]
+    targets = [module, testfilter, testaddr]
+    #targets = [module, testfilter, testaddr, testperf]
     env.Default(targets)
 
     

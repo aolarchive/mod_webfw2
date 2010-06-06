@@ -11,6 +11,7 @@
 typedef struct network_node {
     addr_t  *addr;
     struct network_node *next;
+    void *data;
 } network_node_t;
 
 typedef struct network_tbl {
@@ -19,6 +20,8 @@ typedef struct network_tbl {
     network_node_t *any;
     network_node_t **net_table[32];
 } network_tbl_t;
+
+typedef network_tbl_t network_tree_t;
 
 network_tbl_t *network_tbl_init(apr_pool_t *pool, uint32_t size);
 network_node_t *network_node_str_init(apr_pool_t *pool, const char *addrstr);

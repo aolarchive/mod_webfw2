@@ -9,8 +9,8 @@
 int
 main(int argc, char **argv)
 {
-    filter_t       *filter;
-    apr_pool_t     *root_pool;
+    filter_t   *filter;
+    apr_pool_t *root_pool;
 
     if (argc <= 1) {
         printf("Usage: %s <file>\n", argv[0]);
@@ -26,5 +26,5 @@ main(int argc, char **argv)
 
     apr_pool_destroy(root_pool);
     apr_terminate();
-    return 0;
+    return(0);
 }

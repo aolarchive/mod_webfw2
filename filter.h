@@ -4,7 +4,13 @@
 #include "apr_strings.h"
 #include "apr_tables.h"
 #include "apr_network_io.h"
+
+#ifdef USE_PATRICIA
 #include "patricia.h"
+#else 
+#include "addr.h"
+#include "network_tbl.h"
+#endif
 
 typedef struct filter_rule filter_rule_t;
 typedef struct rule_flow rule_flow_t;
@@ -56,8 +62,8 @@ struct filter_rule {
     char               *name;
     int                 action;
     uint8_t             log;
-    patricia_tree_t    *src_addrs;
-    patricia_tree_t    *dst_addrs;
+    network_tree_t     *src_addrs;
+    network_tree_t     *dst_addrs;
     apr_hash_t         *strings;
     uint8_t             strings_have_regex;
     rule_flow_t        *flow;

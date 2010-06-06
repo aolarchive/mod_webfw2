@@ -84,6 +84,8 @@ typedef struct _patricia_tree_t {
 } patricia_tree_t;
 
 
+typedef patricia_tree_t network_tree_t;
+
 patricia_node_t *patricia_search_exact(patricia_tree_t * patricia,
                                        prefix_t * prefix);
 patricia_node_t *patricia_search_best(apr_pool_t *,

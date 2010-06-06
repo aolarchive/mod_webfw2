@@ -10,50 +10,51 @@
 #include "addr.h"
 #include "network_tbl.h"
 
-static void 
+static void
 add_networks(apr_pool_t *pool, network_tbl_t *table)
 {
-    int count = 0;
+    int   count = 0;
     char *networks[] = {
-	/* 192.168.0.0 - 192.168.0.255 */
-	"192.168.0.1/24",
-	/* 192.168.1.0 - 192.168.1.127 */
-	"192.168.1.0/25",
-	/* 192.168.1.130 - 192.168.1.131 */
-	"192.168.1.130/31",
-	"192.168.2.3/32",
-	"192.168.2.5/32",
-	"192.168.2.7/32",
-	/* 192.168.3.32 - 192.168.3.63 */
-	"192.168.3.32/27", NULL };
+        /* 192.168.0.0 - 192.168.0.255 */
+        "192.168.0.1/24",
+        /* 192.168.1.0 - 192.168.1.127 */
+        "192.168.1.0/25",
+        /* 192.168.1.130 - 192.168.1.131 */
+        "192.168.1.130/31",
+        "192.168.2.3/32",
+        "192.168.2.5/32",
+        "192.168.2.7/32",
+        /* 192.168.3.32 - 192.168.3.63 */
+        "192.168.3.32/27", NULL
+    };
 
-    while(1)
-    {
-	network_node_t *node;
+    while (1) {
+        network_node_t *node;
 
-	if (networks[count] == NULL)
-	    break;
+        if (networks[count] == NULL) {
+            break;
+        }
 
-	node = network_add_node_from_str(pool, 
-		table, networks[count]);
+        node = network_add_node_from_str(pool,
+                                         table, networks[count]);
 
-	printf("%p\n", node);
+        printf("%p\n", node);
 
-	printf("add_network():\n"
-	       "addr      = %s\n" 
-	       "nodeptr   = %p\n"  
+        printf("add_network():\n"
+               "addr      = %s\n"
+               "nodeptr   = %p\n"
                "iaddr     = %u\n"
-	       "mask      = %lX\n"  
-	       "broadcast = %u\n"
+               "mask      = %lX\n"
+               "broadcast = %u\n"
                "bitlen    = %d\n\n",
-	       networks[count], node, 
-	       node->addr->addr, (unsigned long int)node->addr->mask,
-	       node->addr->broadcast, node->addr->bitlen);
+               networks[count], node,
+               node->addr->addr, (unsigned long int)node->addr->mask,
+               node->addr->broadcast, node->addr->bitlen);
 
-	count++;
+        count++;
     }
 
-}
+} /* add_networks */
 
 static void
 print_hash(network_tbl_t *tbl)
@@ -61,28 +62,26 @@ print_hash(network_tbl_t *tbl)
     int i;
 
     printf("hash table:\n");
-    for (i = 0; i <= 31; i++)
-    {
-        int x;
+    for (i = 0; i <= 31; i++) {
+        int              x;
         network_node_t **head = NULL;
 
         printf("bitlen: %d\n", i);
 
         head = tbl->net_table[i];
 
-        if (head == NULL) 
+        if (head == NULL) {
             continue;
+        }
 
-        for (x = 0; x < tbl->hash_size; x++)
-        {
+        for (x = 0; x < tbl->hash_size; x++) {
             network_node_t *node;
             node = head[x];
 
-            while(node)
-            {
-                printf("\tbucket=%d ptr=%p addr=%u bitlen=%u\n", 
-			x, node, node->addr->addr, 
-			node->addr->bitlen);
+            while (node) {
+                printf("\tbucket=%d ptr=%p addr=%u bitlen=%u\n",
+                       x, node, node->addr->addr,
+                       node->addr->bitlen);
                 node = node->next;
             }
         }
@@ -90,21 +89,22 @@ print_hash(network_tbl_t *tbl)
     printf("\n");
 }
 
-static void 
+static void
 print_node(network_node_t *node)
 {
     uint32_t addr;
     uint32_t a, b;
 
-    if (node == NULL)
-	printf("  NULL");
+    if (node == NULL) {
+        printf("  NULL");
+    }
 
     addr = htonl(node->addr->addr);
 
     printf("  ptr:       %p\n", node);
-    printf("  network:   %s/%d\n", 
-	    inet_ntoa(*(struct in_addr *)&addr),
-	    node->addr->bitlen);
+    printf("  network:   %s/%d\n",
+           inet_ntoa(*(struct in_addr *)&addr),
+           node->addr->bitlen);
 
     a = htonl(node->addr->addr);
     b = htonl(node->addr->broadcast);
@@ -118,16 +118,15 @@ print_node(network_node_t *node)
 void
 str2p(char *string, int *outaddr, int *outbitlen)
 {
-    char save[16];
-    int bitlen = 32;
+    char  save[16];
+    int   bitlen = 32;
     char *cp;
 
-    if ((cp = strchr(string, '/')) != NULL)
-    {
-	bitlen = atoi(cp + 1);
+    if ((cp = strchr(string, '/')) != NULL) {
+        bitlen = atoi(cp + 1);
 
-	memcpy(save, string, cp - string);
-	save[cp - string] = '\0';
+        memcpy(save, string, cp - string);
+        save[cp - string] = '\0';
     }
 
 
@@ -140,128 +139,129 @@ static void
 test(apr_pool_t *pool, network_tbl_t *table)
 {
     char *should_match[] = {
-	/* should match 192.168.0.0/24 */
-	"192.168.0.5/32",
-	"192.168.0.75/32",
-	"192.168.0.30/31",
-	"192.168.0.0/24",
-	/* should match 192.168.1.0/25 */
-	"192.168.1.10/32",
-	"192.168.1.16/30",
-	"192.168.1.0/25",
-	/* should match 192.168.1.130/31 */
-	"192.168.1.130/32",
-	"192.168.1.131/32",
-	"192.168.1.130/31",
-	/* these 32's should match */
-	"192.168.2.3/32",
-	"192.168.2.5/32",
-	"192.168.2.7/32",
-	/* should match 192.168.3.32/27 */
-	"192.168.3.32/32",
-	"192.168.3.34/30",
-	"192.168.3.32/27", NULL};
+        /* should match 192.168.0.0/24 */
+        "192.168.0.5/32",
+        "192.168.0.75/32",
+        "192.168.0.30/31",
+        "192.168.0.0/24",
+        /* should match 192.168.1.0/25 */
+        "192.168.1.10/32",
+        "192.168.1.16/30",
+        "192.168.1.0/25",
+        /* should match 192.168.1.130/31 */
+        "192.168.1.130/32",
+        "192.168.1.131/32",
+        "192.168.1.130/31",
+        /* these 32's should match */
+        "192.168.2.3/32",
+        "192.168.2.5/32",
+        "192.168.2.7/32",
+        /* should match 192.168.3.32/27 */
+        "192.168.3.32/32",
+        "192.168.3.34/30",
+        "192.168.3.32/27", NULL
+    };
 
     char *shouldnt_match[] = {
-	/* checks against 192.168.0.1/24 */
-	"192.168.0.0/23",
-	/* check against 192.168.1.0/25 */
-	"192.168.1.128/32",
-	/* check against 192.168.3.32/27 */
-	"192.168.3.30/31", 
-	/* random checks */
-	"0.0.0.0/0",
-	"5.5.5.0/24",
-	"9.9.9.0/23", NULL};
+        /* checks against 192.168.0.1/24 */
+        "192.168.0.0/23",
+        /* check against 192.168.1.0/25 */
+        "192.168.1.128/32",
+        /* check against 192.168.3.32/27 */
+        "192.168.3.30/31",
+        /* random checks */
+        "0.0.0.0/0",
+        "5.5.5.0/24",
+        "9.9.9.0/23",      NULL
+    };
 
-    int count = 0;
+    int   count = 0;
 
     printf(">>>> Checking things that SHOULD match\n");
 
-    while(1)
-    {
-	network_node_t *matched = NULL;
-	uint32_t addr, bitlen;
+    while (1) {
+        network_node_t *matched = NULL;
+        uint32_t        addr, bitlen;
 
-	if (should_match[count] == NULL)
-	    break;
+        if (should_match[count] == NULL) {
+            break;
+        }
 
-	printf("Checking addr %s\n", should_match[count]);
+        printf("Checking addr %s\n", should_match[count]);
 
 #if 0
-	matched = network_search_tbl_from_str(pool, 
-		table, should_match[count]);
+        matched = network_search_tbl_from_str(pool,
+                                              table, should_match[count]);
 #endif
-	str2p(should_match[count], &addr, &bitlen);
-	matched = network_search_tbl_from_addr(pool,
-		table, addr, bitlen);
+        str2p(should_match[count], &addr, &bitlen);
+        matched = network_search_tbl_from_addr(pool,
+                                               table, addr, bitlen);
 
-	if (matched == NULL) {
-	    printf("  !!! %s should have matched something!!\n",
-		    should_match[count]);
-	} else {
-	    printf(" node matched, GOOD!\n");
-	    print_node(matched);
-	}
-	count++;
+        if (matched == NULL) {
+            printf("  !!! %s should have matched something!!\n",
+                   should_match[count]);
+        } else {
+            printf(" node matched, GOOD!\n");
+            print_node(matched);
+        }
+        count++;
     }
-	
+
     printf("\n");
 
     printf(">>>> Checking things that SHOULDN'T match\n");
     count = 0;
 
-    while(1)
-    {
-	network_node_t *matched = NULL;
+    while (1) {
+        network_node_t *matched = NULL;
 
-	if (shouldnt_match[count] == NULL)
-	    break;
+        if (shouldnt_match[count] == NULL) {
+            break;
+        }
 
-	printf("Checking addr %s\n", shouldnt_match[count]);
+        printf("Checking addr %s\n", shouldnt_match[count]);
 
 #if 0
-	matched = network_search_tbl_from_str(pool,
-		table, shouldnt_match[count]);
+        matched = network_search_tbl_from_str(pool,
+                                              table, shouldnt_match[count]);
 #endif
-	uint32_t addr, bitlen;
+        uint32_t addr, bitlen;
 
-	str2p(shouldnt_match[count], &addr, &bitlen);
-	matched = network_search_tbl_from_addr(pool,
-		table, addr, bitlen);
+        str2p(shouldnt_match[count], &addr, &bitlen);
+        matched = network_search_tbl_from_addr(pool,
+                                               table, addr, bitlen);
 
-	if (matched != NULL)
-	{
-	    network_node_t *derr;
+        if (matched != NULL) {
+            network_node_t *derr;
 
-	    derr = network_node_str_init(pool, shouldnt_match[count]);
-	    
-	    printf("  !!! %s should NOT have matched anything!!\n\n",
-		    shouldnt_match[count]);
-	    printf("  THIS NODE\n");
-	    print_node(derr);
-	    printf("\n");
-	    printf("  MATCHED THIS NODE\n");
-	    print_node(matched);
-	    printf("\n");
-	} else {
-	    printf("  %s wasn't found, GOOD!\n",
-		    shouldnt_match[count]);
-	}
+            derr = network_node_str_init(pool, shouldnt_match[count]);
 
-	count++;
+            printf("  !!! %s should NOT have matched anything!!\n\n",
+                   shouldnt_match[count]);
+            printf("  THIS NODE\n");
+            print_node(derr);
+            printf("\n");
+            printf("  MATCHED THIS NODE\n");
+            print_node(matched);
+            printf("\n");
+        } else {
+            printf("  %s wasn't found, GOOD!\n",
+                   shouldnt_match[count]);
+        }
+
+        count++;
     }
 
     printf("\n");
-}
+} /* test */
 
 
 
 
-int 
+int
 main(int argc, char **argv)
 {
-    apr_pool_t *pool;
+    apr_pool_t    *pool;
     network_tbl_t *table;
 
 
@@ -278,6 +278,6 @@ main(int argc, char **argv)
     apr_pool_destroy(pool);
     apr_terminate();
 
-    return 0;
+    return(0);
 }
 
