@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "apr.h"
 #include "apr_hash.h"
 #include "apr_pools.h"
