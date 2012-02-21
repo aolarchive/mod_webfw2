@@ -57,7 +57,6 @@ def apr_setup():
     #env.ParseConfig(env['apxs'] + ' -q EXTRA_CFLAGS')
     env.ParseConfig(env['apxs'] + ' -q EXTRA_CPPFLAGS')
     env.ParseConfig(env['apxs'] + ' -q EXTRA_LIBS')
-    env.ParseConfig(env['apxs'] + ' -q EXTRA_LIBS')
 
     env.AppendUnique(CPPPATH = [
         apxs_query(env['apxs'], 'exp_includedir')])
@@ -106,8 +105,7 @@ def build():
     sources = ['filter.c', 'patricia.c', 'callbacks.c', 'thrasher.c']
     test_sources = ['testfilter.c', 'filter.c', 'patricia.c']
 
-    testfilter = env.Program('testfilter', 
-        source = test_sources, LIBS=['apr-1', 'confuse'], CFLAGS='-DDEBUG')
+    testfilter = env.Program('testfilter', parse_flags = "-DDEBUG", source = test_sources, LIBS=['apr-1', 'confuse'])
 
     module = env.LoadableModule(
         target = 'mod_webfw2.so', 
