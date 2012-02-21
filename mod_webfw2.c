@@ -674,15 +674,25 @@ webfw2_handler(request_rec * rec)
         switch (rule->action) {
 
         case FILTER_DENY:
-            ret = config->default_action;
+            if (rule->status_code)
+                ret = rule->status_code;
+            else
+                ret = config->default_action;
             break;
         case FILTER_PERMIT:
             ret = DECLINED;
             break;
+        case FILTER_REDIRECT:
+            ret = 302;
+            apr_table_setn(rec->headers_out, "Location", rule->redirect_url);
+            break;
         case FILTER_THRASH_v2:
         case FILTER_THRASH_v3:
         case FILTER_THRASH:
-            ret = config->default_taction;
+            if (rule->status_code)
+                ret = rule->status_code;
+            else
+                ret = config->default_taction;
             break;
         case FILTER_THRASH_PROFILE_v2:
         case FILTER_THRASH_PROFILE_v3:

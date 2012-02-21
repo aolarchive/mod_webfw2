@@ -550,9 +550,10 @@ filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
         action = FILTER_PERMIT;
     else if (!strcmp(actionstr, "deny"))
         action = FILTER_DENY;
-    else if (!strcmp(actionstr, "thrash"))
-        action = FILTER_THRASH;
-    else if (!strcmp(actionstr, "thrash-v1"))
+    else if (!memcmp(actionstr, "redirect:", 9)) {
+        action = FILTER_REDIRECT;
+        rule->redirect_url = apr_pstrdup(rule->pool, actionstr+9);
+    } else if (!strcmp(actionstr, "thrash-v1"))
         action = FILTER_THRASH;
     else if (!strcmp(actionstr, "thrash-v1 profile"))
         action = FILTER_THRASH_PROFILE;
@@ -577,6 +578,16 @@ filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
         action = atoi(actionstr);
 
     rule->action = action;
+
+    return 0;
+}
+
+static int
+filter_rule_set_status_code(filter_rule_t * rule, const char *statuscodestr)
+{
+
+    rule->status_code = atoi(statuscodestr);
+    PRINT_DEBUG("status-code %d\n", rule->status_code);
 
     return 0;
 }
@@ -957,7 +968,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
 
     filter = NULL;
 
-    PRINT_DEBUG("Parsing configuration.\n");
+    PRINT_DEBUG("Parsing configuration from %s.\n", filename);
     cfg_opt_t       str_match_opts[] = {
         CFG_STR_LIST("values", 0, CFGF_MULTI),
         CFG_STR_LIST("regex", 0, CFGF_MULTI),
@@ -974,6 +985,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
         CFG_SEC("match_string", str_match_opts, CFGF_MULTI | CFGF_TITLE),
         CFG_STR("action", "deny", CFGF_NONE),
+        CFG_STR("status-code", 0, CFGF_NONE),
         CFG_STR("update-rule", NULL, CFGF_NONE),
         CFG_END()
     };
@@ -988,6 +1000,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
     cfg = cfg_init(opts, CFGF_NOCASE);
 
     if (cfg_parse(cfg, filename) == CFG_PARSE_ERROR) {
+        PRINT_DEBUG("cfg parse failed.\n", "");
         cfg_free(cfg);
         return NULL;
     }
@@ -1031,6 +1044,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
         int             addr_cnt;
         filter_rule_t  *filter_rule;
         char           *action;
+        char           *status_code;
         cfg_t          *rule;
 
         PRINT_DEBUG("Parsing rule %d\n", i);
@@ -1055,6 +1069,9 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
 
         if ((action = cfg_getstr(rule, "action")))
             filter_rule_set_action(filter_rule, action);
+
+        if ((status_code = cfg_getstr(rule, "status-code")))
+            filter_rule_set_status_code(filter_rule, status_code);
 
         PRINT_DEBUG("%d src_addrs defined\n", cfg_size(rule, "src_addrs"));
 
