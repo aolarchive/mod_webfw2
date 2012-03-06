@@ -1,3 +1,9 @@
+1.2
+* Added redirect action
+* Added thrasher v4 action
+* Fixed thrasher v3 action
+* Added status-code variable to over ride the default
+
 1.0r17-5 updates - features/bugfixes
 
 - Extra socket error checking with recv() calls for thrasher.
