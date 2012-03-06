@@ -569,6 +569,10 @@ filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
         action = FILTER_THRASH_v3;
     else if (!strcmp(actionstr, "thrash-v3 profile"))
         action = FILTER_THRASH_PROFILE_v3;
+    else if (!strcmp(actionstr, "thrash-v4"))
+        action = FILTER_THRASH_v4;
+    else if (!strcmp(actionstr, "thrash-v4 profile"))
+        action = FILTER_THRASH_PROFILE_v4;
     else if (!strcmp(actionstr, "pass"))
         action = FILTER_PASS;
     else

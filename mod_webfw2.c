@@ -368,7 +368,7 @@ webfw2_set_interesting_notes(request_rec * rec)
 static int
 webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
                 webfw2_filter_t * filter, const char *srcaddr,
-                int thrasher_type)
+                filter_rule_t *rule)
 {
     thrasher_pkt_type pkt_type;
     int             query_ret;
@@ -422,7 +422,7 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
      * match up our packet types with what came back from
      * the filter rules action 
      */
-    switch (thrasher_type) {
+    switch (rule->action) {
     case FILTER_THRASH_PROFILE_v1:
     case FILTER_THRASH_v1:
         pkt_type = TYPE_THRESHOLD_v1;
@@ -445,6 +445,19 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
             return DECLINED;
 
         break;
+    case FILTER_THRASH_v4:
+    case FILTER_THRASH_PROFILE_v4:
+        pkt_type = TYPE_THRESHOLD_v4;
+
+        /*
+         * generate a random value for our identification 
+         * portion of this packet. 
+         */
+        if (apr_generate_random_bytes((unsigned char *) &ident,
+                                      sizeof(uint32_t)) != APR_SUCCESS)
+            return DECLINED;
+
+        break;
     default:
         /*
          * unknown thrasher type :( 
@@ -453,7 +466,7 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     }
 
     query_ret = thrasher_query(rec, config, filter,
-                               pkt_type, srcaddr, ident);
+                               pkt_type, srcaddr, ident, rule->name);
 
     PRINT_DEBUG("Blah %d\n", query_ret);
 
@@ -520,7 +533,7 @@ webfw2_traverse_filter(request_rec * rec,
             PRINT_DEBUG("MATCHED RULE %s\n", rule->name);
 
             if (rule->action >= FILTER_THRASH &&
-                rule->action <= FILTER_THRASH_PROFILE_v3) {
+                rule->action <= FILTER_THRASH_PROFILE_v4) {
                 /*
                  * we don't want to stop rule processing if a
                  * thrasher rule was found but no thresholds were
@@ -529,7 +542,7 @@ webfw2_traverse_filter(request_rec * rec,
                  */
                 ret =
                     webfw2_thrasher(rec, config, filter, src_ip,
-                                    rule->action);
+                                    rule);
 
                 PRINT_DEBUG
                     ("Thrasher (%d) packet sent for %s. Ret status: %d\n",
@@ -688,6 +701,7 @@ webfw2_handler(request_rec * rec)
             break;
         case FILTER_THRASH_v2:
         case FILTER_THRASH_v3:
+        case FILTER_THRASH_v4:
         case FILTER_THRASH:
             if (rule->status_code)
                 ret = rule->status_code;
@@ -696,6 +710,7 @@ webfw2_handler(request_rec * rec)
             break;
         case FILTER_THRASH_PROFILE_v2:
         case FILTER_THRASH_PROFILE_v3:
+        case FILTER_THRASH_PROFILE_v4:
         case FILTER_THRASH_PROFILE:
             ret = DECLINED;
             break;

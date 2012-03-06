@@ -245,10 +245,62 @@ thrasher_create_v3_pkt(apr_pool_t * pool, uint32_t ident,
     *pkt->packet = TYPE_THRESHOLD_v3;
 
     memcpy(&pkt->packet[1], &ident_nbo, sizeof(uint32_t));
-    memcpy(&pkt->packet[5], &urilen_nbo, sizeof(uint16_t));
-    memcpy(&pkt->packet[7], &hlen_nbo, sizeof(uint16_t));
-    memcpy(&pkt->packet[9], uri, urilen);
-    memcpy(&pkt->packet[9 + urilen], host, hlen);
+    memcpy(&pkt->packet[5], &addr, sizeof(uint32_t));
+    memcpy(&pkt->packet[9], &urilen_nbo, sizeof(uint16_t));
+    memcpy(&pkt->packet[11], &hlen_nbo, sizeof(uint16_t));
+    memcpy(&pkt->packet[13], uri, urilen);
+    memcpy(&pkt->packet[13 + urilen], host, hlen);
+
+    pkt->len = pktlen;
+    pkt->thrasher_recv_cb = thrasher_recv_v3_pkt;
+
+    return pkt;
+}
+
+static thrasher_pkt_t *
+thrasher_create_v4_pkt(apr_pool_t * pool, uint32_t ident,
+                       char *host, char *uri, uint32_t addr,
+                       uint16_t hlen, uint16_t urilen, char *reason, uint16_t rlen)
+{
+    apr_size_t      pktlen;
+    thrasher_pkt_t *pkt;
+    uint16_t        hlen_nbo,
+                    urilen_nbo,
+                    rlen_nbo;
+    uint32_t        ident_nbo;
+
+    if (!addr || !host || !uri || !hlen || !urilen)
+        return NULL;
+
+    if (!(pkt = apr_pcalloc(pool, sizeof(thrasher_pkt_t))))
+        return NULL;
+
+    hlen_nbo = htons(hlen);
+    urilen_nbo = htons(urilen);
+    ident_nbo = htonl(ident);
+    rlen_nbo = htons(rlen);
+
+    pktlen = sizeof(uint8_t) +  /* type  */
+        sizeof(uint32_t) +      /* ident */
+        sizeof(uint32_t) +      /* addr  */
+        sizeof(uint16_t) +      /* uri len */
+        sizeof(uint16_t) +      /* host len */
+        sizeof(uint16_t) +      /* reason len */
+        hlen + urilen + rlen;   /* payloads */
+
+    if (!(pkt->packet = apr_pcalloc(pool, pktlen)))
+        return NULL;
+
+    *pkt->packet = TYPE_THRESHOLD_v4;
+
+    memcpy(&pkt->packet[1], &rlen, sizeof(uint16_t));
+    memcpy(&pkt->packet[3], &ident_nbo, sizeof(uint32_t));
+    memcpy(&pkt->packet[7], &addr, sizeof(uint32_t));
+    memcpy(&pkt->packet[11], &urilen_nbo, sizeof(uint16_t));
+    memcpy(&pkt->packet[13], &hlen_nbo, sizeof(uint16_t));
+    memcpy(&pkt->packet[15], uri, urilen);
+    memcpy(&pkt->packet[15 + urilen], host, hlen);
+    memcpy(&pkt->packet[15 + urilen + urilen], reason, rlen);
 
     pkt->len = pktlen;
     pkt->thrasher_recv_cb = thrasher_recv_v3_pkt;
@@ -259,7 +311,7 @@ thrasher_create_v3_pkt(apr_pool_t * pool, uint32_t ident,
 int
 thrasher_query(request_rec * rec, webfw2_config_t * config,
                webfw2_filter_t * filter, thrasher_pkt_type type,
-               const char *srcaddr, uint32_t ident)
+               const char *srcaddr, uint32_t ident, char *reason)
 {
     /*
      * returns 0 if the host is allowed, 
@@ -292,6 +344,14 @@ thrasher_query(request_rec * rec, webfw2_config_t * config,
                                      rec->uri, inet_addr(srcaddr),
                                      strlen(rec->hostname),
                                      strlen(rec->uri));
+        break;
+    case TYPE_THRESHOLD_v4:
+        pkt = thrasher_create_v4_pkt(rec->pool,
+                                     ident, (char *) rec->hostname,
+                                     rec->uri, inet_addr(srcaddr),
+                                     strlen(rec->hostname),
+                                     strlen(rec->uri),
+                                     reason, strlen(reason));
         break;
     default:
         return -1;
