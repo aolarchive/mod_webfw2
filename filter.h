@@ -6,8 +6,6 @@
 #include "apr_tables.h"
 #include "apr_network_io.h"
 #include "patricia.h"
-#include "httpd/httpd.h"
-#include "httpd/http_log.h"
 
 typedef struct filter_rule filter_rule_t;
 typedef struct rule_flow rule_flow_t;
