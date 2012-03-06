@@ -182,9 +182,7 @@ thrasher_recv_v3_pkt(thrasher_pkt_t * pkt, apr_socket_t * sock)
     uint32_t        ident;
     apr_size_t      torecv;
     char            recv_data[5];
-    thrasher_v3_data_t *data;
 
-    data = (thrasher_v3_data_t *) pkt->thrasher_data;
 
     /*
      * recv 4 byte ident along with the boolean on whether
@@ -194,10 +192,11 @@ thrasher_recv_v3_pkt(thrasher_pkt_t * pkt, apr_socket_t * sock)
     if (apr_socket_recv(sock, recv_data, &torecv) != APR_SUCCESS)
         return -1;
 
-    ident = (uint32_t) * recv_data;
+
+    memcpy(&ident, recv_data, sizeof(uint32_t));
     allowed = (uint8_t) recv_data[4];
 
-    if (data->ident != ntohl(ident))
+    if (pkt->ident != ntohl(ident))
         /*
          * our identifiers did not match, we must
          * return an error, something very odd 
@@ -253,6 +252,7 @@ thrasher_create_v3_pkt(apr_pool_t * pool, uint32_t ident,
 
     pkt->len = pktlen;
     pkt->thrasher_recv_cb = thrasher_recv_v3_pkt;
+    pkt->ident = ident;
 
     return pkt;
 }
@@ -293,17 +293,18 @@ thrasher_create_v4_pkt(apr_pool_t * pool, uint32_t ident,
 
     *pkt->packet = TYPE_THRESHOLD_v4;
 
-    memcpy(&pkt->packet[1], &rlen, sizeof(uint16_t));
+    memcpy(&pkt->packet[1], &rlen_nbo, sizeof(uint16_t));
     memcpy(&pkt->packet[3], &ident_nbo, sizeof(uint32_t));
     memcpy(&pkt->packet[7], &addr, sizeof(uint32_t));
     memcpy(&pkt->packet[11], &urilen_nbo, sizeof(uint16_t));
     memcpy(&pkt->packet[13], &hlen_nbo, sizeof(uint16_t));
     memcpy(&pkt->packet[15], uri, urilen);
     memcpy(&pkt->packet[15 + urilen], host, hlen);
-    memcpy(&pkt->packet[15 + urilen + urilen], reason, rlen);
+    memcpy(&pkt->packet[15 + urilen + hlen], reason, rlen);
 
     pkt->len = pktlen;
     pkt->thrasher_recv_cb = thrasher_recv_v3_pkt;
+    pkt->ident = ident;
 
     return pkt;
 }

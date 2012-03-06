@@ -41,8 +41,8 @@ typedef struct thrasher_v4_data {
 typedef struct thrasher_pkt {
   unsigned char *packet;
   apr_size_t len;
-  void *thrasher_data;
-  int  (*thrasher_recv_cb)(struct thrasher_pkt *pkt, apr_socket_t *sock);
+  uint32_t   ident;
+  int        (*thrasher_recv_cb)(struct thrasher_pkt *pkt, apr_socket_t *sock);
 } thrasher_pkt_t;
 	
 int thrasher_query(request_rec *, 
