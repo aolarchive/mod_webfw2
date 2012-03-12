@@ -561,7 +561,7 @@ webfw2_traverse_filter(request_rec * rec,
              */
             if ((rule->action == FILTER_PASS) ||
                 (rule->action >= FILTER_THRASH &&
-                rule->action <= FILTER_THRASH_PROFILE_v3)) {
+                rule->action <= FILTER_THRASH_PROFILE_v4)) {
                 char           *curr_passes;
 
                 curr_passes = (char *)

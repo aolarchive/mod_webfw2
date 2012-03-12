@@ -32,6 +32,8 @@ typedef struct filter_callbacks filter_callbacks_t;
             __FILE__, __PRETTY_FUNCTION__, ##args);
 #else
 #ifdef APDEBUG
+#include "httpd.h"
+#include "http_log.h"
 #define PRINT_DEBUG(format, args...) \
     ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL, format, ##args)
 #else
