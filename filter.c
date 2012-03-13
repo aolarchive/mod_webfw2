@@ -553,7 +553,9 @@ filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
     else if (!memcmp(actionstr, "redirect:", 9)) {
         action = FILTER_REDIRECT;
         rule->redirect_url = apr_pstrdup(rule->pool, actionstr+9);
-    } else if (!strcmp(actionstr, "thrash-v1"))
+    } else if (!strcmp(actionstr, "thrash"))
+        action = FILTER_THRASH;
+    else if (!strcmp(actionstr, "thrash-v1"))
         action = FILTER_THRASH;
     else if (!strcmp(actionstr, "thrash-v1 profile"))
         action = FILTER_THRASH_PROFILE;
