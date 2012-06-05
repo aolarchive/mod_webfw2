@@ -25,6 +25,8 @@ typedef struct filter_callbacks filter_callbacks_t;
 #define FILTER_THRASH_PROFILE_v3 1977
 #define FILTER_THRASH_v4         1978
 #define FILTER_THRASH_PROFILE_v4 1979
+#define FILTER_THRASH_v6         1980
+#define FILTER_THRASH_PROFILE_v6 1981
 
 #ifdef DEBUG
 #define PRINT_DEBUG(format, args...) \

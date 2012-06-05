@@ -309,6 +309,59 @@ thrasher_create_v4_pkt(apr_pool_t * pool, uint32_t ident,
     return pkt;
 }
 
+static thrasher_pkt_t *
+thrasher_create_v6_pkt(apr_pool_t * pool, uint32_t ident,
+                       char *host, char *uri, const char *addr,
+                       uint16_t hlen, uint16_t urilen, char *reason, uint16_t rlen)
+{
+    apr_size_t      pktlen;
+    thrasher_pkt_t *pkt;
+    uint16_t        hlen_nbo,
+                    urilen_nbo,
+                    rlen_nbo;
+    uint32_t        ident_nbo;
+    unsigned char   s6addr[16];
+
+    if (!addr || !host || !uri || !hlen || !urilen)
+        return NULL;
+
+    if (!(pkt = apr_pcalloc(pool, sizeof(thrasher_pkt_t))))
+        return NULL;
+
+    hlen_nbo = htons(hlen);
+    urilen_nbo = htons(urilen);
+    ident_nbo = htonl(ident);
+    rlen_nbo = htons(rlen);
+
+    pktlen = sizeof(uint8_t) +  /* type  */
+        sizeof(uint32_t) +      /* ident */
+        sizeof(uint32_t) +      /* s6addr */
+        sizeof(uint16_t) +      /* uri len */
+        sizeof(uint16_t) +      /* host len */
+        sizeof(uint16_t) +      /* reason len */
+        hlen + urilen + rlen;   /* payloads */
+
+    if (!(pkt->packet = apr_pcalloc(pool, pktlen)))
+        return NULL;
+
+    *pkt->packet = TYPE_THRESHOLD_v6;
+
+    memcpy(&pkt->packet[1], &rlen_nbo, sizeof(uint16_t));
+    memcpy(&pkt->packet[3], &ident_nbo, sizeof(uint32_t));
+    memcpy(&pkt->packet[7], s6addr, 16);
+    memcpy(&pkt->packet[23], &urilen_nbo, sizeof(uint16_t));
+    memcpy(&pkt->packet[25], &hlen_nbo, sizeof(uint16_t));
+    memcpy(&pkt->packet[27], uri, urilen);
+    memcpy(&pkt->packet[27 + urilen], host, hlen);
+    memcpy(&pkt->packet[27 + urilen + hlen], reason, rlen);
+
+    pkt->len = pktlen;
+    pkt->thrasher_recv_cb = thrasher_recv_v3_pkt;
+    pkt->ident = ident;
+
+    return pkt;
+}
+
 int
 thrasher_query(request_rec * rec, webfw2_config_t * config,
                webfw2_filter_t * filter, thrasher_pkt_type type,
@@ -350,6 +403,14 @@ thrasher_query(request_rec * rec, webfw2_config_t * config,
         pkt = thrasher_create_v4_pkt(rec->pool,
                                      ident, (char *) rec->hostname,
                                      rec->uri, inet_addr(srcaddr),
+                                     strlen(rec->hostname),
+                                     strlen(rec->uri),
+                                     reason, strlen(reason));
+        break;
+    case TYPE_THRESHOLD_v6:
+        pkt = thrasher_create_v6_pkt(rec->pool,
+                                     ident, (char *) rec->hostname,
+                                     rec->uri, srcaddr,
                                      strlen(rec->hostname),
                                      strlen(rec->uri),
                                      reason, strlen(reason));

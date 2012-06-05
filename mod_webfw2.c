@@ -458,6 +458,19 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
             return DECLINED;
 
         break;
+    case FILTER_THRASH_v6:
+    case FILTER_THRASH_PROFILE_v6:
+        pkt_type = TYPE_THRESHOLD_v6;
+
+        /*
+         * generate a random value for our identification 
+         * portion of this packet. 
+         */
+        if (apr_generate_random_bytes((unsigned char *) &ident,
+                                      sizeof(uint32_t)) != APR_SUCCESS)
+            return DECLINED;
+
+        break;
     default:
         /*
          * unknown thrasher type :( 
@@ -533,7 +546,7 @@ webfw2_traverse_filter(request_rec * rec,
             PRINT_DEBUG("MATCHED RULE %s\n", rule->name);
 
             if (rule->action >= FILTER_THRASH &&
-                rule->action <= FILTER_THRASH_PROFILE_v4) {
+                rule->action <= FILTER_THRASH_PROFILE_v6) {
                 /*
                  * we don't want to stop rule processing if a
                  * thrasher rule was found but no thresholds were
@@ -561,7 +574,7 @@ webfw2_traverse_filter(request_rec * rec,
              */
             if ((rule->action == FILTER_PASS) ||
                 (rule->action >= FILTER_THRASH &&
-                rule->action <= FILTER_THRASH_PROFILE_v4)) {
+                rule->action <= FILTER_THRASH_PROFILE_v6)) {
                 char           *curr_passes;
 
                 curr_passes = (char *)
@@ -702,6 +715,7 @@ webfw2_handler(request_rec * rec)
         case FILTER_THRASH_v2:
         case FILTER_THRASH_v3:
         case FILTER_THRASH_v4:
+        case FILTER_THRASH_v6:
         case FILTER_THRASH:
             if (rule->status_code)
                 ret = rule->status_code;
@@ -711,6 +725,7 @@ webfw2_handler(request_rec * rec)
         case FILTER_THRASH_PROFILE_v2:
         case FILTER_THRASH_PROFILE_v3:
         case FILTER_THRASH_PROFILE_v4:
+        case FILTER_THRASH_PROFILE_v6:
         case FILTER_THRASH_PROFILE:
             ret = DECLINED;
             break;

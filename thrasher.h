@@ -5,6 +5,7 @@ typedef enum {
     TYPE_THRESHOLD_v2,
     TYPE_THRESHOLD_v3,
     TYPE_THRESHOLD_v4,
+    TYPE_THRESHOLD_v6,
 } thrasher_pkt_type;
 
 typedef struct thrasher_v1_data {
@@ -37,6 +38,16 @@ typedef struct thrasher_v4_data {
 	uint32_t ident;
 	char *reason;
 } thrasher_v4_data_t;
+
+typedef struct thrasher_v6_data {
+	char *host;
+	char *uri;
+	unsigned char addr[16];
+	uint16_t hlen;
+	uint16_t urilen;
+	uint32_t ident;
+	char *reason;
+} thrasher_v6_data_t;
 
 typedef struct thrasher_pkt {
   unsigned char *packet;
