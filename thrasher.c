@@ -328,6 +328,15 @@ thrasher_create_v6_pkt(apr_pool_t * pool, uint32_t ident,
     if (!(pkt = apr_pcalloc(pool, sizeof(thrasher_pkt_t))))
         return NULL;
 
+    if (strchr(addr, '.')) {
+        memset(s6addr, 0, 10);
+        s6addr[10] = 0xff;
+        s6addr[11] = 0xff;
+        inet_pton(AF_INET, addr, s6addr+12);
+    } else {
+        inet_pton(AF_INET6, addr, s6addr);
+    }
+
     hlen_nbo = htons(hlen);
     urilen_nbo = htons(urilen);
     ident_nbo = htonl(ident);
