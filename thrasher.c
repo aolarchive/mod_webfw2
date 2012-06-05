@@ -334,11 +334,11 @@ thrasher_create_v6_pkt(apr_pool_t * pool, uint32_t ident,
     rlen_nbo = htons(rlen);
 
     pktlen = sizeof(uint8_t) +  /* type  */
-        sizeof(uint32_t) +      /* ident */
-        sizeof(uint32_t) +      /* s6addr */
-        sizeof(uint16_t) +      /* uri len */
-        sizeof(uint16_t) +      /* host len */
-        sizeof(uint16_t) +      /* reason len */
+        sizeof(uint32_t)     +  /* ident */
+        16                   +  /* s6addr */
+        sizeof(uint16_t)     +  /* uri len */
+        sizeof(uint16_t)     +  /* host len */
+        sizeof(uint16_t)     +  /* reason len */
         hlen + urilen + rlen;   /* payloads */
 
     if (!(pkt->packet = apr_pcalloc(pool, pktlen)))
