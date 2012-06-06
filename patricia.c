@@ -75,6 +75,8 @@ my_inet_pton(int af, const char *src, void *dst)
         }
         memcpy(dst, xp, 4);
         return (1);
+    } else if (af == AF_INET6) {
+        return (inet_pton (af, src, dst));
     } else {
         errno = EAFNOSUPPORT;
         return -1;
@@ -119,6 +121,14 @@ prefix_toa2x(prefix_t * prefix, char *buff, int with_len)
             sprintf(buff, "%d.%d.%d.%d", a[0], a[1], a[2], a[3]);
         }
         return (buff);
+    } else if (prefix->family == AF_INET6) {
+	char *r;
+	r = (char *) inet_ntop (AF_INET6, &prefix->add.sin6, buff, 48 /* a guess value */ );
+	if (r && with_len) {
+	    assert (prefix->bitlen <= 128);
+	    sprintf (buff + strlen (buff), "/%d", prefix->bitlen);
+	}
+	return (buff);
     } else
         return (NULL);
 }
@@ -151,6 +161,13 @@ New_Prefix2(apr_pool_t * pool, int family, void *dest, int bitlen,
             dynamic_allocated++;
         }
         memcpy(&prefix->add.sin, dest, 4);
+    } else if (family == AF_INET6) {
+        default_bitlen = 128;
+	if (prefix == NULL) {
+            prefix = apr_pcalloc(pool, sizeof (prefix6_t));
+	    dynamic_allocated++;
+	}
+	memcpy (&prefix->add.sin6, dest, 16);
     } else {
         return (NULL);
     }
@@ -180,6 +197,7 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
                     maxbitlen = 0;
     char           *cp;
     struct in_addr  sin;
+    struct in6_addr sin6;
     int             result;
     /*
      * not thread safe 
@@ -191,7 +209,17 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
         return (NULL);
     }
 
-    maxbitlen = 32;
+    if (family == 0) {
+       family = AF_INET;
+       if (strchr (string, ':')) family = AF_INET6;
+    }
+
+    if (family == AF_INET) {
+        maxbitlen = 32;
+    }
+    else if (family == AF_INET6) {
+        maxbitlen = 128;
+    }
 
     if ((cp = strchr(string, '/')) != NULL) {
         bitlen = atol(cp + 1);
@@ -211,6 +239,10 @@ ascii2prefix(apr_pool_t * pool, int family, char *string)
             return (NULL);
 	}
         return (New_Prefix(pool, AF_INET, &sin, bitlen));
+    } else if (family == AF_INET6) {
+        if ((result = inet_pton (AF_INET6, string, &sin6)) <= 0)
+            return (NULL);
+	return (New_Prefix (pool, AF_INET6, &sin6, bitlen));
     } else
         return (NULL);
 }
@@ -757,7 +789,7 @@ make_and_lookup(apr_pool_t * pool, patricia_tree_t * tree, char *string)
     prefix_t       *prefix;
     patricia_node_t *node;
 
-    prefix = ascii2prefix(pool, AF_INET, string);
+    prefix = ascii2prefix(pool, 0, string);
     node = patricia_lookup(pool, tree, prefix);
     Deref_Prefix(prefix);
     return (node);
@@ -769,7 +801,7 @@ try_search_best(apr_pool_t * pool, patricia_tree_t * tree, char *string)
     prefix_t       *prefix;
     patricia_node_t *node;
 
-    prefix = ascii2prefix(pool, AF_INET, string);
+    prefix = ascii2prefix(pool, 0, string);
     if ((node = patricia_search_best(pool, tree, prefix)) == NULL)
         Deref_Prefix(prefix);
     return (node);

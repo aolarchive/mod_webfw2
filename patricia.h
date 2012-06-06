@@ -54,15 +54,20 @@ typedef struct _prefix4_t {
     struct in_addr  sin;
 } prefix4_t;
 
+typedef struct _prefix6_t {
+    u_short         family;     /* AF_INET | AF_INET6 */
+    u_short         bitlen;     /* same as mask? */
+    int             ref_count;  /* reference count */
+    struct in6_addr sin6;
+} prefix6_t;
+
 typedef struct _prefix_t {
     u_short         family;     /* AF_INET | AF_INET6 */
     u_short         bitlen;     /* same as mask? */
     int             ref_count;  /* reference count */
     union {
         struct in_addr  sin;
-#ifdef HAVE_IPV6
         struct in6_addr sin6;
-#endif                          /* IPV6 */
     } add;
 } prefix_t;
 

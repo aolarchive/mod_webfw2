@@ -919,7 +919,7 @@ parse_whitelist(filter_t * filter, const char *filename)
 {
     FILE           *wlf;
     filter_rule_t  *filter_rule;
-    char           *buf;
+    char            buf[1024];
     char           *bptr;
 
     if (!filename)
@@ -939,25 +939,21 @@ parse_whitelist(filter_t * filter, const char *filename)
 
     filter_rule_set_action(filter_rule, "permit");
 
-    buf = malloc(1024);
+    while ((bptr = fgets(buf, sizeof(buf)-1, wlf))) {
 
-    while ((bptr = fgets(buf, 1023, wlf))) {
+        filter_trim_str(buf);
 
-        buf = filter_trim_str(buf);
-
-        if (!buf || *buf == '\0' || *buf == '#')
+        if (*buf == '\0' || *buf == '#')
             continue;
 
         if (filter_rule_add_network(filter_rule, buf,
                                     RULE_MATCH_SRCADDR, NULL) == -1) {
-            free(buf);
             fclose(wlf);
             return NULL;
         }
 
     }
 
-    free(buf);
     fclose(wlf);
 
     return filter_rule;
