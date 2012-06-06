@@ -624,7 +624,7 @@ filter_rule_add_network(filter_rule_t * rule,
     }
 
     if (*tree == NULL)
-        *tree = New_Patricia(rule->pool, 32);
+        *tree = New_Patricia(rule->pool, 128);
 
     rtree = *tree;
 
