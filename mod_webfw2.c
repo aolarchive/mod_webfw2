@@ -181,6 +181,21 @@ webfw2_child_init(apr_pool_t * pool, server_rec * rec)
                           apr_pool_cleanup_null, rec->process->pool);
 }
 
+static void
+webfw2_add_array_unique(apr_pool_t          *pool, apr_array_header_t  *addr_array, const char *addr)
+{
+    int i;
+
+    for (i = 0; i < addr_array->nelts; i++) {
+        char *src_ip = ((char **) addr_array->elts)[i];
+        if (strcmp(src_ip, addr) == 0)
+            return;
+    }
+
+    *(const char **) apr_array_push(addr_array) =
+        apr_pstrdup(pool, addr);
+}
+
 static apr_array_header_t *
 webfw2_find_all_sources(request_rec * rec)
 {
@@ -206,8 +221,7 @@ webfw2_find_all_sources(request_rec * rec)
         /*
          * no xff headers defined, so we only look at the remote addr 
          */
-        *(const char **) apr_array_push(addr_array) =
-            rec->connection->remote_ip;
+        webfw2_add_array_unique(rec->pool, addr_array, rec->connection->remote_ip);
         return addr_array;
     }
 
@@ -283,8 +297,7 @@ webfw2_find_all_sources(request_rec * rec)
                 if (!filter_validate_ip(addr))
                     continue;
 
-                *(const char **) apr_array_push(addr_array) =
-                    apr_pstrdup(rec->pool, addr);
+                webfw2_add_array_unique(rec->pool, addr_array, addr);
             }
         } else {
             /*
@@ -303,8 +316,7 @@ webfw2_find_all_sources(request_rec * rec)
                     /*
                      * printf("Copying first entries %s\n", addrs_ptr[x]);
                      */
-                    *(const char **) apr_array_push(addr_array) =
-                        apr_pstrdup(rec->pool, addrs_ptr[x]);
+                    webfw2_add_array_unique(rec->pool, addr_array, addrs_ptr[x]);
                 }
             }
 
@@ -330,8 +342,7 @@ webfw2_find_all_sources(request_rec * rec)
                     /*
                      * printf("Copying last entries %s\n", addrs_ptr[x]);
                      */
-                    *(const char **) apr_array_push(addr_array) =
-                        apr_pstrdup(rec->pool, addrs_ptr[x]);
+                    webfw2_add_array_unique(rec->pool, addr_array, addrs_ptr[x]);
                 }
             }
         }
@@ -339,8 +350,7 @@ webfw2_find_all_sources(request_rec * rec)
         free_tokens(addrs_ptr);
     }
 
-    *(const char **) apr_array_push(addr_array) =
-        rec->connection->remote_ip;
+    webfw2_add_array_unique(rec->pool, addr_array, rec->connection->remote_ip);
 
     return addr_array;
 }
