@@ -764,7 +764,7 @@ webfw2_handler(request_rec * rec)
             PRINT_DEBUG("Updating Dynamic rule %s with src-ip %s\n",
                         rule->update_rule->name, matched_src_ip);
             filter_rule_add_network(rule->update_rule, matched_src_ip,
-                                    RULE_MATCH_SRCADDR, NULL);
+                                    RULE_MATCH_SRCADDR);
         }
 
     }

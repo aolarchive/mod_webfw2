@@ -64,6 +64,9 @@ struct filter_callbacks {
   apr_hash_t *string_callbacks;
 };
 
+#define FILTER_RULE_IP_ADD     (void *)0
+#define FILTER_RULE_IP_SUB     (void *)1
+
 struct filter_rule {
     char            *name;
     int              action;
@@ -111,5 +114,5 @@ void free_tokens(char **);
 int filter_register_user_cb(filter_t *, 
   void *(*cb)(apr_pool_t *, void *, const void *), int, void *);
 filter_rule_t *filter_get_rule(filter_t *filter, const char *rule_name);
-int filter_rule_add_network(filter_rule_t *, const char *, const int, void *);
+int filter_rule_add_network(filter_rule_t *, const char *, const int);
 int filter_validate_ip(char *);

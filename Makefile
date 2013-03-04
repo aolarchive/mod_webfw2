@@ -49,3 +49,5 @@ clean:
 	rm -rf testfilter
 	rm -rf ./.libs/
 
+scons:
+	CFLAGS=-I../pchad-libs/confuse/src LDFLAGS=-L../pchad-libs/confuse/src/.libs scons

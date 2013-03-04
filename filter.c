@@ -161,11 +161,13 @@ static int
 filter_match_srcaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
                      void *usrdata)
 {
+    patricia_node_t *pnode;
+
     if (!rule->src_addrs)
         return 1;
 
-    if ((try_search_best(pool, rule->src_addrs, (char *) data)))
-        return 1;
+    if ((pnode = try_search_best(pool, rule->src_addrs, (char *) data)))
+        return pnode->data == FILTER_RULE_IP_ADD;
 
     return 0;
 }
@@ -174,11 +176,13 @@ static int
 filter_match_not_dstaddr(apr_pool_t * pool, filter_rule_t * rule,
                          void *data, void *usrdata)
 {
+    patricia_node_t *pnode;
+
     if (!rule->dst_addrs)
         return 1;
 
-    if ((try_search_best(pool, rule->dst_addrs, (char *) data)))
-        return 0;
+    if ((pnode = try_search_best(pool, rule->dst_addrs, (char *) data)))
+        return pnode->data == FILTER_RULE_IP_SUB;
 
     return 1;
 }
@@ -187,11 +191,13 @@ static int
 filter_match_not_srcaddr(apr_pool_t * pool, filter_rule_t * rule,
                          void *data, void *usrdata)
 {
+    patricia_node_t *pnode;
+
     if (!rule->src_addrs)
         return 1;
 
-    if ((try_search_best(pool, rule->src_addrs, (char *) data)))
-        return 0;
+    if ((pnode = try_search_best(pool, rule->src_addrs, (char *) data)))
+        return pnode->data == FILTER_RULE_IP_SUB;
 
     return 1;
 }
@@ -200,11 +206,13 @@ static int
 filter_match_dstaddr(apr_pool_t * pool, filter_rule_t * rule, void *data,
                      void *usrdata)
 {
+    patricia_node_t *pnode;
+
     if (!rule->dst_addrs)
         return 1;
 
-    if ((try_search_best(pool, rule->dst_addrs, (char *) data)))
-        return 1;
+    if ((pnode = try_search_best(pool, rule->dst_addrs, (char *) data)))
+        return pnode->data == FILTER_RULE_IP_ADD;
 
     return 0;
 }
@@ -605,12 +613,12 @@ filter_rule_set_status_code(filter_rule_t * rule, const char *statuscodestr)
 
 int
 filter_rule_add_network(filter_rule_t * rule,
-                        const char *network, const int direction,
-                        void *data)
+                        const char *network, const int direction)
 {
     patricia_tree_t **tree;
     patricia_tree_t *rtree;
     patricia_node_t *pnode;
+    void            *data = FILTER_RULE_IP_ADD;
 
     switch (direction) {
     case RULE_MATCH_SRCADDR:
@@ -627,6 +635,12 @@ filter_rule_add_network(filter_rule_t * rule,
         *tree = New_Patricia(rule->pool, 128);
 
     rtree = *tree;
+    if (*network == '-') {
+        data = FILTER_RULE_IP_SUB;
+        network++;
+    } else if (*network == '+') {
+        network++;
+    }
 
     if (!(pnode = make_and_lookup(rule->pool, rtree, (char *) network)))
         return -1;
@@ -947,11 +961,10 @@ parse_whitelist(filter_t * filter, const char *filename)
             continue;
 
         if (filter_rule_add_network(filter_rule, buf,
-                                    RULE_MATCH_SRCADDR, NULL) == -1) {
+                                    RULE_MATCH_SRCADDR) == -1) {
             fclose(wlf);
             return NULL;
         }
-
     }
 
     fclose(wlf);
@@ -1087,8 +1100,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
                 cfg_getnstr(rule, "src_addrs", addr_cnt);
 
             PRINT_DEBUG("Adding %s to our src_addr radix tree\n", addr);
-            filter_rule_add_network(filter_rule, addr, RULE_MATCH_SRCADDR,
-                                    NULL);
+            filter_rule_add_network(filter_rule, addr, RULE_MATCH_SRCADDR);
         }
 
         PRINT_DEBUG("%d dst_addrs defined\n", cfg_size(rule, "dst_addrs"));
@@ -1098,8 +1110,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
             char           *addr =
                 cfg_getnstr(rule, "dst_addrs", addr_cnt);
             PRINT_DEBUG("Adding %s to our dst_addr radix tree\n", addr);
-            filter_rule_add_network(filter_rule, addr, RULE_MATCH_DSTADDR,
-                                    NULL);
+            filter_rule_add_network(filter_rule, addr, RULE_MATCH_DSTADDR);
         }
 
         int             str_match_size = cfg_size(rule, "match_string");
