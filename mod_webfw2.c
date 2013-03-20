@@ -372,7 +372,7 @@ webfw2_set_interesting_notes(request_rec * rec)
     apr_table_set(rec->notes, "__wf2-uri__", rec->uri);
     apr_table_set(rec->notes, "__wf2-unparsed-uri__", rec->unparsed_uri);
     apr_table_set(rec->notes, "__wf2-protocol__", rec->protocol);
-
+    apr_table_set(rec->notes, "__wf2-method__", rec->method);
 }
 
 static int
@@ -678,7 +678,7 @@ webfw2_handler(request_rec * rec)
      * grab all the source addresses within the request 
      */
     addrs = webfw2_find_all_sources(rec);
-    
+
     do {
         /*
          * initialize our default return 

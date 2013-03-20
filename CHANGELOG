@@ -1,3 +1,10 @@
+1.6
+* New send-method that when used with thrasher actions prepends the method "[GET]/index.html"
+* Added __wf2-method__ note which has the apache method string "GET"
+
+1.5
+* IP lists (whitelist, src and dst lists) can now have a leading '-' to remove that ip(s) from the list
+
 1.3
 * IPv6 support
 
