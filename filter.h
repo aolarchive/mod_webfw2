@@ -68,17 +68,18 @@ struct filter_callbacks {
 #define FILTER_RULE_IP_SUB     (void *)1
 
 struct filter_rule {
-    char            *name;
-    int              action;
-    int              status_code;
-    uint8_t          log;
-    patricia_tree_t *src_addrs;
-    patricia_tree_t *dst_addrs;
-    apr_hash_t      *strings;
-    uint8_t          strings_have_regex;
-    rule_flow_t    *flow;
-    apr_pool_t     *pool;
-    char           *redirect_url;
+    char               *name;
+    int                 action;
+    int                 status_code;
+    uint8_t             log;
+    uint8_t             send_method;
+    patricia_tree_t    *src_addrs;
+    patricia_tree_t    *dst_addrs;
+    apr_hash_t         *strings;
+    uint8_t             strings_have_regex;
+    rule_flow_t        *flow;
+    apr_pool_t         *pool;
+    char               *redirect_url;
     struct filter_rule *next;
     struct filter_rule *update_rule;
 };

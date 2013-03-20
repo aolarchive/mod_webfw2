@@ -374,7 +374,7 @@ thrasher_create_v6_pkt(apr_pool_t * pool, uint32_t ident,
 int
 thrasher_query(request_rec * rec, webfw2_config_t * config,
                webfw2_filter_t * filter, thrasher_pkt_type type,
-               const char *srcaddr, uint32_t ident, char *reason)
+               const char *srcaddr, uint32_t ident, char *reason, int sendMethod)
 {
     /*
      * returns 0 if the host is allowed, 
@@ -386,6 +386,17 @@ thrasher_query(request_rec * rec, webfw2_config_t * config,
 
     pkt = NULL;
     ret = 0;
+    int   urilen;
+    char *uri;
+    char  uribuf[4000];
+
+    if (sendMethod) {
+        uri = uribuf;
+        urilen = snprintf(uribuf, sizeof(uribuf), "[%s]%s", rec->method, rec->uri);
+    } else {
+        uri = rec->uri;
+        urilen = strlen(uri);
+    }
 
     if (!thrasher_is_connected(filter->thrasher_sock))
         return -1;
@@ -394,9 +405,9 @@ thrasher_query(request_rec * rec, webfw2_config_t * config,
     case TYPE_THRESHOLD_v1:
         pkt = thrasher_create_v1_pkt(rec->pool,
                                      (char *) rec->hostname,
-                                     (char *) rec->uri, inet_addr(srcaddr),
+                                     (char *) uri, inet_addr(srcaddr),
                                      strlen(rec->hostname),
-                                     strlen(rec->uri));
+                                     urilen);
         break;
     case TYPE_THRESHOLD_v2:
         pkt = thrasher_create_v2_pkt(rec->pool, inet_addr(srcaddr));
@@ -404,24 +415,24 @@ thrasher_query(request_rec * rec, webfw2_config_t * config,
     case TYPE_THRESHOLD_v3:
         pkt = thrasher_create_v3_pkt(rec->pool,
                                      ident, (char *) rec->hostname,
-                                     rec->uri, inet_addr(srcaddr),
+                                     uri, inet_addr(srcaddr),
                                      strlen(rec->hostname),
-                                     strlen(rec->uri));
+                                     urilen);
         break;
     case TYPE_THRESHOLD_v4:
         pkt = thrasher_create_v4_pkt(rec->pool,
                                      ident, (char *) rec->hostname,
-                                     rec->uri, inet_addr(srcaddr),
+                                     uri, inet_addr(srcaddr),
                                      strlen(rec->hostname),
-                                     strlen(rec->uri),
+                                     urilen,
                                      reason, strlen(reason));
         break;
     case TYPE_THRESHOLD_v6:
         pkt = thrasher_create_v6_pkt(rec->pool,
                                      ident, (char *) rec->hostname,
-                                     rec->uri, srcaddr,
+                                     uri, srcaddr,
                                      strlen(rec->hostname),
-                                     strlen(rec->uri),
+                                     urilen,
                                      reason, strlen(reason));
         break;
     default:

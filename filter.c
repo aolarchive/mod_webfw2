@@ -999,6 +999,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
         CFG_BOOL("enabled", cfg_true, CFGF_NONE),
         CFG_BOOL("log", cfg_true, CFGF_NONE),
         CFG_BOOL("pass", cfg_false, CFGF_NONE),
+        CFG_BOOL("send-method", cfg_false, CFGF_NONE),
         CFG_STR("set-cookie", NULL, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
@@ -1076,6 +1077,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
         filter_rule->name =
             apr_pstrdup(filter_rule->pool, cfg_title(rule));
         filter_rule->log = cfg_getbool(rule, "log");
+        filter_rule->send_method = cfg_getbool(rule, "send-method");
 
         PRINT_DEBUG("Rule name: %s\n", filter_rule->name);
 

@@ -489,7 +489,7 @@ webfw2_thrasher(request_rec * rec, webfw2_config_t * config,
     }
 
     query_ret = thrasher_query(rec, config, filter,
-                               pkt_type, srcaddr, ident, rule->name);
+                               pkt_type, srcaddr, ident, rule->name, rule->send_method);
 
     PRINT_DEBUG("Blah %d\n", query_ret);
 

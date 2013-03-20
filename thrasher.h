@@ -62,7 +62,8 @@ int thrasher_query(request_rec *,
         thrasher_pkt_type, 
         const char *, 
         uint32_t, 
-        char*);
+        char*,
+        int);
 
 apr_socket_t *thrasher_connect(apr_pool_t *pool, webfw2_config_t *config);
 int thrasher_is_connected(apr_socket_t *sock);
