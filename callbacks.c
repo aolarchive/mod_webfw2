@@ -1,3 +1,9 @@
+/******************************************************************************/
+/* callbacks.c  -- Functions dealing with filter callbacks
+ *
+ * Copyright 2000-2013 AOL Inc. All rights reserved.
+ *
+ */
 #include <stdio.h>
 #include "mod_webfw2.h"
 #include "callbacks.h"

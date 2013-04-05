@@ -1,3 +1,9 @@
+/******************************************************************************/
+/* filter.c  -- Filter rule parsing and implementation
+ *
+ * Copyright 2007-2013 AOL Inc. All rights reserved.
+ *
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
