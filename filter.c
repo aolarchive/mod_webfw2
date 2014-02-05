@@ -567,6 +567,11 @@ filter_rule_set_action(filter_rule_t * rule, const char *actionstr)
     else if (!memcmp(actionstr, "redirect:", 9)) {
         action = FILTER_REDIRECT;
         rule->redirect_url = apr_pstrdup(rule->pool, actionstr+9);
+        rule->redirect_question = strchr(actionstr+9, '?') == 0;
+    } else if (!memcmp(actionstr, "redirect_params:", 16)) {
+        action = FILTER_REDIRECT_PARAMS;
+        rule->redirect_url = apr_pstrdup(rule->pool, actionstr+16);
+        rule->redirect_question = strchr(actionstr+16, '?') != 0;
     } else if (!strcmp(actionstr, "thrash"))
         action = FILTER_THRASH;
     else if (!strcmp(actionstr, "thrash-v1"))
@@ -799,7 +804,6 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
              * string key 
              */
             {
-                PRINT_DEBUG("Processing flow STRING\n");
                 void           *(*cb) (apr_pool_t * pool, void *fc_data,
                                        const void *usrdata);
 
@@ -812,6 +816,7 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
                     continue;
                 }
                 data = cb(pool, flows->user_data, usrdata);
+                PRINT_DEBUG("Processed flow STRING %s data %s\n", flows->user_data, data);
                 extra = flows->user_data;
             }
             break;

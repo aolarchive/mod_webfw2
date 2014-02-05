@@ -15,6 +15,7 @@ typedef struct filter_callbacks filter_callbacks_t;
 #define FILTER_PERMIT               2
 #define FILTER_PASS                 3
 #define FILTER_REDIRECT             4
+#define FILTER_REDIRECT_PARAMS      5
 #define FILTER_THRASH            1972
 #define FILTER_THRASH_v1         1972
 #define FILTER_THRASH_PROFILE    1973
@@ -27,6 +28,8 @@ typedef struct filter_callbacks filter_callbacks_t;
 #define FILTER_THRASH_PROFILE_v4 1979
 #define FILTER_THRASH_v6         1980
 #define FILTER_THRASH_PROFILE_v6 1981
+
+#define APDEBUG
 
 #ifdef DEBUG
 #define PRINT_DEBUG(format, args...) \
@@ -80,6 +83,7 @@ struct filter_rule {
     rule_flow_t        *flow;
     apr_pool_t         *pool;
     char               *redirect_url;
+    char                redirect_question;
     struct filter_rule *next;
     struct filter_rule *update_rule;
 };

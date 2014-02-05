@@ -1,3 +1,6 @@
+1.7
+* New redirect_args append the args
+
 1.6
 * New send-method that when used with thrasher actions prepends the method "[GET]/index.html"
 * Added __wf2-method__ note which has the apache method string "GET"

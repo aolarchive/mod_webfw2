@@ -728,6 +728,18 @@ webfw2_handler(request_rec * rec)
             ret = 302;
             apr_table_setn(rec->headers_out, "Location", rule->redirect_url);
             break;
+        case FILTER_REDIRECT_PARAMS:
+            ret = 302;
+            char *location;
+            if (!rec->args)
+                location = rule->redirect_url;
+            else if (rule->redirect_question)
+                location = apr_pstrcat(rec->pool, rule->redirect_url, "&", rec->args, NULL);
+            else
+                location = apr_pstrcat(rec->pool, rule->redirect_url, "?", rec->args, NULL);
+            PRINT_DEBUG("redirecting to >%s<", location);
+            apr_table_setn(rec->headers_out, "Location", location);
+            break;
         case FILTER_THRASH_v2:
         case FILTER_THRASH_v3:
         case FILTER_THRASH_v4:
