@@ -29,8 +29,6 @@ typedef struct filter_callbacks filter_callbacks_t;
 #define FILTER_THRASH_v6         1980
 #define FILTER_THRASH_PROFILE_v6 1981
 
-#define APDEBUG
-
 #ifdef DEBUG
 #define PRINT_DEBUG(format, args...) \
     printf("[%s] %-25s: \033[31m"format"\033[0m", \
