@@ -548,9 +548,23 @@ webfw2_traverse_filter(request_rec * rec,
         PRINT_DEBUG("Rule %s Traversing with %s\n",
                     current_rule->name, src_ip);
 
+        int whitelisted = 0;
+        if (filter->filter->whitelist_rule) {
+            whitelisted = filter_traverse_filter(filter->filter,
+                                                 filter->filter->whitelist_rule,
+                                                 (void *) callback_data) != NULL;
+        }
+
         do {
             if (!current_rule)
                 break;
+
+            /* If this is a whitelist request only look at rules that have ignore-whitelist set */
+            if (whitelisted && !current_rule->ignore_whitelist) {
+                current_rule = rule->next;
+                rule = NULL;
+                continue;
+            }
 
             rule = filter_traverse_filter(filter->filter,
                                           current_rule,

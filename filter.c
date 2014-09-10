@@ -1011,6 +1011,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
         CFG_BOOL("log", cfg_true, CFGF_NONE),
         CFG_BOOL("pass", cfg_false, CFGF_NONE),
         CFG_BOOL("send-method", cfg_false, CFGF_NONE),
+        CFG_BOOL("ignore-whitelist", cfg_false, CFGF_NONE),
         CFG_STR("set-cookie", NULL, CFGF_NONE),
         CFG_STR_LIST("src_addrs", 0, CFGF_MULTI),
         CFG_STR_LIST("dst_addrs", 0, CFGF_MULTI),
@@ -1043,15 +1044,12 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
      * first setup a rule for our whitelist if needed 
      */
     if (whitelist_file && do_whitelist) {
-        filter_rule_t  *whitelist_rule;
-        whitelist_rule = parse_whitelist(filter, whitelist_file);
-        if (whitelist_rule) {
-            filter_add_rule(filter, whitelist_rule);
-
+        filter->whitelist_rule = parse_whitelist(filter, whitelist_file);
+        if (filter->whitelist_rule) {
             if (cfg_getbool(cfg, "whitelist-log"))
-                whitelist_rule->log = 1;
+                filter->whitelist_rule->log = 1;
             else
-                whitelist_rule->log = 0;
+                filter->whitelist_rule->log = 0;
         } else {
             cfg_error(cfg, "Unable to parse whitelist: %s",
                       whitelist_file);
@@ -1089,6 +1087,7 @@ filter_parse_config(apr_pool_t * pool, const char *filename, int do_whitelist)
             apr_pstrdup(filter_rule->pool, cfg_title(rule));
         filter_rule->log = cfg_getbool(rule, "log");
         filter_rule->send_method = cfg_getbool(rule, "send-method");
+        filter_rule->ignore_whitelist = cfg_getbool(rule, "ignore-whitelist");
 
         PRINT_DEBUG("Rule name: %s\n", filter_rule->name);
 

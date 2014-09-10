@@ -74,6 +74,7 @@ struct filter_rule {
     int                 status_code;
     uint8_t             log;
     uint8_t             send_method;
+    uint8_t             ignore_whitelist;
     patricia_tree_t    *src_addrs;
     patricia_tree_t    *dst_addrs;
     apr_hash_t         *strings;
@@ -87,6 +88,7 @@ struct filter_rule {
 };
 
 typedef struct filter {
+    filter_rule_t      *whitelist_rule;
     filter_rule_t      *head;
     filter_rule_t      *tail;
     apr_pool_t        *pool;
