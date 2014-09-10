@@ -561,7 +561,7 @@ webfw2_traverse_filter(request_rec * rec,
 
             /* If this is a whitelist request only look at rules that have ignore-whitelist set */
             if (whitelisted && !current_rule->ignore_whitelist) {
-                current_rule = rule->next;
+                current_rule = current_rule->next;
                 rule = NULL;
                 continue;
             }
