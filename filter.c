@@ -881,7 +881,7 @@ filter_match_rulen(apr_pool_t * pool, filter_t * filter,
 
 filter_rule_t  *
 filter_traverse_filter(filter_t * filter, filter_rule_t * start_rule,
-                       const void *usrdata)
+                       int whitelisted, const void *usrdata)
 {
     filter_rule_t  *rule;
     apr_pool_t     *subpool;
@@ -896,12 +896,14 @@ filter_traverse_filter(filter_t * filter, filter_rule_t * start_rule,
 
     apr_pool_create(&subpool, NULL);
 
-    while (rule != NULL) {
+    for (;rule != NULL;rule = rule->next) {
+        if (whitelisted && !rule->ignore_whitelist)
+            continue;
+
         if (filter_match_rulen(subpool, filter, rule, usrdata) == 1)
             break;
 
         apr_pool_clear(subpool);
-        rule = rule->next;
     }
 
     apr_pool_destroy(subpool);

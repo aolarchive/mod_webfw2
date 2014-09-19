@@ -112,7 +112,7 @@ rule_flow_t *filter_rule_flow_init(apr_pool_t *);
 filter_t *filter_init(apr_pool_t *);
 int filter_match_rule(apr_pool_t *, filter_rule_t *, const char *, 
     const char *, const void *);
-filter_rule_t *filter_traverse_filter(filter_t *, filter_rule_t *, const void *);
+filter_rule_t *filter_traverse_filter(filter_t *, filter_rule_t *, int whitelisted, const void *);
 filter_t *filter_parse_config(apr_pool_t *, const char *, int);
 char **filter_tokenize_str(char *, const char *, int *nelts);
 void free_tokens(char **);

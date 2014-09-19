@@ -552,6 +552,7 @@ webfw2_traverse_filter(request_rec * rec,
         if (filter->filter->whitelist_rule) {
             whitelisted = filter_traverse_filter(filter->filter,
                                                  filter->filter->whitelist_rule,
+                                                 FALSE,
                                                  (void *) callback_data) != NULL;
         }
 
@@ -559,19 +560,14 @@ webfw2_traverse_filter(request_rec * rec,
             if (!current_rule)
                 break;
 
-            /* If this is a whitelist request only look at rules that have ignore-whitelist set */
-            if (whitelisted && !current_rule->ignore_whitelist) {
-                current_rule = current_rule->next;
-                rule = NULL;
-                continue;
-            }
-
             rule = filter_traverse_filter(filter->filter,
                                           current_rule,
+                                          whitelisted,
                                           (void *) callback_data);
 
             if (!rule)
                 break;
+
 
             PRINT_DEBUG("MATCHED RULE %s\n", rule->name);
 
