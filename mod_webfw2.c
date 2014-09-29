@@ -635,6 +635,11 @@ webfw2_traverse_filter(request_rec * rec,
 
         if (ret != DECLINED)
             break;
+
+        if (whitelisted) {
+            rule = filter->filter->whitelist_rule;
+            break;
+        }
     }
 
     *sip = src_ip;
