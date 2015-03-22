@@ -227,7 +227,11 @@ webfw2_find_all_sources(request_rec * rec)
         /*
          * no xff headers defined, so we only look at the remote addr 
          */
+#if AP_MODULE_MAGIC_AT_LEAST(20111130,0)
+        webfw2_add_array_unique(rec->pool, addr_array, rec->connection->client_ip);
+#else
         webfw2_add_array_unique(rec->pool, addr_array, rec->connection->remote_ip);
+#endif
         return addr_array;
     }
 
@@ -273,7 +277,13 @@ webfw2_find_all_sources(request_rec * rec)
          */
         if (xff_opts && xff_opts->source_ip &&
             !apr_hash_get(xff_opts->source_ip,
+
+#if AP_MODULE_MAGIC_AT_LEAST(20111130,0)
+                          (char *) rec->connection->client_ip,
+#else
                           (char *) rec->connection->remote_ip,
+#endif
+
                           APR_HASH_KEY_STRING)) {
             /*
              * printf("Untrusted source address for XFF %s\n", 
@@ -356,7 +366,11 @@ webfw2_find_all_sources(request_rec * rec)
         free_tokens(addrs_ptr);
     }
 
+#if AP_MODULE_MAGIC_AT_LEAST(20111130,0)
+    webfw2_add_array_unique(rec->pool, addr_array, rec->connection->client_ip);
+#else
     webfw2_add_array_unique(rec->pool, addr_array, rec->connection->remote_ip);
+#endif
 
     return addr_array;
 }
