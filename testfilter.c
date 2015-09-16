@@ -19,18 +19,19 @@ void print_ip(prefix_t *prefix, void *data)
     printf("  %c%s\n", (data == 0?'+':'-'), buf);
 }
 
-
-void print_filter(filter_t *filter)
+void print_rules(filter_t *filter, filter_rule_t *rule)
 {
-    char *flows[] = {"", "src_addr", "dst_addr", "chad_ord", "string", "or", "and", "not_src_addr", "not_dst_addr", "not_string"};
-    filter_rule_t  *rule = filter->head;
-
-
     while (rule) {
-        printf("Name:         %s\n", rule->name);
-        printf("Action:       %d\n", rule->action);
-        printf("Code:         %d\n", rule->status_code);
-        printf("Log:          %d\n", rule->log);
+        printf("Name:            %s\n", rule->name);
+        printf("Action:          %d\n", rule->action);
+        printf("Code:            %d\n", rule->status_code);
+        printf("Log:             %d\n", rule->log);
+        printf("SendMethod:      %d\n", rule->send_method);
+        printf("IgnoreWhitelist  %d\n", rule->ignore_whitelist);
+        if (rule->redirect_url) {
+            printf("RedirectUrl      %s\n", rule->redirect_url);
+            printf("RedirectQuestion %d\n", rule->ignore_whitelist);
+        }
         if (rule->src_addrs) {
             printf("Src Addrs:\n");
             patricia_process(rule->src_addrs, print_ip);
@@ -75,6 +76,19 @@ void print_filter(filter_t *filter)
     }
 }
 
+void print_filter(filter_t *filter)
+{
+    char *flows[] = {"", "src_addr", "dst_addr", "chad_ord", "string", "or", "and", "not_src_addr", "not_dst_addr", "not_string"};
+
+    if (filter->whitelist_rule) {
+        printf("WHITELIST:\n");
+        print_rules(filter, filter->whitelist_rule);
+    }
+    printf("RULES:\n");
+    print_rules(filter, filter->head);
+
+}
+
 int
 main(int argc, char **argv)
 {
@@ -82,7 +96,7 @@ main(int argc, char **argv)
     apr_pool_t     *root_pool;
 
     if (argc <= 1) {
-        printf("Usage: %s <file>\n", argv[0]);
+        printf("Usage: %s <file> [--print]\n", argv[0]);
         exit(0);
     }
 
@@ -93,8 +107,8 @@ main(int argc, char **argv)
 
     printf("Filter passed? %s\n", filter ? "yes" : "no");
 
-    /*if (filter)
-        print_filter(filter);*/
+    if (filter && argc > 2 && strcmp("--print", argv[2]) == 0)
+        print_filter(filter);
 
     apr_pool_destroy(root_pool);
     apr_terminate();
